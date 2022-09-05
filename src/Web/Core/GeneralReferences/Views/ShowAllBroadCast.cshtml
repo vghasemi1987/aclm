@@ -1,0 +1,381 @@
+﻿@using DomainEntities.BroadcastAggregate
+@model List<BroadCast>
+
+<div class="container">
+	<div class="alert alert-success waiting hidden">
+		<h3>لطفا منتظر بمانید ... </h3>
+	</div>
+	@if (Convert.ToInt32(ViewBag.CountAdameMoshahede) != null)
+	{
+		<div class="row">
+			<div class="col-md-4">
+				<a href="/GeneralReferences/ShowAllUnReadMessage">پیام های مشاهده نشده  <span>@(ViewBag.CountAdameMoshahede)</span></a>
+			</div>
+		</div>
+		<hr />
+	}
+
+	<div class="row">
+		<div class="col-md-4">
+			<div class="input-group input-group-sm mb-3">
+				<div class="input-group-prepend">
+					<span class="input-group-text" id="inputGroup-sizing-sm">کدرهگیری</span>
+				</div>
+				<input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="codeRahgiri">
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div class="input-group input-group-sm mb-3">
+				<div class="input-group-prepend">
+					<span class="input-group-text" id="inputGroup-sizing-sm">ارسالی/دریافتی</span>
+				</div>
+				<select class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="typeMessage">
+					<option value="دریافتی">دریافتی</option>
+					<option value="ارسالی">ارسالی</option>
+				</select>
+			</div>
+		</div>
+	</div>
+	<hr />
+	<br />
+	<div class="table-responsive">
+		<table id="listBoardCastAll" class="table table-bordered table-striped table-hover text-center table-sm tahoma">
+			<thead>
+				<tr class="bg-warning">
+					<th>کدرهگیری</th>
+					<th>نوع پیام</th>
+					<th>نام و نام خانوادگی</th>
+					<th>موضوع</th>
+					<th>کد پرسنلی</th>
+					<th>تاریخ ایجاد</th>
+					<th>ارسالی/دریافتی</th>
+					<th style="width : 50px !important;">متن پیان</th>
+					<th style="width : 50px !important;">جزئیات</th>
+				</tr>
+			</thead>
+			<tbody>
+				
+				@if (Model.Count>0 && Model != null)
+				{
+					foreach (var item in Model)
+					{
+						<tr>
+							<td>@item.Id</td>
+							<td>@(item.BroadCastType == BroadCastTypeEnum.General ? "عمومی" : "فوری") </td>
+							<td>@(item.FirstName + " " + item.LastName)</td>
+							<td>@item.Subject</td>
+							<td>@item.PersonnelCode</td>
+							<td style="direction:ltr">@item.CreateDatePersian</td>
+							<td>
+								@if (User.Identity.Name == item.UserNameSender)
+								{
+									<span>ارسالی</span>
+								}
+								else
+								{
+									<span>دریافتی</span>
+									<button class="btn btn-primary btn-sm btn-eghdam" value="@item.Id"><span class="k-icon k-i-edit"></span>اقدام</button>
+								}
+							</td>
+							<td>
+								<button class="btn btn-sm btn-primary btn-text" value="@item.Text" type="button">متن</button>
+							</td>
+							<td>
+								<button data-toggle="modal" data-target="#modalDetails" value="@item.Id" class="btn btn-primary btn-sm refDetails">جزئیات</button>
+							</td>
+						</tr>
+					}
+				}
+				else
+				{
+					if (ViewBag.ErrorMessage != null)
+					{
+						string message = ViewBag.ErrorMessage;
+						<tr>
+
+							<td colspan="9">
+								@message
+							</td>
+						</tr>
+					}
+
+				}
+
+			</tbody>
+		</table>
+	</div>
+
+</div>
+<!-- The Modal -->
+<div class="modal" id="modalDetails">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+
+			<!-- Modal Header -->
+			<div class="modal-header">
+				<h3 class="modal-title">مشاهده جزئیات</h3>
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+			<!-- Modal body -->
+			<div class="modal-body">
+				<div class="table-responsive">
+					<table class="table table-bordered table-striped table-hover text-center table-sm tahoma">
+						<thead>
+							<tr class="bg-danger">
+								<th>نام خانوادگی گیرنده</th>
+								<th>نام کاربری گیرنده</th>
+								<th>فرستنده</th>
+								<th>وضعیت</th>
+								<th>تاریخ ایجاد</th>
+								<th>ضرب الاجل</th>
+								<th>متن پیام</th>
+								<th>اقدام</th>
+							</tr>
+						</thead>
+						<tbody id="trDetails">
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Modal Eghdam-->
+<div class="modal" id="modalEghdam">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3 class="modal-title">مشاهده جزئیات</h3>
+				<button type="button" class="close closeModal" data-dismiss="modal">&times;</button>
+			</div>
+			<div class="modal-body" id="innerEghdam">
+
+			</div>
+		</div>
+	</div>
+</div>
+
+@section styles
+{
+	<link href="~/lib/Datatable/dataTables.bootstrap4.min.css" rel="stylesheet" />
+	<style>
+		#input_search {
+			direction: ltr !important;
+		}
+
+		.ltr {
+			direction: ltr !important;
+		}
+
+		.verdanaFont {
+			font-family: Verdana !important;
+			font-size: small !important;
+		}
+
+		.dt-buttons > * {
+			font-family: Verdana !important;
+		}
+
+		.dt-buttons {
+			position: absolute;
+			left: 400px;
+			width: 210px !important;
+			height: 120px;
+		}
+
+		table {
+			width: 100% !important;
+		}
+
+		.pix75 {
+			width: 75px !important;
+		}
+
+		.tahoma {
+			font-family: Tahoma !important;
+		}
+	</style>
+}
+@section scripts
+{
+	<script src="~/lib/Datatable/jquery-3.5.1.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="~/lib/Datatable/jquery.dataTables.min.js"></script>
+	<script src="~/lib/Datatable/dataTables.buttons.min.js"></script>
+	<script src="~/lib/datatable/datatables.bootstrap4.min.js"></script>
+	<script src="~/lib/Datatable/jszip.min.js"></script>
+	<script src="~/lib/Datatable/pdfmake.min.js"></script>
+	<script src="~/lib/Datatable/vfs_fonts.js"></script>
+	<script src="~/lib/Datatable/buttons.html5.min.js"></script>
+	<script src="~/lib/Datatable/buttons.print.min.js"></script>
+	<script src="~/lib/sweetalert2/sweetalert2.js"></script>
+	<script>
+		$(document).ready(function () {
+			closeModal();
+
+			$('#codeRahgiri').on('keyup', function () {
+				table
+					.columns(0)
+					.search(this.value)
+					.draw();
+			});
+
+			bindDetails();
+			bindEghdamHtml();
+			$('.waiting').hide();
+
+			const table = $('#listBoardCastAll').DataTable({
+
+				"ordering": true,
+				"info": true,
+				"filter": true,
+				"length": true,
+				"processing": true,
+				"dom": 't<"bottom"if><"clear">',
+
+				"deferRender": true,
+
+
+
+
+				dom: 'Bfrtip',
+				buttons: [
+					'copy', 'csv', 'excel', 'print',
+				]
+			});
+
+			table.columns(6).search('دریافتی').draw();
+
+			$('.buttons-html5').addClass('btn btn-info btn-sm');
+			$('.buttons-print').addClass('btn btn-info btn-sm');
+
+
+
+			$('#codeRahgiri').on('keyup', function () {
+				table
+					.columns(0)
+					.search(this.value)
+					.draw();
+			});
+
+			$('#typeMessage').bind('change keyup', function () {
+				table
+					.columns(6)
+					.search(this.value)
+					.draw();
+			});
+
+		});
+
+
+		$('.waiting').hide();
+
+
+		btnTextShow();
+
+
+		function bindDetails() {
+			$('.refDetails').click(function () {
+				let id = $(this).val();
+				dataRefferal(id);
+			});
+		}
+
+
+		function dataRefferal(id) {
+			$.get('/GeneralReferences/GetDataReferralBroadCasts?id=' + id + '')
+				.done(function (result) {
+					//alert(JSON.stringify(result));
+					if (result != null) {
+						$('#trDetails').html('');
+
+						let textData = '';
+
+						for (var i = 0; i < result.length; i++) {
+
+							textData +=
+								`<tr>
+																						<td> ${result[i].ApplicationUser.FirstName + ' ' + result[i].ApplicationUser.LastName}</td>
+																						<td>${result[i].ApplicationUser.UserName}</td>
+																						<td>${result[i].BroadCast.UserNameSender}</td>
+																						<td>${result[i].StatusString}</td>
+																						<td>${result[i].BroadCast.CreateDatePersian}</td>
+																						<td>${result[i].DeadLinePersian}</td>
+																						<td><button class="btn-ActionText btn-sm btn btn-dark" value="${result[i].BroadCast.Text}">متن پیام</button></td>
+																						<td><button class="btn-ActionDescription btn-sm btn btn-info" value="${result[i].ActionDescription}">مشاهده</button></td>
+																						</tr>`;
+						}
+						$('#trDetails').html(textData);
+					} else {
+						$('#trDetails').html('');
+						$('#trDetails').html('<tr><td colspan="3">داده ای وجود ندارد.</td></tr>');
+						alert('null data');
+					}
+
+					btn_ActionDescription();
+					btn_ActionText();
+
+				});
+		}
+		function btnTextShow() {
+			$('.btn-text').click(function () {
+				let text = $(this).val();
+				Swal.fire(text);
+			});
+		}
+		function btn_ActionDescription() {
+
+			$('.btn-ActionDescription').click(function () {
+				let message = $(this).val();
+				if (message == 'null') {
+					Swal.fire(`اقدامی صورت نپذیرفته است`);
+				} else {
+					Swal.fire(message);
+				}
+			});
+		}
+		function btn_ActionText() {
+
+			$('.btn-ActionText').click(function () {
+				let message = $(this).val();
+				if (message == 'null') {
+					Swal.fire(`فاقد متن می باشد`);
+				} else {
+					Swal.fire(message);
+				}
+			});
+		}
+		function bindEghdamHtml() {
+			$('.btn-eghdam').click(function () {
+				let id = $(this).val();
+				$.ajax(`/GeneralReferences/ShowDetails/${id}`).done(function (result) {
+					//alert(result);
+					$('#innerEghdam').html('');
+					$('#innerEghdam').html(result);
+
+					$('#modalEghdam').toggle();
+					registerEghdam();
+					closeModal();
+				});
+			});
+		}
+		function closeModal() {
+			$('.closeModal').click(function () {
+				$('#modalEghdam').toggle();
+				//$('#modalEghdam').modal('toggle');
+			});
+		}
+		function registerEghdam() {
+			$('.btn-register').click(function () {
+				let broadCastId = $('#BroadCastId').val();
+				let actionDescription = $('#ActionDescription').val();
+				//alert(broadCastId);
+				//alert(actionDescription);
+				$.post(`/GeneralReferences/ActionEghdam?broadCastId=${broadCastId}&actionDescription=${actionDescription}`)
+					.done(function (result) {
+						Swal.fire(result);
+					});
+			});
+		}
+	</script>
+}

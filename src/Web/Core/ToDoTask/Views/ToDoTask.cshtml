@@ -1,0 +1,33 @@
+﻿@model Dictionary<string, string>
+@{
+    ViewData["Title"] = Model["Title"];
+}
+<div class="row">
+    <div class="col-xs-12">
+        <ol class="breadcrumb">
+            <li>
+                <i class="fa fa-home"></i>
+                <a asp-controller="Home" asp-action="Index">داشبورد</a>
+            </li>
+            <li>
+                <i class="fas fa-tasks"></i>
+                <a asp-controller="ToDoTask" asp-action="Index">لیست وظایف</a>
+            </li>
+            <li class="active">
+                @Model["Title"]
+            </li>
+        </ol>
+    </div>
+</div>
+<div class="row">
+    <div class="m-heading-1 border-red m-bordered col-md-8">
+        <div id="task-detail" data-url="@Url.Action("ShowDetail", "ToDoTask", new { Id = Model["Id"]})"></div>
+
+        <div id="change-task-state" data-url="@Url.Action("ChangeTaskState", "ToDoTask", new {toDoTaskId = Model["Id"]})"></div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $("#li-task").addClass('m-menu__item--active m-menu__item--open');
+    </script>
+}

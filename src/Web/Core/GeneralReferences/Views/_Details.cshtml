@@ -1,0 +1,34 @@
+﻿@using Web.Core.Separ.ViewModels
+@model ReferralBroadCastViewModel
+<form method="post" asp-action="ActionEghdam" asp-controller="GeneralReferences">
+    <div class="row">
+        <input hidden asp-for="BroadCastId" />
+        <div class="form-group col-md-12">
+            <label asp-for="BroadCast.Subject" class="control-label"></label>
+            <input asp-for="BroadCast.Subject" class="form-control" disabled />
+            <span asp-validation-for="BroadCast.Subject" class="text-danger"></span>
+        </div>
+        <div class="form-group col-md-12">
+            <label asp-for="BroadCast.Text" class="control-label"></label>
+            <textarea asp-for="BroadCast.Text" class="form-control" disabled rows=6></textarea>
+            <span asp-validation-for="BroadCast.Text" class="text-danger"></span>
+        </div>
+        <div class="form-group col-md-12">
+            <label asp-for="ActionDescription" class="control-label"></label>
+            <textarea asp-for="ActionDescription" class="form-control" rows=6></textarea>
+            <span asp-validation-for="ActionDescription" class="text-danger"></span>
+        </div>
+        <div class="form-group col-md-12">
+            @if (Model?.ActionDescription?.Length > 0)
+            {
+                <button type="button" class="btn btn-warning btn-register">ویرایش</button>
+                <button type="button" class="btn btn-danger closeModal">بستن</button>
+            }
+            else
+            {
+                <button type="button" class="btn btn-success btn-register">ثبت</button>
+                <button type="button" class="btn btn-danger closeModal">بستن</button>
+            }
+        </div>
+    </div>
+</form>

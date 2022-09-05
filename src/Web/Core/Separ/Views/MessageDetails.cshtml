@@ -1,0 +1,174 @@
+﻿@using DomainEntities.BroadcastAggregate
+@model List<MessageHandler>
+
+
+@if (ViewData["Message"] != null)
+{
+	<div class="alert alert-success">
+		<h3>@(ViewData["Message"])</h3>
+	</div>
+}
+<div class="card">
+	<div class="card-header bg-warning">
+		<h3>مدیریت اعلانات</h3>
+	</div>
+	<div class="card-body">
+		<form asp-controller="Separ" asp-action="MessageDetails" enctype="multipart/form-data">
+			<div class="col-md-12">
+				<div class="row">
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="title">عنوان</label>
+							<input id="title" name="title" class="form-control" type="text" value="" />
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="title">عنوان</label>
+							<select name="MessageType" id="MessageType" class="form-control">
+								<option value="1">پیام اطلاع</option>
+								<option value="0">Agent</option>
+							</select>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="file">پیوست</label>
+							<input id="file" name="file" class="form-control" type="file" value="" />
+
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-12">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label for="description">متن</label>
+							<textarea id="description" name="description" rows="6" class="form-control" type="text" value=""></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-12">
+				<div class="row">
+					<div class="col-md-4">
+						<div class="form-group">
+							<button class="btn btn-success btn-sm">ذخیره</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="card-footer">
+		<br />
+		@if (Model.Count > 0)
+		{
+			<div class="table-responsive">
+				<table class="table table-bordered table-striped table-hover" id="tableMessage">
+					<thead class="text-center">
+						<tr class="bg-success">
+							<th>
+								عنوان
+							</th>
+							<th>
+								توضیحات
+							</th>
+							<th>
+								دانلود
+							</th>
+							<th style="width:75px">
+
+							</th>
+						</tr>
+					</thead>
+					<tbody class="text-center">
+						@foreach (var item in Model)
+						{
+							<tr>
+								<td>@(item.Title)</td>
+								<td>@(item.Description)</td>
+								<td>
+									@if (!string.IsNullOrWhiteSpace(item.FileName))
+									{
+										<a class="btn btn-success btn-sm" asp-action="DownloadFile" asp-route-path="@(item.FileName)" name="path" download="@(item.FileName)">
+											دانلود
+										</a>
+									}
+									
+								</td>
+								<td>
+									<form asp-controller="Separ" asp-action="DeleteMessage" onsubmit="return confirm('آیا مطمئن هستید ؟')" method="post">
+										<input type="hidden" hidden value="@(item.Id)" name="id" />
+										<button class="btn btn-danger btn-sm">حذف</button>
+									</form>
+
+								</td>
+
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		}
+	</div>
+</div>
+@section styles
+{
+	<link href="~/lib/Datatable/dataTables.bootstrap4.min.css" rel="stylesheet" />
+	<style>
+
+		.dt-buttons > * {
+			font-family: Verdana !important;
+		}
+
+		.dt-buttons {
+			display: flex !important;
+			position: absolute;
+			left: 400px;
+			width: 210px !important;
+			height: 0%;
+		}
+
+			.dt-buttons > * {
+				margin: auto !important;
+				width: 210px !important;
+			}
+
+		table {
+			width: 100% !important;
+		}
+	</style>
+
+}
+@section scripts
+{
+	<script src="~/lib/Datatable/jquery-3.5.1.js"></script>
+	<script src="~/lib/Datatable/jquery.dataTables.min.js"></script>
+	<script src="~/lib/Datatable/dataTables.buttons.min.js"></script>
+	<script src="~/lib/datatable/datatables.bootstrap4.min.js"></script>
+	<script src="~/lib/Datatable/jszip.min.js"></script>
+	<script src="~/lib/Datatable/pdfmake.min.js"></script>
+	<script src="~/lib/Datatable/vfs_fonts.js"></script>
+	<script src="~/lib/Datatable/buttons.html5.min.js"></script>
+	<script src="~/lib/Datatable/buttons.print.min.js"></script>
+	<script src="~/lib/select2/select2.min.js"></script>
+	<script>
+		$(document).ready(function () {
+
+
+
+			const table = $('#tableMessage').DataTable({
+				dom: 'Bfrtip',
+				buttons: [
+					'copy', 'csv', 'excel', 'print',
+				]
+			});
+
+			$('.buttons-html5').addClass('btn btn-primary btn-sm');
+			$('.buttons-print').addClass('btn btn-primary btn-sm');
+		});
+
+	</script>
+}

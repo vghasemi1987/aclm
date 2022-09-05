@@ -1,0 +1,138 @@
+﻿@*@using DomainEntities.BroadcastAggregate
+    @model List<ReferralBroadCast>
+    @if (Model != null)
+    {
+        <table>
+            <thead>
+                <tr>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var reff in Model)
+                {
+                    <tr>
+                        <td>@reff.BroadCast.Subject</td>
+                        <td>@reff.BroadCast.Text</td>
+                        <td>@reff.Status</td>
+                        <td>@reff.Description</td>
+                        <td>@reff.DeadLine</td>
+                        <td>@reff.IsImmediate</td>
+                        <td>@reff.SrcUser</td>
+                        <td>@reff.RecordStatus</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <h3>موردی وجود ندارد</h3>
+    }*@
+@using Web.Core.Routers
+@{
+    ViewBag.Title = "لیست پیام ها";
+}
+
+<div class="m-portlet">
+    <div class="m-portlet__head">
+        <div class="m-portlet__head-caption">
+            <div class="m-portlet__head-title">
+                <h3 class="m-portlet__head-text">
+                    لیست روترهای ثبت شده در سامانه
+                </h3>
+            </div>
+        </div>
+    </div>
+    <div class="m-portlet__body">
+        <div class="k-rtl">
+            <div id="report-grid"></div>
+        </div>
+    </div>
+</div>
+
+<div class="k-rtl">
+    <div id="report-grid"></div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var productsDataSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        url: '@Html.Raw(Url.Action("ReferenceMessage", "Separ"))',
+                        dataType: "json",
+                        type: 'GET'
+                    },
+                    parameterMap: function(options) {
+                        return `models=${kendo.stringify(options)}`;
+                    }
+                },
+                schema: {
+                    data: "Data",
+                    total: "Total"
+                },
+                error: function(e) {
+                    alert(e.errorThrown);
+                },
+                pageSize: 10,
+                sort: { field: "Id", dir: "desc" },
+                serverPaging: true,
+                serverFiltering: true,
+                serverSorting: true
+            });
+
+          var grid =  $("#report-grid").kendoGrid({
+                dataSource: productsDataSource,
+                autoBind: true,
+                scrollable: false,
+                pageable: {
+                    buttonCount: 5,
+                    refresh: true,
+                    input: true,
+                    pageSizes: [5, 10, 15, 20, 25],
+                    info: true
+                },
+
+                sortable: true,
+                filterable: {
+                    mode: "menu",
+                    messages: {
+                        selectedItemsFormat: "{0} آیتم انتخاب شده",
+                        search: "جستجو",
+                        checkAll: "انتخاب همه",
+                        clear: "لغو",
+                        filter: "اعمال"
+                    }
+                },
+                 toolbar: [
+                    {
+                        template:
+                          `<button class="k-button" data-title="جدید" data-link="@Url.Action(nameof(RoutersController.GetDetail))"><span class="k-icon k-i-add"></span>روتر جدید</button>&nbsp;
+                           <button class="k-button" id="deleteSelection" data-url="@Url.Action(nameof(RoutersController.Delete))"><span class="k-icon k-i-delete"></span>حذف انتخاب شده ها</button> `
+                    },
+
+                ],
+                reorderable: true,
+                columnMenu: true,
+                columns: [
+                    { template: "<input type='checkbox' class='checkbox' />"  ,  width:"30px"},
+                    { field: "Id", hidden:true },
+                    { field: "Name", title: "نام", media: "(min-width: 450px)" },
+                    { field: "AccessNo", title: "شماره", media: "(min-width: 450px)" },
+                    {
+                        title: "عملیات",
+                        template:
+                            '<button class="k-button k-button-icontext k-grid-edit" data-link="@Url.Action(nameof(RoutersController.GetDetail))/#:Id#" data-title="ویرایش #:Name#"><span class="k-icon k-i-edit"></span>ویرایش</button>'
+                    }
+                ]
+            }).data("kendoGrid");
+            grid.table.on("click", ".checkbox" , selectRow);
+        });
+    </script>
+    <script id="responsive-column-template" type="text/x-kendo-template">
+        <strong>نام</strong>
+        <p class="col-template-val">#:data.FirstName#</p>
+    </script>
+}

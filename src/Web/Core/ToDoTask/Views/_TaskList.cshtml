@@ -1,0 +1,48 @@
+﻿@using ApplicationCommon
+@model List<Web.Core.ToDoTask.ViewModels.ToDoTaskListViewModel>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th class="text-center">عنوان</th>
+                <th class="text-center">کاربر</th>
+                <th class="text-center">وضعیت</th>
+                <th class="text-center">اولویت</th>
+                <th class="text-center">تاریخ سررسید</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="text-center">
+                        <a asp-controller="ToDoTask" asp-action="Detail" asp-route-id="@item.Id">
+                            @item.Title
+                        </a>
+                    </td>
+                    <td class="text-center">@item.User</td>
+                    <td class="text-center">@item.Status</td>
+                    <td class="text-center">@item.Priority</td>
+                    <td class="text-center">
+                        @item.DueDateTime.ToPersianDateTime("yyyy/MM/dd HH:mm")
+                    </td>
+                    <td class="text-center">
+                        <a class="far fa-trash-alt" data-confirm="آیا از حذف وظیفه انتخابی اطمینان دارید؟" asp-action="Delete" asp-controller="ToDoTask"
+                           asp-route-id="@item.Id" asp-route-path="@Context.Request.Path.Value.ToLower()"></a>
+                    </td>
+                    <td class="text-center">
+                        <a asp-action="GetDetail" asp-controller="ToDoTask" asp-route-id="@item.Id" data-caption="جزئیات وظیفه"
+                           class="far fa-edit"></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <span>رکوردی وجود ندارد</span>
+}

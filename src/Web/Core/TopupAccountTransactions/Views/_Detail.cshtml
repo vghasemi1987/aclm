@@ -1,0 +1,82 @@
+﻿@model Web.Core.TopupAccountTransactions.ViewModels.TopupAccountTransactionViewModel
+
+<form asp-controller="TopupAccountTransactions" asp-action="AddDetail" id="frmTopupAccountTransactions" method="post" enctype="multipart/form-data">
+    <div class="modal-body">
+        <div class="container">
+
+            <div class="row">
+                <input asp-for="Id" />
+                <div class="form-group col-md-6">
+                    <label asp-for="FileName" class="control-label"></label>
+                    <input asp-for="FileName" class="form-control" />
+                    <span asp-validation-for="FileName" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="UploadDate" class="control-label"></label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text cursor-pointer" id="btnUploadDate"><i class="far fa-calendar-alt"></i></span>
+                        </div>
+                        <input asp-for="UploadDate" class="form-control" />
+                    </div>
+                    <span class="help-block"><span asp-validation-for="UploadDate" class="text-danger"></span></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label asp-for="ExcelFormatHeaderId" class="control-label"></label>
+                    <select asp-for="ExcelFormatHeaderId" asp-items="@Model.ExcelFormatHeaderList" class="form-control">
+                        <option value="">لطفا انتخاب کنید...</option>
+                    </select>
+                    <span asp-validation-for="ExcelFormatHeaderId" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="FileKindId" class="control-label"></label>
+                    <select asp-for="FileKindId" class="form-control">
+                        <option value="">لطفا انتخاب کنید...</option>
+                        <option value="0">فایل اکسل</option>
+                        <option value="1">فایل csv</option>
+                        <option value="2">فایل TXT</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-12">
+                    <label asp-for="Description" class="control-label"></label>
+                    <input asp-for="Description" class="form-control" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-12">
+                    <br />
+                    <label asp-for="PostedFile" class="control-label"></label>
+                    <input asp-for="PostedFile" type="file" />
+                    <span asp-validation-for="PostedFile" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">خروج</button>
+            @{ var url = Url.Action("AddDetail", "TopupAccountTransactions");}
+            <button onclick="event.preventDefault();saveAndupdateFile($(this.form), '@url');" type="button" class="btn btn-primary" perform="action">
+                ذخیره
+            </button>
+        </div>
+    </div>
+</form>
+
+
+<script>
+    $(document).ready(function () {
+        $.validator.unobtrusive.parse($("form"));
+        $('#btnUploadDate').MdPersianDateTimePicker({
+            targetTextSelector: '#UploadDate',
+            textFormat: 'yyyy/MM/dd HH:mm:ss',
+            englishNumber: true,
+            enableTimePicker: true
+        });
+    });
+</script>

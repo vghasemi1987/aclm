@@ -1,0 +1,215 @@
+﻿@model Web.Core.UserManagement.ViewModels.UserFormViewModel
+
+@{ string action = Model.UserId > 0 ? "EditDetail02" : "AddDetail02";}
+<form asp-controller="UserManagement" asp-action="@action" enctype="multipart/form-data" method="post">
+	<div class="modal-body">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label asp-for="UserName" class="control-label"></label>
+						<input asp-for="UserName" readonly="@(Model.UserId > 0)" class="form-control" />
+						<span asp-validation-for="UserName" class="text-danger"></span>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label asp-for="PersonnelCode" class="control-label"></label>
+						<input asp-for="PersonnelCode" class="form-control" />
+						<span asp-validation-for="PersonnelCode" class="text-danger"></span>
+					</div>
+				</div>
+				<div class="col-md-6 ">
+					<div class="form-group">
+						<label asp-for="FirstName" class="control-label"></label>
+						<input asp-for="FirstName" class="form-control" />
+						<span asp-validation-for="FirstName" class="text-danger"></span>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label asp-for="LastName" class="control-label"></label>
+						<input asp-for="LastName" class="form-control" />
+						<span asp-validation-for="LastName" class="text-danger"></span>
+					</div>
+				</div>
+
+				@*واحد اداری*@
+
+				<!--<div class="col-md-6" id="testtest">
+	<div class="form-group">
+		<label asp-for="DepartmentId" class="control-label"></label>
+		<select asp-for="DepartmentId" title="لطفا انتخاب کنید..." data-live-search="true" class="form-control selectpicker show-tick">
+			@foreach (var dep in Model.DepartmentList)
+			{
+				<option value="">@dep.Text</option>
+			}
+		</select>-->
+				@*<select asp-for="DepartmentId" asp-items="Model.DepartmentList" title="لطفا انتخاب کنید..." data-live-search="true" class="form-control selectpicker show-tick"></select>*@
+				<!--<span asp-validation-for="DepartmentId" class="text-danger"></span>
+		</div>
+	</div>-->
+				<div class="col-md-6">
+					<div class="form-group">
+						<label asp-for="DepartmentId" class="control-label"></label>
+						<select asp-for="DepartmentId" asp-items="Model.DepartmentList" class="form-control"></select>
+						<span asp-validation-for="DepartmentId" class="text-danger"></span>
+					</div>
+				</div>
+				@*کد محل خدمت*@
+				<div class="col-md-6">
+					<div class="form-group">
+						<label asp-for="DutyPositionId" class="control-label"></label>
+						<select asp-for="DutyPositionId" asp-items="Model.DutyPositionList" class="form-control"></select>
+						<span asp-validation-for="DutyPositionId" class="text-danger"></span>
+					</div>
+				</div>
+
+
+
+
+				<div class="col-md-6">
+					<div class="form-group">
+						<label asp-for="PhoneNumber" class="control-label"></label>
+						<input asp-for="PhoneNumber" class="form-control" />
+						<span asp-validation-for="PhoneNumber" class="text-danger"></span>
+					</div>
+				</div>
+
+				@*نقش*@
+				<div class="col-md-6">
+					<div class="form-group">
+						<label asp-for="SelectedRole" class="control-label"></label>
+						<select asp-for="SelectedRole" asp-items="Model.RolesList" class="form-control"></select>
+						<span asp-validation-for="SelectedRole" class="text-danger"></span>
+					</div>
+				</div>
+
+				<div class="col-md-6">
+					<div class="form-group">
+						<label asp-for="Password" class="control-label"></label>
+						<input asp-for="Password" class="form-control" required />
+						<span asp-validation-for="Password" class="text-danger"></span>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group ">
+						<label asp-for="ConfirmPassword" class="control-label"></label>
+						<input asp-for="ConfirmPassword" class="form-control" required />
+						<span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label asp-for="LockState" class="control-label"></label>
+						<select asp-for="LockState" class="form-control">
+							<option value="True">دسترسی فعال</option>
+							<option value="False">دسترسی غیرفعال</option>
+						</select>
+						<span asp-validation-for="LockState" class="text-danger"></span>
+					</div>
+				</div>
+
+
+
+
+
+				@*امور شعب*@
+				@*<div class="col-md-6">
+					<div class="form-group">
+						<label asp-for="BankBranchId" class="control-label"></label>
+						<select asp-for="BankBranchId" asp-items="Model.BankBranchList" title="لطفا انتخاب کنید..." data-live-search="true" class="form-control selectpicker show-tick"></select>
+						<span asp-validation-for="BankBranchId" class="text-danger"></span>
+					</div>
+				</div>*@
+
+				<div class="col-md-6">
+					<div class="form-group">
+						<label asp-for="BankBranchId" class="control-label"></label>
+						<select asp-for="BankBranchId" asp-items="Model.BankBranchList" class="form-control"></select>
+						<span asp-validation-for="BankBranchId" class="text-danger"></span>
+					</div>
+				</div>
+
+
+
+
+				<div class="col-md-6">
+					<div class="form-group">
+						<label asp-for="PostedFile" class="control-label"></label>
+						<input asp-for="PostedFile" type="file" />
+						<span asp-validation-for="PostedFile" class="text-danger"></span>
+					</div>
+					<input asp-for="UserId" />
+				</div>
+				<div class="col-md-6">
+				</div>
+				<div class="col-md-3">
+					<div class="form-group">
+						<label asp-for="ExpertPerformance" class="control-label"></label>
+						<select asp-for="ExpertPerformance" class="form-control">
+							<option value="True">فعال</option>
+							<option value="False">غیرفعال</option>
+						</select>
+						<span asp-validation-for="ExpertPerformance" class="text-danger"></span>
+					</div>
+				</div>
+				<div class="col-md-9">
+					<div class="form-group ">
+						<label asp-for="ExpertPerformanceToken" class="control-label"></label>
+						<input asp-for="ExpertPerformanceToken" class="form-control" />
+						<span asp-validation-for="ExpertPerformanceToken" class="text-danger"></span>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="form-group">
+						<label asp-for="Qualifications" class="control-label"></label>
+						<select asp-for="Qualifications" class="form-control">
+							<option value="True">فعال</option>
+							<option value="False">غیرفعال</option>
+						</select>
+						<span asp-validation-for="Qualifications" class="text-danger"></span>
+					</div>
+				</div>
+				<div class="col-md-9">
+					<div class="form-group ">
+						<label asp-for="QualificationsToken" class="control-label"></label>
+						<input asp-for="QualificationsToken" class="form-control" />
+						<span asp-validation-for="QualificationsToken" class="text-danger"></span>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="form-group">
+						<label asp-for="Qualifications_Second" class="control-label"></label>
+						<select asp-for="Qualifications_Second" class="form-control">
+							<option value="True">فعال</option>
+							<option value="False">غیرفعال</option>
+						</select>
+						<span asp-validation-for="Qualifications_Second" class="text-danger"></span>
+					</div>
+				</div>
+				<div class="col-md-9">
+					<div class="form-group ">
+						<label asp-for="QualificationsToken_Second" class="control-label"></label>
+						<input asp-for="QualificationsToken_Second" class="form-control" />
+						<span asp-validation-for="QualificationsToken_Second" class="text-danger"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default btn-sm" data-dismiss="modal">خروج</button>
+		@{ var url = Model.UserId > 0 ? Url.Action("EditDetail02", "UserManagement") : Url.Action("AddDetail02", "UserManagement");}
+		<button class="btn btn-primary" perform="action">
+			ذخیره
+		</button>
+	</div>
+</form>
+<script>
+	$('#btnDisabledDate').MdPersianDateTimePicker({
+		Placement: 'bottom',
+		Trigger: 'click',
+		TargetSelector: 'input[name=DisabledDate]'
+	});
+</script>

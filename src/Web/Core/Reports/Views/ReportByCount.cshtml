@@ -1,0 +1,117 @@
+﻿@using Web.Core.Reports
+
+@{
+    ViewBag.Title = "گزارش دسترسی بر اساس تعداد";
+}
+
+<div class="m-portlet">
+    <div class="m-portlet__head">
+        <div class="m-portlet__head-caption">
+            <div class="m-portlet__head-title">
+                <h3 class="m-portlet__head-text">
+                    گزارش دسترسی بر اساس تعداد
+                </h3>
+            </div>
+        </div>
+    </div>
+    <div class="m-portlet__body">
+        <div>
+            <div class="col-md-1" style="padding:0px;margin-top:10px;float:right"><label>تعداد دسترسی:</label></div>
+            <div class="col-md-3" style="float:right">
+                <input type="number" id="count" name="count" class="form-control" />
+            </div>
+            <div class="col-md-2" style="float:right"><button type="submit" id="btnSearch" class="btn btn-primary">جستجو</button></div>
+        </div>
+        <br /><br /><br />
+
+        <div class="k-rtl">
+            <div id="report-grid"></div>
+        </div>
+    </div>
+</div>
+
+
+<div class="k-rtl">
+    <div id="report-grid"></div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function() {
+
+            $('#btnSearch').click(function() {
+
+                var serviceDataSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        url: '@Html.Raw(Url.Action("GetReportByCount", "Reports"))?count='+$('#count').val(),
+                        dataType: "json",
+                        type: 'GET',
+                    },
+                    parameterMap: function(options) {
+                        return `models=${kendo.stringify(options)}`;
+                    }
+                },
+                schema: {
+                    data: "Data",
+                    total: "Total"
+                },
+                error: function(e) {
+                    alert(e.errorThrown);
+                },
+                pageSize: 10,
+                sort: { field: "Id", dir: "desc" },
+                serverPaging: true,
+                serverFiltering: true,
+                serverSorting: true
+            });
+            $("#report-grid").kendoGrid({
+                dataSource: serviceDataSource,
+                autoBind: true,
+                scrollable: true,
+                pageable: {
+                    buttonCount: 5,
+                    refresh: true,
+                    input: true,
+                    pageSizes: [5, 10, 15, 20, 25],
+                    info: true
+                },
+        progress:true,
+                sortable: true,
+                filterable: {
+                    mode: "menu",
+                    messages: {
+                        selectedItemsFormat: "{0} آیتم انتخاب شده",
+                        search: "جستجو",
+                        checkAll: "انتخاب همه",
+                        clear: "لغو",
+                        filter: "اعمال"
+                    }
+                },
+         toolbar: [
+                     "excel",
+                  ],
+         excel: {
+                allPages: true
+            },
+                reorderable: true,
+                columnMenu: true,
+                columns: [
+                    { field: "Id", title: "ردیف",width:"120px" , media: "(min-width: 450px)" },
+                    { field: "DestinationSystemName", title: "سامانه مقصد",width:"120px" , media: "(min-width: 450px)" },
+                    { field: "DestinationIp", title: "آدرس سامانه مقصد",width:"120px" , media: "(min-width: 450px)" },
+                    { field: "Count", title: "تعداد دسترسی",width:"140px" , media: "(min-width: 450px)" },
+                ]
+            });
+            });
+        });
+
+    </script>
+
+
+
+    <script id="responsive-column-template" type="text/x-kendo-template">
+        <strong>نام</strong>
+        <p class="col-template-val">#:data.Id#</p>
+    </script>
+}

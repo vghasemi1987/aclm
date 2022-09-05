@@ -1,0 +1,93 @@
+﻿@using Web.Core.Transactions
+@{
+    ViewBag.Title = "گزارش فراوانی ها";
+}
+
+<div class="m-portlet">
+    <div class="m-portlet__head">
+        <div class="m-portlet__head-caption">
+            <div class="m-portlet__head-title">
+                <h3 class="m-portlet__head-text">
+                    گزارش فراوانی ها
+                </h3>
+            </div>
+        </div>
+    </div>
+    <div class="m-portlet__body">
+        <div class="k-rtl">
+            <div id="report-grid"></div>
+        </div>
+    </div>
+</div>
+
+<div class="k-rtl">
+    <div id="report-grid"></div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function() {
+
+            var aclFilesUploadDataSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        url: '@Html.Raw(Url.Action("GetAbundanceReport", "SearchLogs"))',
+                        dataType: "json",
+                        type: 'GET'
+                    },
+                    parameterMap: function(options) {
+                        return `models=${kendo.stringify(options)}`;
+                    }
+                },
+                schema: {
+                    data: "Data",
+                    total: "Total"
+                },
+                error: function(e) {
+                    alert(e.errorThrown);
+                },
+                pageSize: 10,
+                sort: { field: "Id", dir: "desc" },
+                serverPaging: true,
+                serverFiltering: true,
+                serverSorting: true
+            });
+           $("#report-grid").kendoGrid({
+                dataSource: aclFilesUploadDataSource,
+                autoBind: true,
+                scrollable: false,
+                pageable: {
+                    buttonCount: 5,
+                    refresh: true,
+                    input: true,
+                    pageSizes: [5, 10, 15, 20, 25],
+                    info: true
+                },
+
+                sortable: true,
+                filterable: {
+                    mode: "menu",
+                    messages: {
+                        selectedItemsFormat: "{0} آیتم انتخاب شده",
+                        search: "جستجو",
+                        checkAll: "انتخاب همه",
+                        clear: "لغو",
+                        filter: "اعمال"
+                    }
+                },
+                reorderable: true,
+                columnMenu: true,
+                columns: [
+                    { field: "Id", title:"ردیف", media: "(min-width: 50px)" },
+                    { field: "UserName", title: "کاربر", media: "(min-width: 450px)" },
+                    { field: "SuccessStatus", title: "وضعیت", media: "(min-width: 450px)" },
+                    { field: "Count", title: "فراوانی", media: "(min-width: 450px)" },
+                ]
+            });
+        });
+    </script>
+    <script id="responsive-column-template" type="text/x-kendo-template">
+        <strong>نام</strong>
+        <p class="col-template-val">#:data.FileName#</p>
+    </script>
+}

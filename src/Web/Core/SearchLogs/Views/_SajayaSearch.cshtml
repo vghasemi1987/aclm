@@ -1,0 +1,67 @@
+﻿@model Web.Core.SearchLogs.ViewModels.SearchLogDetailViewModel
+
+<form asp-controller="SearchLogs" asp-action="SajayaReport" method="get">
+
+    <div class="modal-body">
+        <div class="container">
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label asp-for="LetterIdentifier" class="control-label"></label>
+                    <input asp-for="LetterIdentifier" class="form-control" />
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="SearchDate" class="control-label"></label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text cursor-pointer" id="btnSearchDate"><i class="far fa-calendar-alt"></i></span>
+                        </div>
+                        <input asp-for="SearchDate" class="form-control" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <input asp-for="Search" value="1" hidden />
+                <div class="form-group col-md-6">
+                    <label asp-for="FirstName" class="control-label"></label>
+                    <input asp-for="FirstName" class="form-control" />
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="LastName" class="control-label"></label>
+                    <input asp-for="LastName" class="form-control" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label asp-for="IsSuccess" class="control-label"></label>
+                    <select asp-for="IsSuccess" class="form-control">
+                        <option value="1">موفق</option>
+                        <option value="0">ناموفق</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="IsVictim" class="control-label"></label>
+                    <select asp-for="IsVictim" class="form-control">
+                        <option value="0">قربانی</option>
+                        <option value="1">سواستفاده کننده</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">خروج</button>
+            <button class="btn btn-primary" perform="action">جستجو</button>
+        </div>
+    </div>
+</form>
+<script>
+    $.validator.unobtrusive.parse($("form"));
+    $('#btnSearchDate').MdPersianDateTimePicker({
+        targetTextSelector: '#SearchDate',
+        textFormat: 'yyyy/MM/dd HH:mm:ss',
+        englishNumber:true,
+        enableTimePicker:true
+    });
+
+</script>

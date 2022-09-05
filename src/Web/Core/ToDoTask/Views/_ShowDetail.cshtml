@@ -1,0 +1,64 @@
+﻿@using ApplicationCommon
+@using DomainEntities.ApplicationUserAggregate;
+
+@model DomainEntities.ToDoTaskAggregate.ToDoTask
+
+<div class="dropdown" style="float: left">
+    <a class="dropdown-toggle text-underline" data-toggle="dropdown"><b style="font-size: 20px">...</b></a>
+    <ul class="dropdown-menu" style="position: relative; min-width: 50px">
+        <li>
+            <a asp-action="GetDetail" asp-controller="ToDoTask" asp-route-id="@Model.Id" data-caption="جزئیات وظیفه">
+                <i class="icon-pencil"></i>&nbsp;ویرایش
+            </a>
+        </li>
+        @if (User.IsInRole(ApplicationRolesEnum.Admin.DescriptionAttr()))
+        {
+            <li>
+                <a data-confirm="آیا از حذف وظیفه انتخابی اطمینان دارید؟" asp-action="Delete" asp-controller="ToDoTask" asp-route-id="@Model.Id"
+                   asp-route-path="@Context.Request.Path.Value.ToLower()">
+                    <i class="fas fa-trash-alt"></i>&nbsp;حذف
+                </a>
+            </li>
+        }
+    </ul>
+</div>
+<h3>جزئیات وظیفه</h3>
+عنوان: <b>@Model.Title</b>
+<br />
+@if (!string.IsNullOrEmpty(Model.Priority.Title))
+{
+    <div>
+        اولویت: <b>@Model.Priority.Title</b><br />
+    </div>
+}
+@if (Model.DueDateTime != null)
+{
+    <div>
+        تاریخ سررسید: <b>@Model.DueDateTime.GetValueOrDefault().ToPersianDateTime("yyyy/MM/dd - HH:mm")</b><br />
+    </div>
+}
+@if (!string.IsNullOrEmpty(Model.CreatorUser.Name))
+{
+    <div>
+        ایجاد شده توسط: <b>@Model.CreatorUser.Name</b><br />
+    </div>
+}
+@if (!string.IsNullOrEmpty(Model.AssignedToUser.Name))
+{
+    <div>
+        اختصاص داده شده به: <b>@Model.AssignedToUser.Name</b><br />
+    </div>
+}
+@if (!string.IsNullOrEmpty(Model.Description))
+{
+    <div>
+        توضیحات:<br />
+        <b>@Model.Description</b><br />
+    </div>
+}
+@if (Model.CompletionDateTime != null)
+{
+    <div>
+        تاریخ تکمیل وظیفه: <b>@Model.CompletionDateTime.Value.ToPersianDateTime("yyyy/MM/dd - HH:mm")</b><br />
+    </div>
+}

@@ -1,0 +1,187 @@
+﻿@using Web.Core.InquiryEmployee.ViewModels
+@model List<PersonnelResult>
+@section styles
+{
+    <link href="~/lib/Datatable/dataTables.bootstrap4.min.css" rel="stylesheet" />
+    <style>
+        #input_search {
+            direction: ltr !important;
+        }
+
+        .ltr {
+            direction: ltr !important;
+        }
+
+        .verdanaFont {
+            font-family: Verdana !important;
+            font-size: small !important;
+        }
+
+		.dt-buttons > * {
+			font-family: Verdana !important;
+		}
+
+		.dt-buttons {
+			position: absolute;
+			left: 150px;
+			width: 210px !important;
+			height: 120px;
+		}
+
+        table {
+            width: 100% !important;
+        }
+    </style>
+}
+@*<div class="alert alert-warning waiting">
+        <h5>لطفا منتظر بمانید ... </h5>
+    </div>*@
+<div class="card">
+    <div class="card-header bg-success">
+        <h3>تاریخچه افراد با تست مثبت</h3>
+    </div>
+    <div class="card-body">
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <a asp-controller="InquiryEmployee" asp-action="ExportExcelPositive" class="btn btn-success btn-sm">خروجی اکسل کامل</a>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-md-4">
+                <div class="input-group input-group-sm mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-sm">محل خدمت</span>
+                    </div>
+                    <input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="mahalKhedmat">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="input-group input-group-sm mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-sm">امور شعب</span>
+                    </div>
+                    <input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="omoorShoab">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="input-group input-group-sm mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-sm">شعبه</span>
+                    </div>
+                    <input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="shobe">
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="alert alert-warning waiting">
+            <h3>لطفا منتظر بمانید ... </h3>
+        </div>
+        <br />
+        @if (Model != null)
+        {
+            int row = 1;
+            <table id="example" class="table table-striped table-bordered table-hover table-sm text-center">
+                <thead>
+                    <tr class="bg-info">
+                        <th>ردیف</th>
+                        <th>نام</th>
+                        <th>نام خانوادگی</th>
+                        <th>کد پرسنلی</th>
+                        <th>محل خدمت</th>
+                        <th>امورشعب</th>
+                        <th>شعبه</th>
+                        @*<th>نام کاربری سازمان</th>*@
+                        <th>کد ملی کارمند</th>
+                        @*<th>تاریخ(میلادی)</th>*@
+                        <th>تاریخ استعلام</th>
+                        <th>وضعیت ناقل</th>
+                        @*<th>تاریخ اتمام قرنطینه</th>*@
+                        <th>تاریخ اتمام قرنطینه</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@row</td>
+                            <td>@item.FirstName</td>
+                            <td>@item.LastName</td>
+                            <td>@item.Code</td>
+                            <td>@item.ProvinceName</td>
+                            <td>@item.OrganizationName</td>
+                            <td>@item.UnitName</td>
+                            @*<td>@item.organization</td>*@
+                            <td class="ltr verdanaFont">@item.NationalCode</td>
+                            @*<td class="ltr verdanaFont">@item.lastStatusCheck</td>*@
+                            <td class="ltr verdanaFont">@item.lastStatusCheckFa</td>
+                            <td class="ltr verdanaFont">@item.isContagious</td>
+                            @*<td class="ltr verdanaFont">@item.quarantineEndDate</td>*@
+                            <td class="ltr verdanaFont">@item.quarantineEndDateFa</td>
+                        </tr>
+                        row++;
+                    }
+                </tbody>
+
+            </table> }
+        else
+        {
+            <h3>داده ای وجود ندارد</h3>}
+    </div>
+</div>
+@section scripts
+{
+    <script src="~/lib/Datatable/jquery-3.5.1.js"></script>
+    <script src="~/lib/Datatable/jquery.dataTables.min.js"></script>
+    <script src="~/lib/Datatable/dataTables.buttons.min.js"></script>
+    <script src="~/lib/Datatable/dataTables.bootstrap4.min.js"></script>
+    <script src="~/lib/Datatable/jszip.min.js"></script>
+
+
+    <script src="~/lib/Datatable/pdfmake.min.js"></script>
+
+
+    <script src="~/lib/Datatable/vfs_fonts.js"></script>
+
+
+    <script src="~/lib/Datatable/buttons.html5.min.js"></script>
+
+
+    <script src="~/lib/Datatable/buttons.print.min.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            $('.waiting').show();
+            var table = $('#example').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'print'
+                ]
+            });
+
+            $('#mahalKhedmat').on('keyup', function () {
+                table
+                    .columns(4)
+                    .search(this.value)
+                    .draw();
+            });
+
+            $('#omoorShoab').on('keyup', function () {
+                table
+                    .columns(5)
+                    .search(this.value)
+                    .draw();
+            });
+
+            $('#shobe').on('keyup', function () {
+                table
+                    .columns(6)
+                    .search(this.value)
+                    .draw();
+            });
+
+            $('.buttons-html5').addClass('btn btn-success btn-sm');
+            $('.buttons-print').addClass('btn btn-success btn-sm');
+
+            $('.waiting').hide();
+        });
+    </script>
+}

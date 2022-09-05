@@ -1,0 +1,199 @@
+﻿@using DomainEntities.BroadcastAggregate
+@model IEnumerable<ReferralBroadCast>
+
+<div class="table-responsive">
+	<table id="listBoardCastAll" class="table table-bordered table-striped table-hover text-center table-sm tahoma">
+		<thead>
+			<tr class="bg-danger">
+				<th>نام خانوادگی گیرنده</th>
+				<th>نام کاربری گیرنده</th>
+				<th>فرستنده</th>
+				<th>تاریخ ایجاد</th>
+				<th>ضرب الاجل</th>
+				<th>متن پیام</th>
+			</tr>
+		</thead>
+		<tbody>
+			@if (Model != null)
+			{
+				foreach (var item in Model)
+				{
+					<tr>
+						<td> @(item?.ApplicationUser?.FirstName + ' ' + item?.ApplicationUser?.LastName)</td>
+						<td>@(item?.ApplicationUser?.UserName)</td>
+						<td>@(item?.BroadCast?.UserNameSender)</td>
+						<td>@(item?.BroadCast?.CreateDatePersian)</td>
+						<td>@(item?.DeadLinePersian)</td>
+						<td><button class="btn-ActionText btn-sm btn btn-dark" value="@item?.BroadCast?.Text)">متن پیام</button></td>
+					</tr>
+				}
+			}
+
+		</tbody>
+	</table>
+</div>
+
+<!-- Modal Eghdam-->
+<div class="modal" id="modalEghdam">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3 class="modal-title">مشاهده جزئیات</h3>
+				<button type="button" class="close closeModal" data-dismiss="modal">&times;</button>
+			</div>
+			<div class="modal-body" id="innerEghdam">
+
+			</div>
+		</div>
+	</div>
+</div>
+@section styles
+{
+	<link href="~/lib/Datatable/dataTables.bootstrap4.min.css" rel="stylesheet" />
+	<style>
+		#input_search {
+			direction: ltr !important;
+		}
+
+		.ltr {
+			direction: ltr !important;
+		}
+
+		.verdanaFont {
+			font-family: Verdana !important;
+			font-size: small !important;
+		}
+
+		.dt-buttons > * {
+			font-family: Verdana !important;
+		}
+
+		.dt-buttons {
+			position: absolute;
+			left: 400px;
+			width: 210px !important;
+			height: 120px;
+		}
+
+		table {
+			width: 100% !important;
+		}
+
+		.pix75 {
+			width: 75px !important;
+		}
+
+		.tahoma {
+			font-family: Tahoma !important;
+		}
+	</style>
+}
+@section scripts
+{
+	<script src="~/lib/Datatable/jquery-3.5.1.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="~/lib/Datatable/jquery.dataTables.min.js"></script>
+	<script src="~/lib/Datatable/dataTables.buttons.min.js"></script>
+	<script src="~/lib/datatable/datatables.bootstrap4.min.js"></script>
+	<script src="~/lib/Datatable/jszip.min.js"></script>
+	<script src="~/lib/Datatable/pdfmake.min.js"></script>
+	<script src="~/lib/Datatable/vfs_fonts.js"></script>
+	<script src="~/lib/Datatable/buttons.html5.min.js"></script>
+	<script src="~/lib/Datatable/buttons.print.min.js"></script>
+	<script src="~/lib/sweetalert2/sweetalert2.js"></script>
+	<script>
+		$(document).ready(function () {
+			
+			btnTextShow();
+			btn_ActionText();
+			btn_ActionDescription();
+			bindEghdamHtml();
+			closeModal();
+			registerEghdam();
+
+
+			const table = $('#listBoardCastAll').DataTable({
+
+				"ordering": true,
+				"info": true,
+				"filter": true,
+				"length": true,
+				"processing": true,
+				"dom": 't<"bottom"if><"clear">',
+
+				"deferRender": true,
+
+
+
+
+				dom: 'Bfrtip',
+				buttons: [
+					'copy', 'csv', 'excel', 'print',
+				]
+			});
+
+		});
+		function btnTextShow() {
+			$('.btn-text').click(function () {
+				let text = $(this).val();
+				Swal.fire(text);
+			});
+		}
+		function btn_ActionText() {
+
+			$('.btn-ActionText').click(function () {
+				let message = $(this).val();
+				if (message == 'null') {
+					Swal.fire(`فاقد متن می باشد`);
+				} else {
+					Swal.fire(message);
+				}
+			});
+		}
+		function btn_ActionDescription() {
+
+			$('.btn-ActionDescription').click(function () {
+				let message = $(this).val();
+				if (message == 'null') {
+					Swal.fire(`اقدامی صورت نپذیرفته است`);
+				} else {
+					Swal.fire(message);
+				}
+			});
+		}
+		function bindEghdamHtml() {
+			$('.btn-eghdam').click(function () {
+				let id = $(this).val();
+				$.ajax(`/GeneralReferences/ShowDetails/${id}`).done(function (result) {
+					//alert(result);
+					$('#innerEghdam').html('');
+					$('#innerEghdam').html(result);
+
+					$('#modalEghdam').toggle();
+					registerEghdam();
+					closeModal();
+				});
+			});
+		}
+		function closeModal() {
+			$('.closeModal').click(function () {
+				$('#modalEghdam').toggle();
+				//$('#modalEghdam').modal('toggle');
+			});
+		}
+		function registerEghdam() {
+			$('.btn-register').click(function () {
+				let broadCastId = $('#BroadCastId').val();
+				let actionDescription = $('#ActionDescription').val();
+				//alert(broadCastId);
+				//alert(actionDescription);
+				$.post(`/GeneralReferences/ActionEghdam?broadCastId=${broadCastId}&actionDescription=${actionDescription}`)
+					.done(function (result) {
+						Swal.fire(result);
+					});
+			});
+		}
+
+
+	</script>
+}

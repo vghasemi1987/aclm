@@ -1,0 +1,152 @@
+﻿@model Web.Core.ToDoTask.ViewModels.SearchViewModel
+@{
+    ViewBag.Title = "جستجو پیشرفته وظیفه";
+}
+<div class="row">
+    <div class="col-xs-12">
+        <ol class="breadcrumb">
+            <li>
+                <i class="fa fa-home"></i>
+                <a asp-controller="Home" asp-action="Index">داشبورد</a>
+            </li>
+            <li class="active">
+                @ViewBag.Title
+            </li>
+        </ol>
+    </div>
+    <div class="col-md-6 col-xs-12">
+        <h3>@ViewBag.Title</h3>
+        <p class="text-muted">جستجوی پیشرفته در وظایف ثبت شده در سامانه</p>
+    </div>
+</div>
+<form asp-controller="ToDoTask" asp-action="Index" id="frmSearchTask" method="get">
+    @{ await Html.RenderPartialAsync("_CustomValidationSummary"); }
+    <div class="row">
+        <input asp-for="Oper" />
+        <div class="form-group col-md-3">
+            <label asp-for="Title" class="control-label"></label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+        <div class="form-group col-md-3">
+            <label asp-for="PriorityId" class="control-label"></label>
+            <select asp-for="PriorityId" asp-items="Model.Priority" data-selected-text-format="count" ultiple data-actions-box="true"
+                    multiple class="form-control selectpicker show-tick" title="انتخاب کنید ..."></select>
+            <span asp-validation-for="PriorityId" class="text-danger"></span>
+        </div>
+        <div class="form-group col-md-3">
+            <label asp-for="StateId" class="control-label"></label>
+            <select asp-for="StateId" asp-items="Model.StateSelectList" multiple data-selected-text-format="count" ultiple data-actions-box="true"
+                    class="form-control selectpicker show-tick" title="انتخاب کنید ..."></select>
+            <span asp-validation-for="StateId" class="text-danger"></span>
+        </div>
+        <div class="form-group col-md-3">
+            <label asp-for="Description" class="control-label"></label>
+            <input asp-for="Description" class="form-control" />
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-md-3">
+            <label asp-for="CreatorUserId" class="control-label"></label>
+            <select asp-for="CreatorUserId" asp-items="Model.Users" data-selected-text-format="count" title="انتخاب کنید ..."
+                    multiple data-live-search="true" class="form-control selectpicker show-tick" ultiple data-actions-box="true"></select>
+            <span asp-validation-for="CreatorUserId" class="text-danger"></span>
+        </div>
+        <div class="form-group col-md-3">
+            <label asp-for="AssignedToUserId" class="control-label"></label>
+            <select asp-for="AssignedToUserId" asp-items="Model.Users" multiple data-live-search="true" title="انتخاب کنید ..."
+                    data-selected-text-format="count" class="form-control selectpicker show-tick" ultiple data-actions-box="true"></select>
+            <span asp-validation-for="AssignedToUserId" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-md-3">
+            <label asp-for="FromDueDateTime" class="control-label"></label>
+            <div class="input-group">
+                <div class="input-group-addon" data-placement="bottom" data-mddatetimepicker="true" data-targetselector="#FromDueDateTime" data-trigger="click"
+                     data-enabletimepicker="false" data-isgregorian="false" data-englishnumber="true" data-groupid="due-date" data-fromdate="true">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </div>
+                <input asp-for="FromDueDateTime" class="form-control" />
+            </div>
+            <span class="help-block"><span asp-validation-for="FromDueDateTime" class="text-danger"></span></span>
+        </div>
+
+        <div class="form-group col-md-3">
+            <label asp-for="ToDueDateTime" class="control-label"></label>
+            <div class="input-group">
+                <div class="input-group-addon" data-placement="bottom" data-mddatetimepicker="true" data-targetselector="#ToDueDateTime" data-trigger="click"
+                     data-enabletimepicker="false" data-isgregorian="false" data-englishnumber="true" data-groupid="due-date" data-todate="true">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </div>
+                <input asp-for="ToDueDateTime" class="form-control" />
+            </div>
+            <span class="help-block"><span asp-validation-for="ToDueDateTime" class="text-danger"></span></span>
+        </div>
+
+        <div class="form-group col-md-3">
+            <label asp-for="FromEntryDate" class="control-label"></label>
+            <div class="input-group">
+                <div class="input-group-addon" data-placement="bottom" data-mddatetimepicker="true" data-targetselector="#FromEntryDate" data-trigger="click" data-enabletimepicker="false"
+                     data-isgregorian="false" data-englishnumber="true" data-groupid="entry-date" data-fromdate="true">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </div>
+                <input asp-for="FromEntryDate" class="form-control" />
+            </div>
+            <span class="help-block"><span asp-validation-for="FromEntryDate" class="text-danger"></span></span>
+        </div>
+
+        <div class="form-group col-md-3">
+            <label asp-for="ToEntryDate" class="control-label"></label>
+            <div class="input-group">
+                <div class="input-group-addon" data-placement="bottom" data-mddatetimepicker="true" data-targetselector="#ToEntryDate" data-trigger="click" data-enabletimepicker="false"
+                     data-isgregorian="false" data-englishnumber="true" data-groupid="entry-date" data-todate="true">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </div>
+                <input asp-for="ToEntryDate" class="form-control" />
+            </div>
+            <span class="help-block"><span asp-validation-for="ToEntryDate" class="text-danger"></span></span>
+        </div>
+
+
+        <div class="form-group col-md-3">
+            <label asp-for="FromCompletionDateTime" class="control-label"></label>
+            <div class="input-group">
+                <div class="input-group-addon" data-placement="bottom" data-mddatetimepicker="true" data-targetselector="#FromCompletionDateTime" data-trigger="click"
+                     data-enabletimepicker="false" data-isgregorian="false" data-englishnumber="true" data-groupid="completion-date" data-fromdate="true">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </div>
+                <input asp-for="FromCompletionDateTime" class="form-control" />
+            </div>
+            <span class="help-block"><span asp-validation-for="FromCompletionDateTime" class="text-danger"></span></span>
+        </div>
+
+        <div class="form-group col-md-3">
+            <label asp-for="ToCompletionDateTime" class="control-label"></label>
+            <div class="input-group">
+                <div class="input-group-addon" data-placement="bottom" data-mddatetimepicker="true" data-targetselector="#ToCompletionDateTime" data-trigger="click"
+                     data-enabletimepicker="false" data-isgregorian="false" data-englishnumber="true" data-groupid="completion-date" data-todate="true">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </div>
+                <input asp-for="ToCompletionDateTime" class="form-control" />
+            </div>
+            <span class="help-block"><span asp-validation-for="ToCompletionDateTime" class="text-danger"></span></span>
+        </div>
+        <div class="form-group col-md-3">
+            <label asp-for="ContactName" class="control-label"></label>
+            <input asp-for="ContactName" class="form-control contact-autocomplete" />
+            <span asp-validation-for="ContactName" class="text-danger"></span>
+        </div>
+    </div>
+    <div>
+        <button asp-action="Index" asp-controller="ToDoTask" class="btn green-jungle" perform="action">
+            <i class="fas fa-search"></i>&nbsp; جستجو
+        </button>
+    </div>
+
+</form>
+@section scripts
+{
+    <script type="text/javascript">
+        $("#li-task, #li-tasks-search").addClass('m-menu__item--active m-menu__item--open');
+    </script>
+}

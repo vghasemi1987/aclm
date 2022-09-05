@@ -1,0 +1,31 @@
+﻿@using Web.Core.RegisterEmployee.ViewModels
+@model List<SaveEmployeeListDtoResponse>
+
+@if (Model != null)
+{
+    <table class="table table-hover table-striped table-bordered text-center">
+        <thead>
+            <tr class="text-center bg-success">
+                <th>کد ملی</th>
+                <th>پیام</th>
+                <th>شناسه رکورد</th>
+                <th>وضعیت خطا</th>
+            </tr>
+        </thead>
+        <tbody style="font-family:Tahoma !important;">
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.nationalCode</td>
+                    <td>@item.message</td>
+                    <td>@item.uid</td>
+                    <td>@item.isError</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <h3>سرور مورد نظر پاسخ گو نمی باشد</h3>
+}

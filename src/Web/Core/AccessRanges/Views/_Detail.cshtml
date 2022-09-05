@@ -1,0 +1,108 @@
+﻿@model Web.Core.AccessRanges.ViewModels.AccessRangeViewModel
+
+<div class="modal-body">
+    <div class="container">
+        <div class="row">
+            <input asp-for="Id" />
+            <div class="form-group col-md-10">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+        </div>
+        <div id="ip-container">
+            <div class="row">
+                <div class="form-group col-md-5">
+                    <label asp-for="IpFrom" class="control-label"></label>
+                    <input asp-for="IpFrom" class="form-control" />
+                    <span asp-validation-for="IpFrom" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-5">
+                    <label asp-for="IpTo" class="control-label"></label>
+                    <input asp-for="IpTo" class="form-control" />
+                    <span asp-validation-for="IpTo" class="text-danger"></span>
+
+                </div>
+                @if (Model.Id == 0)
+                {
+
+                <div class="form-group col-md-2">
+                    <br />
+                    <button class="btn btn-info btn-sm" id="btnAdd" onclick="addControl()">+</button>
+                </div>
+                }
+            </div>
+        </div>
+        @if (Model.Id == 0)
+        {
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">خروج</button>
+                @*@{ var url = Model.Id > 0 ? Url.Action("EditDetail", "AccessRanges") : Url.Action("AddDetail", "AccessRanges");}*@
+                @*<button onclick="event.preventDefault();saveAndupdate($(this.form), '@url');" type="button" class="btn btn-primary">ذخیره</button>*@
+                <button onclick="saveAccessRange()" type="button" class="btn btn-primary">ذخیره</button>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    $(document).ready(function(){
+       var detailArray = JSON.parse('@Html.Raw(Json.Serialize(Model.AccessRangeDetails))');
+
+        if(detailArray.length>0)
+        {
+           var row = $('#ip-container').first();
+           $('#IpFrom', row).val(detailArray[0].IpFrom);
+           $('#IpTo', row).val(detailArray[0].IpTo);
+
+            var i = 1;
+            while(i < detailArray.length)
+            {
+                var row =  $('#ip-container').last().clone();
+                 $('#IpFrom', row).val(detailArray[i].IpFrom);
+                 $('#IpTo', row).val(detailArray[i].IpTo);
+                 $('#ip-container').append(row);
+                 i++;
+            }
+        }
+    });
+
+      $('#IpFrom').mask('0ZZ.0ZZ.0ZZ.0ZZ', {
+            translation: {
+            'Z': {
+             pattern: /[0-9]/, optional: true
+          }
+        }
+     });
+     $('#IpTo').mask('0ZZ.0ZZ.0ZZ.0ZZ', {
+            translation: {
+            'Z': {
+             pattern: /[0-9]/, optional: true
+          }
+        }
+     });
+    function addControl(){
+       var row =$('#ip-container .row').first().clone();
+      $('input', row).val('');
+      $('#ip-container').append(row);
+      $("#ip-container input").last().focus();
+      $("#ip-container button").hide();
+      $("#ip-container :last").show();
+    debugger;
+    }
+    function saveAccessRange(){
+    var accessRanges = [];
+        var title = $('#Title').val();
+        var userId = $('#UserId :selected').val();
+        $('#ip-container .row').each(function (i,item){
+            var ipFrom =  $('#IpFrom', item).first().val();
+            var ipTo =  $('#IpTo', item).first().val();
+            var accessRange = {Title: title, UserId:userId, IpFrom: ipFrom, IpTo: ipTo};
+            accessRanges.push(accessRange);
+        })
+        $.post('/AccessRanges/AddDetail', { model: accessRanges }, function (result) {
+            update_list(result);
+        })
+      }
+</script>
+

@@ -1,0 +1,109 @@
+﻿
+@using Web.Core.Transactions
+@model Web.Core.Transactions.ViewModels.SearchViewModel
+
+@{
+    ViewBag.Title = "جزییات تراکنش";
+}
+
+<div class="m-portlet">
+
+    <div class="m-portlet__body">
+        <div class="k-rtl">
+            <div id="report-grid"></div>
+        </div>
+    </div>
+</div>
+
+
+<div class="k-rtl">
+    <div id="report-grid"></div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+         $(document).ready(function() {
+               var reportDataSource = new kendo.data.DataSource({
+                    transport: {
+                        read: {
+                            url: '@Html.Raw(Url.Action("GetTransactionDetailByHeader", "Transactions", Model))',
+                            dataType: "json",
+                            type: 'GET'
+                        },
+                        parameterMap: function(options) {
+                            return `models=${kendo.stringify(options)}`;
+                        }
+                    },
+                    schema: {
+                        data: "Data",
+                        total: "Total"
+                    },
+                    error: function(e) {
+                        alert(e.errorThrown);
+                    },
+                    pageSize: 10,
+                    sort: { field: "Id", dir: "desc" },
+                    serverPaging: true,
+                    serverFiltering: true,
+                    serverSorting: true
+                });
+                $("#report-grid").kendoGrid({
+                    dataSource: reportDataSource,
+                    autoBind: true,
+                    scrollable: false,
+                    pageable: {
+                        buttonCount: 5,
+                        refresh: true,
+                        input: true,
+                        pageSizes: [5, 10, 15, 20, 25],
+                        info: true
+                    },
+            progress:true,
+                    sortable: true,
+                    filterable: {
+                        mode: "menu",
+                        messages: {
+                            selectedItemsFormat: "{0} آیتم انتخاب شده",
+                            search: "جستجو",
+                            checkAll: "انتخاب همه",
+                            clear: "لغو",
+                            filter: "اعمال"
+                        }
+                    },
+                @*toolbar: [
+                        {
+                            template:
+                              `<button class="k-button" data-title="جستجو" data-link="@Url.Action(nameof(TransactionsController.Search),Model)"><span class="k-icon k-i-search"></span>جستجو</button>&nbsp;`
+                        },
+                    ],*@
+                    reorderable: true,
+                    columnMenu: true,
+                 //     excel: {
+                 //   allPages: true
+                 //  },
+                    columns: [
+                        { field: "Id", hidden:true },
+                        { field: "SourcePan", title: "شماره کارت مبدا", media: "(min-width: 450px)" },
+                        { field: "TargetPan", title: "شماره کارت مقصد", media: "(min-width: 450px)" },
+                        { field: "TransactionDate", title: "تاریخ تراکنش", media: "(min-width: 450px)" },
+                        { field: "TransactionTime", title: "زمان تراکنش", media: "(min-width: 450px)" },
+                        { field: "Tel", title: "تلفن", media: "(min-width: 450px)" },
+                        { field: "Amount", title: "مبلغ", media: "(min-width: 450px)" },
+                        { field: "IpAddress", title: "آدرسIp", media: "(min-width: 450px)" },
+                        { field: "UserAgent", title: "UserAgent", media: "(min-width: 450px)" },
+                        { field: "Status", title: "وضعیت", media: "(min-width: 450px)" },
+                        { field: "RefNumber", title: "شماره مرجع", media: "(min-width: 450px)" },
+
+                    ]
+                });
+            });
+
+    </script>
+
+
+
+    <script id="responsive-column-template" type="text/x-kendo-template">
+        <strong>نام</strong>
+        <p class="col-template-val">#:data.Id#</p>
+    </script>
+}

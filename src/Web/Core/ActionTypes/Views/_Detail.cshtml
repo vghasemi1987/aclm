@@ -1,0 +1,22 @@
+﻿@model Web.Core.ActionTypes.ViewModels.ActionTypeViewModel
+
+<form asp-controller="ActionTypes" asp-action="AddDetail" id="frmActionTypeDetail" method="post">
+    <div class="modal-body">
+        <div class="container">
+            <div class="row">
+                <input asp-for="Id" />
+                <div class="form-group col-md-12">
+                    <label asp-for="Title" class="control-label"></label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">خروج</button>
+                @{ var url = Model.Id > 0 ? Url.Action("EditDetail", "ActionTypes") : Url.Action("AddDetail", "ActionTypes");}
+                <button onclick="event.preventDefault();saveAndupdate($(this.form), '@url');" type="button" class="btn btn-primary">ذخیره</button>
+            </div>
+        </div>
+    </div>
+</form>

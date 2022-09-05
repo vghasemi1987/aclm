@@ -1,0 +1,22 @@
+﻿@model Web.Core.Departments.ViewModels.DepartmentViewModel
+
+<form asp-controller="Departments" asp-action="AddDetail" id="frmDepartmentDetail" method="post">
+    <div class="modal-body">
+        <div class="container">
+            <div class="row">
+                <input asp-for="Id" />
+                <div class="form-group col-md-12">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">خروج</button>
+                @{ var url = Model.Id > 0 ? Url.Action("EditDetail", "Departments") : Url.Action("AddDetail", "Departments");}
+                <button onclick="event.preventDefault();saveAndupdate($(this.form), '@url');" type="button" class="btn btn-primary">ذخیره</button>
+            </div>
+        </div>
+    </div>
+</form>

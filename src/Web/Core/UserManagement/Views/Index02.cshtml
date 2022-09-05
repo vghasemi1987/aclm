@@ -1,0 +1,245 @@
+﻿@using Web.Core.UserManagement.ViewModels
+@using ApplicationCommon
+@model IList<UserDetailViewModel>
+@{
+	ViewBag.Title = "لیست کاربران";
+}
+<div class="alert alert-warning waiting">
+	<h5>لطفا منتظر بمانید ... </h5>
+</div>
+@if (!string.IsNullOrEmpty(Convert.ToString(ViewBag.Message)))
+{
+<div class="alert alert-success">
+	<h5>@ViewBag.Message</h5>
+</div>
+}
+<div class="row">
+	<div class="col-md-12">
+		<button data-toggle="modal" data-target="#modalAddNewUser" id="addNewUserBtn" class="btn btn-success btn-sm" data-title="ثبت کاربر جدید"><span class="k-icon k-i-add"></span>کاربر جدید</button>'
+	</div>
+</div>
+<br />
+<div class="table-responsive">
+	<table id="example" class="table table-bordered table-striped table-hover table-sm text-center" style="width:100%; font-family:Tahoma !important">
+		<thead>
+			<tr class="bg-success">
+				<th>نام کاربری</th>
+				<th>نام و نام خانوادگی</th>
+				<th>سازمان</th>
+				<th>امور شعب</th>
+				<th>محل خدمت</th>
+				<th>نقش</th>
+				<th>تاریخ ثبت نام</th>
+				<th>وضعیت قفل</th>
+				<th>دپارتمان</th>
+				<th>پوزیشن</th>
+				<th>بانک</th>
+				<th>اداره</th>
+				<th>عملیات</th>
+				<th>عملیات</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var user in Model)
+			{
+			<tr>
+				<td>@user.UserName</td>
+				<td>@(user.FirstName + " " + user.LastName)</td>
+				<td>@user.DepartmentName</td>
+				<td>@user.BankBranchName</td>
+				<td>@user.DutyPositionTitle</td>
+				<td>@user.Roles</td>
+				<td>@user.RegDateTime.ToPersianDateTimePcr()</td>
+				<td>@user.LockoutStateName</td>
+				<td>@user.PositionName</td>
+				<td>@user.BankBranchName</td>
+				<td>@user.BankBranchName</td>
+				<td>@user.DutyPositionTitle</td>
+				<td>
+					<button type="button" class="btn btn-sm btn-warning btn-edit" data-toggle="modal" data-target="#myModal" value="@user.Id">ویرایش</button>
+				</td>
+				<td>
+					<button type="button" class="btn btn-sm btn-danger btn-takhsis" data-toggle="modal" data-target="#modalTakhsis" value="@user.Id">تخصیص محدوده دسترسی</button>
+				</td>
+			</tr>
+			}
+		</tbody>
+	</table>
+</div>
+
+<!-- The Modal -->
+<div class="modal" id="myModal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+
+			<!-- Modal Header -->
+			<div class="modal-header">
+				<h4 class="modal-title">ویرایش کاربران</h4>
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+
+			<!-- Modal body -->
+			<div class="modal-body" id="innerUserEdit">
+				
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal" id="modalTakhsis">
+	<div class="modal-dialog">
+		<div class="modal-content">
+
+			<!-- Modal Header -->
+			<div class="modal-header">
+				<h4 class="modal-title">تخصیص</h4>
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+
+			<!-- Modal body -->
+			<div class="modal-body" id="innerUserTakhsis">
+
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+<div class="modal" id="modalAddNewUser">
+	<div class="modal-dialog">
+		<div class="modal-content">
+
+			<!-- Modal Header -->
+			<div class="modal-header">
+				<h4 class="modal-title">تخصیص</h4>
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+
+			<!-- Modal body -->
+			<div class="modal-body" id="innerAddNewUser">
+
+			</div>
+		</div>
+	</div>
+</div>
+
+@section styles
+{
+	<link href="~/lib/Datatable/dataTables.bootstrap4.min.css" rel="stylesheet" />
+	<link href="~/lib/select2/select2.min.css" rel="stylesheet" />
+	<style>
+		#input_search {
+			direction: ltr !important;
+		}
+
+		.ltr {
+			direction: ltr !important;
+		}
+
+		.verdanaFont {
+			font-family: Verdana !important;
+			font-size: small !important;
+		}
+
+		.dt-buttons > * {
+			font-family: Verdana !important;
+		}
+
+		.dt-buttons {
+			display: flex !important;
+			position: absolute;
+			left: 400px;
+			width: 210px !important;
+			height: 0%;
+		}
+
+			.dt-buttons > * {
+				margin: auto !important;
+				width: 210px !important;
+			}
+
+		table {
+			width: 100% !important;
+		}
+		.select2-container {
+			width: 470px !important;
+		}
+	</style>
+}
+@section scripts
+{
+	<script src="~/lib/Datatable/jquery-3.5.1.js"></script>
+	<script src="~/lib/Datatable/jquery.dataTables.min.js"></script>
+	<script src="~/lib/Datatable/dataTables.buttons.min.js"></script>
+	<script src="~/lib/datatable/datatables.bootstrap4.min.js"></script>
+	<script src="~/lib/Datatable/jszip.min.js"></script>
+	<script src="~/lib/Datatable/pdfmake.min.js"></script>
+	<script src="~/lib/Datatable/vfs_fonts.js"></script>
+	<script src="~/lib/Datatable/buttons.html5.min.js"></script>
+	<script src="~/lib/Datatable/buttons.print.min.js"></script>
+	<script src="~/lib/select2/select2.min.js"></script>
+	<script>
+
+		$(document).ready(function () {
+			bindEditInsert();
+			bindTakhsis();
+			bindAddNewUser();
+			$('.waiting').show();
+			const table = $('#example').DataTable({
+				dom: 'Bfrtip',
+				buttons: [
+					'copy', 'csv', 'excel', 'print',
+				]
+			});
+
+			$('.buttons-html5').addClass('btn btn-info btn-sm');
+			$('.buttons-print').addClass('btn btn-info btn-sm');
+
+
+			$('.waiting').hide();
+
+
+
+		});
+
+		function bindEditInsert() {
+
+			$('.btn-edit').click(function () {
+				let id = $(this).val();
+				$.ajax('/usermanagement/GetDetailDataTable/' + id + '').done(function (result) {
+					$('#innerUserEdit').html('');
+					$('#innerUserEdit').html(result);
+					
+				});
+			});
+		}
+		function bindTakhsis() {
+			$('.btn-takhsis').click(function () {
+				let id = $(this).val();
+				$.ajax('/usermanagement/AccessRange02/' + id + '').done(function (result) {
+					$('#innerUserTakhsis').html('');
+					$('#innerUserTakhsis').html(result);
+
+				});
+			});
+		}
+		function bindAddNewUser() {
+			$('#addNewUserBtn').click(function() {
+
+				$.ajax('/usermanagement/GetDetailDataTable').done(function (result) {
+					$('#innerAddNewUser').html('');
+					$('#innerAddNewUser').html(result);
+					//alert(result);
+				});
+			});
+		}
+		
+	</script>
+	<script>
+		$('#btnDisabledDate').MdPersianDateTimePicker({
+			Placement: 'bottom',
+			Trigger: 'click',
+			TargetSelector: 'input[name=DisabledDate]'
+		});
+	</script>
+}

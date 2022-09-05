@@ -1,0 +1,146 @@
+﻿@model Web.Core.Systems.ViewModels.SystemViewModel
+
+<form asp-controller="Systems" asp-action="AddDetail" id="frmSystemDetail" method="post">
+    <div class="modal-body">
+        <div class="container">
+
+            <div class="row ">
+                <input asp-for="Id" />
+                <div class="form-group col-md-6 ">
+                    <label asp-for="KindId" class="control-label"></label>
+                    <select asp-for="KindId" class="form-control">
+                        <option value="1">سامانه</option>
+                        <option value="2">اداره</option>
+                        <option value="3">کاربر</option>
+                    </select>
+                    <span asp-validation-for="KindId" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="SystemName" class="control-label"></label>
+                    <input asp-for="SystemName" class="form-control" />
+                    <span asp-validation-for="SystemName" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label asp-for="IpAddress" class="control-label"></label>
+                    <input asp-for="IpAddress" class="form-control" />
+                    <span asp-validation-for="IpAddress" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6 ">
+                    <label asp-for="ImportanceFactor" class="control-label"></label>
+                    <input asp-for="ImportanceFactor" class="form-control" />
+                    <span asp-validation-for="ImportanceFactor" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row ">
+                <div class="form-group col-md-6 ">
+                    <label asp-for="AccessibilityLevelId" class="control-label"></label>
+                    <select asp-for="AccessibilityLevelId" asp-items="@Model.AccessibilityLevelList" class="form-control">
+                        <option value="">لطفا انتخاب کنید...</option>
+                    </select>
+                    <span asp-validation-for="AccessibilityLevelId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label asp-for="InformationAccessibilityLevelId" class="control-label"></label>
+                    <select asp-for="InformationAccessibilityLevelId" asp-items="@Model.AccessibilityLevelList" class="form-control">
+                        <option value="">لطفا انتخاب کنید...</option>
+                    </select>
+                    <span asp-validation-for="InformationAccessibilityLevelId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row" id="kind2">
+                <div class="form-group col-md-6 ">
+                    <label asp-for="IpFrom" class="control-label"></label>
+                    <input asp-for="IpFrom" class="form-control" />
+                    <span asp-validation-for="IpFrom" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label asp-for="IpTo" class="control-label"></label>
+                    <input asp-for="IpTo" class="form-control" />
+                    <span asp-validation-for="IpTo" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row" id="kind3">
+                <div class="form-group col-md-3">
+                    <label asp-for="PersonelCode" class="control-label"></label>
+                    <input asp-for="PersonelCode" class="form-control" />
+                    <span asp-validation-for="PersonelCode" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="FirstName" class="control-label"></label>
+                    <input asp-for="FirstName" class="form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="LastName" class="control-label"></label>
+                    <input asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="DepartmentId" class="control-label"></label>
+                    <select asp-for="DepartmentId" asp-items="@Model.DepartmentList" class="form-control">
+                        <option value="">لطفا انتخاب کنید...</option>
+                    </select>
+                    <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">خروج</button>
+            @{ var url = Model.Id > 0 ? Url.Action("EditDetail", "Systems") : Url.Action("AddDetail", "Systems");}
+            <button onclick="event.preventDefault();saveAndupdate($(this.form), '@url');" type="button" class="btn btn-primary">ذخیره</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function (){
+          setVisibility($('#KindId option:selected').val());
+    });
+
+    $('#KindId').on('change', function (e) {
+           setVisibility(this.value);
+    });
+
+    function setVisibility(kindId){
+        if(kindId == 1){
+            $('#kind2').hide();
+            $('#kind3').hide();
+        }
+        else if(kindId == 2){
+            $('#kind2').show();
+            $('#kind3').hide();
+        }
+        else if(kindId == 3){
+            $('#kind3').show();
+            $('#kind2').hide();
+        }
+    }
+
+    $('#IpAddress').mask('0ZZ.0ZZ.0ZZ.0ZZ', {
+        translation: {
+            'Z': {
+            pattern: /[0-9]/, optional: true
+            }
+        }
+    });
+    $('#IpFrom').mask('0ZZ.0ZZ.0ZZ.0ZZ', {
+        translation: {
+            'Z': {
+            pattern: /[0-9]/, optional: true
+            }
+        }
+    });
+    $('#IpTo').mask('0ZZ.0ZZ.0ZZ.0ZZ', {
+        translation: {
+            'Z': {
+            pattern: /[0-9]/, optional: true
+            }
+        }
+    });
+</script>
+

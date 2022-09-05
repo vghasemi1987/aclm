@@ -1,0 +1,43 @@
+﻿@using Web.Core.Separ.ViewModels
+@model ReferralBroadCastViewModel
+<form method="post" asp-action="ActionEghdam" asp-controller="Separ">
+	<!-- The Modal -->
+	<div class="modal-content" id="modalDetails">
+		<!-- Modal Header -->
+		<div class="modal-header">
+			<h4 class="modal-title">مشاهده جزئیات</h4>
+		</div>
+		<!-- Modal body -->
+		<div class="modal-body">
+			<div class="row">
+				<input hidden asp-for="BroadCastId" />
+				<div class="form-group col-md-12">
+					<label asp-for="BroadCast.Subject" class="control-label"></label>
+					<input asp-for="BroadCast.Subject" class="form-control" disabled />
+					<span asp-validation-for="BroadCast.Subject" class="text-danger"></span>
+				</div>
+				<div class="form-group col-md-12">
+					<label asp-for="BroadCast.Text" class="control-label"></label>
+					<textarea asp-for="BroadCast.Text" class="form-control" disabled rows=6></textarea>
+					<span asp-validation-for="BroadCast.Text" class="text-danger"></span>
+				</div>
+				<div class="form-group col-md-12">
+					<label asp-for="ActionDescription" class="control-label"></label>
+					<textarea asp-for="ActionDescription" class="form-control" rows=6></textarea>
+					<span asp-validation-for="ActionDescription" class="text-danger"></span>
+				</div>
+			</div>
+		</div>
+		<!-- Modal footer -->
+		<div class="modal-footer">
+			@if (Model?.ActionDescription?.Length > 0)
+			{
+				<button type="submit" class="btn btn-warning">ویرایش</button>
+			}
+			else
+			{
+				<button type="submit" class="btn btn-success">ثبت</button>
+			}
+		</div>
+	</div>
+</form>

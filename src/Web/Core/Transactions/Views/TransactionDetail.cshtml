@@ -1,0 +1,244 @@
+﻿
+@using Web.Core.Transactions
+@model Web.Core.Transactions.ViewModels.SearchViewModel
+
+@{
+    ViewBag.Title = "گزارش تراکنش ها";
+}
+
+<div class="m-portlet">
+
+    <div class="m-portlet__body">
+
+        <div id="search">
+            <div class="row row-no-gutters">
+                <div class="form-group col-md-3">
+                    <label asp-for="SourcePan" class="control-label"></label><span style="color:red">*</span>
+                    <input asp-for="SourcePan" class="form-control">
+                    <span style="color:red;">فرمت ورودی 1234******123456</span>
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="TargetPan" class="control-label"></label><span style="color:red">*</span>
+                    <input asp-for="TargetPan" class="form-control">
+                    <span style="color:red;">فرمت ورودی 1234******123456</span>
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="BeginTransactionDate" class="control-label"></label><span style="color:red">*</span>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text cursor-pointer" id="btnBeginTransactionDate"><i class="far fa-calendar-alt"></i></span>
+                        </div>
+                        <input asp-for="BeginTransactionDate" class="form-control" style="width:100px" />
+                    </div>
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="EndTransactionDate" class="control-label"></label><span style="color:red">*</span>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text cursor-pointer" id="btnEndTransactionDate"><i class="far fa-calendar-alt"></i></span>
+                        </div>
+                        <input asp-for="EndTransactionDate" class="form-control" style="width:100px" />
+                    </div>
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="Amount" class="control-label"></label>
+                    <input asp-for="Amount" class="form-control" />
+                </div>
+                <div class="form-group col-md-1">
+                    <br />
+                    <button class="btn btn-primary" type="submit" id="btnSearch">
+                        جستجو
+                    </button>
+                </div>
+
+            </div>
+            </div>
+        <br />
+        <div class="k-rtl">
+            <div id="report-grid"></div>
+        </div>
+    </div>
+</div>
+
+
+<div class="k-rtl">
+    <div id="report-grid"></div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#btnSearch').click(function () {
+                let sourcePan = $('#SourcePan').val();
+                let targetPan = $('#TargetPan').val();
+                let amount = $('#Amount').val();
+                let beginTransactionDate = $('#BeginTransactionDate').val();
+                let endTransactionDate = $('#EndTransactionDate').val();
+                if (sourcePan != "" && beginTransactionDate != "" && endTransactionDate != "") {
+                    var searchParameters = JSON.stringify(
+                        {
+                            sourcePan: sourcePan,
+                            targetPan: targetPan,
+                            amount: amount,
+                            beginTransactionDate: beginTransactionDate,
+                            endTransactionDate: endTransactionDate,
+                        });
+                
+                var reportDataSource = new kendo.data.DataSource({
+                    transport: {
+                        read: {
+                            url: '@Html.Raw(Url.Action("GetTransactionDetail", "Transactions"))?searchParameters=' + searchParameters,
+                            dataType: "json",
+                            type: 'GET'
+                        },
+                        parameterMap: function (options) {
+                            return `models=${kendo.stringify(options)}`;
+                        },
+                    },
+                    schema: {
+                        data: "Data",
+                        total: "Total"
+                    },
+                    error: function (e) {
+                        alert(e.errorThrown);
+                    },
+                    pageSize: 10,
+                    sort: { field: "Id", dir: "desc" },
+                    serverPaging: true,
+                    serverFiltering: true,
+                    serverSorting: true
+                });
+                $("#report-grid").kendoGrid({
+                    dataSource: reportDataSource,
+                    autoBind: true,
+                    scrollable: false,
+                    pageable: {
+                        buttonCount: 5,
+                        refresh: true,
+                        input: true,
+                        pageSizes: [5, 10, 15, 20, 25],
+                        info: true
+                    },
+                    progress: true,
+                    sortable: true,
+                    filterable: {
+                        mode: "menu",
+                        messages: {
+                            selectedItemsFormat: "{0} آیتم انتخاب شده",
+                            search: "جستجو",
+                            checkAll: "انتخاب همه",
+                            clear: "لغو",
+                            filter: "اعمال"
+                        }
+                    },
+                    toolbar: [
+                        {
+                            template:
+                                '<button onclick="downloadExcel()" class="k-button" "><span class="k-icon k-i-excel"></span>خروجی اکسل</button>'
+                        }
+                    ],
+                    reorderable: true,
+                    columnMenu: true,
+                    excel: {
+                        allPages: true
+                    },
+                    columns: [
+                        { field: "Id", hidden: true },
+                        { field: "SourcePan", title: "شماره کارت مبدا", media: "(min-width: 450px)", width: "110px", dir: "rtl", },
+                        { field: "TargetPan", title: "شماره کارت مقصد", media: "(min-width: 450px)", width: "110px", dir: "rtl" },
+                        { field: "TransactionDate", title: "تاریخ تراکنش", media: "(min-width: 450px)", width: "80px" },
+                        { field: "TransactionTime", title: "زمان تراکنش", media: "(min-width: 450px)", width: "80px" },
+                        { field: "Tel", title: "تلفن", media: "(min-width: 450px)", width: "90px" },
+                        { field: "Amount", title: "مبلغ", media: "(min-width: 450px)", width: "100px" },
+                        { field: "IpAddress", title: "آدرسIp", media: "(min-width: 450px)", width: "90px" },
+                        { field: "UserAgent", title: "UserAgent", media: "(min-width: 450px)", width: "60px" },
+                        { field: "Status", title: "وضعیت", media: "(min-width: 450px)", width: "60px" },
+                        { field: "RefNumber", title: "شماره مرجع", media: "(min-width: 450px)", width: "80px" },
+
+                    ]
+                });
+
+                }
+                else {
+                    console.log("Requred")
+                    toastr["warning"]("فیلترهای ستاره دار را کامل نمایید", "اجباری");
+            }
+             }
+
+        );
+
+            });
+
+    </script>
+
+
+    <script src="~/lib/jquery.mask/jquery.mask.min.js"></script>
+
+    <script id="responsive-column-template" type="text/x-kendo-template">
+        <strong>نام</strong>
+        <p class="col-template-val">#:data.Id#</p>
+    </script>
+
+    <script>
+        $('#btnBeginTransactionDate').MdPersianDateTimePicker({
+            targetTextSelector: '#BeginTransactionDate',
+            textFormat: 'yyyy/MM/dd',
+            englishNumber: true,
+            enableTimePicker: true
+        });
+        $('#btnEndTransactionDate').MdPersianDateTimePicker({
+            targetTextSelector: '#EndTransactionDate',
+            textFormat: 'yyyy/MM/dd',
+            englishNumber: true,
+            enableTimePicker: true
+        });
+
+        $('#SourcePan').mask('ZZZZ-ZZ**-****-ZZZZ', {
+            translation: {
+                'Z': {
+                    pattern: /[0-9]/, optional: true
+                },
+                'S': {
+                    pattern: /[*]/, optional: true
+                },
+            }
+        });
+
+        $('#TargetPan').mask('ZZZZ-ZZ**-****-ZZZZ', {
+            translation: {
+                'Z': {
+                    pattern: /[0-9]/, optional: true
+                },
+                'S': {
+                    pattern: /[*]/, optional: true
+                },
+
+            }
+        });
+
+        function downloadExcel() {
+            let sourcePan= $('#SourcePan').val();
+            let targetPan= $('#TargetPan').val();
+            let amount= $('#Amount').val();
+            let beginTransactionDate= $('#BeginTransactionDate').val();
+            let endTransactionDate= $('#EndTransactionDate').val();
+            if (sourcePan!=""  && beginTransactionDate!="" && endTransactionDate!="" ) {
+                var searchParameters = JSON.stringify({
+                sourcePan:sourcePan,
+                targetPan: targetPan,
+                amount: amount,
+                beginTransactionDate: beginTransactionDate,
+                endTransactionDate: endTransactionDate,
+            });
+
+            window.location.href = '@Url.Action("ExportToExcel", "Transactions")?searchParameters=' + searchParameters;
+            }
+            else {
+                console.log("Requred")
+                toastr["warning"]("فیلترهای ستاره دار را کامل نمایید", "اجباری");
+            }
+            
+        }
+    </script>
+
+}

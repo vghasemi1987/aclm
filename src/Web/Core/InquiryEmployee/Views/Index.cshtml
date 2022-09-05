@@ -1,0 +1,27 @@
+﻿@using Web.Core.InquiryEmployee.ViewModels
+@{System.Globalization.PersianCalendar pcr = new System.Globalization.PersianCalendar(); DateTime today = DateTime.Now;
+    string pDate = $"{pcr.GetYear(today)}/{pcr.GetMonth(today)}/{pcr.GetDayOfMonth(today)}"; }
+@model GetLastStatusOfEmployeesDtoRequestVM
+
+<div class="container">
+    <div class="card">
+        <div class="card-header bg-warning">
+            <h3>استعلام کاربران</h3>
+        </div>
+        <div class="card-body">
+            <form asp-controller="InquiryEmployee" asp-action="ResponseServicrSrc" method="get">
+                <br />
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            <a title="آرشیو استعلام ها" asp-controller="InquiryEmployee" asp-action="ShowAllInquery" class="btn btn-success btn-sm">آرشیو استعلام ها</a>
+                            <a title="جستجو در آرشیو" asp-controller="InquiryEmployee" asp-action="SearchAllInquery" class="btn btn-info btn-sm">جستجو در آرشیو</a>
+                            <a title="آرشیو نتایج مثبت" asp-controller="InquiryEmployee" asp-action="ShowPositiveInquery" class="btn btn-danger btn-sm">آرشیو نتایج مثبت</a>
+                            <button title="استعلام جدید" type="submit" class="btn btn-dark btn-sm">استعلام جدید : <span class="text-white">@pDate</span></button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

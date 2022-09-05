@@ -1,0 +1,108 @@
+﻿@using Web.Core.InquiryEmployee.ViewModels
+@model List<PersonnelResult>
+@section styles
+{
+    <link href="~/lib/Datatable/dataTables.bootstrap4.min.css" rel="stylesheet" />
+    <style>
+        #input_search {
+            direction: ltr !important;
+        }
+
+        .ltr {
+            direction: ltr !important;
+        }
+
+        .verdanaFont {
+            font-family: Verdana !important;
+            font-size: small !important;
+        }
+    </style>
+}
+<div class="card">
+    <div class="card-header bg-info">
+        <h3>نتایج استعلام</h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3">
+                <button class="btn btn-warning">تعداد کل : @Convert.ToInt32(Model?.Count == null ? 0 : Model.Count)</button>
+            </div>
+            <div class="col-md-3">
+                @{ int? count = Model?.Where(w => w.isContagious == true).Count();}
+                <button class="btn btn-warning">تعداد ناقل ها : @count</button>
+            </div>
+            <div class="col-md-3">
+                <a class="btn btn-info" asp-controller="InquiryEmployee" asp-action="ShowAllInquery">گزارشات کلی</a>
+            </div>
+
+
+        </div>
+        <hr />
+        @if (Model != null)
+        {
+            int row = 1;
+            <table id="example" class="table table-striped table-bordered table-hover table-sm table-responsive text-center" style="width:100%">
+                <thead>
+                    <tr class="bg-success">
+                        <th>ردیف</th>
+                        <th>نام</th>
+                        <th>نام خانوادگی</th>
+                        <th>کد پرسنلی</th>
+                        <th>محل خدمت</th>
+                        <th>امورشعب</th>
+                        <th>شعبه</th>
+                        @*<th>نام کاربری سازمان</th>*@
+                        <th>کد ملی کارمند</th>
+                        <th>تاریخ(میلادی)</th>
+                        <th>تاریخ(شمسی)</th>
+                        <th>وضعیت ناقل</th>
+                        <th>تاریخ اتمام قرنطینه</th>
+                        <th>تاریخ اتمام قرنطینه (شمسی)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@row</td>
+                            <td>@item.FirstName</td>
+                            <td>@item.LastName</td>
+                            <td>@item.Code</td>
+                            <td>@item.ProvinceName</td>
+                            <td>@item.OrganizationName</td>
+                            <td>@item.UnitName</td>
+                            @*<td>@item.organization</td>*@
+                            <td class="ltr verdanaFont">@item.NationalCode</td>
+                            <td class="ltr verdanaFont">@item.lastStatusCheck</td>
+                            <td class="ltr verdanaFont">@item.lastStatusCheckFa</td>
+                            <td class="ltr verdanaFont">@item.isContagious</td>
+                            <td class="ltr verdanaFont">@item.quarantineEndDate</td>
+                            <td class="ltr verdanaFont">@item.quarantineEndDateFa</td>
+                        </tr>
+                        row++;
+                    }
+                </tbody>
+
+            </table> }
+        else
+        {
+            @if (ViewBag.Message != null)
+            {
+                <span>@ViewBag.Message</span>
+            }
+            <h3>داده ای وجود ندارد</h3>}
+    </div>
+</div>
+@section scripts
+{
+    <script src="~/lib/Datatable/jquery-3.5.1.js"></script>
+    <script src="~/lib/Datatable/jquery.dataTables.min.js"></script>
+    <script src="~/lib/Datatable/dataTables.bootstrap4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#example').DataTable();
+        });
+    </script>
+}
+
+

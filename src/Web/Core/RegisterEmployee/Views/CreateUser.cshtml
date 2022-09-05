@@ -1,0 +1,75 @@
+﻿@using Web.Core.RegisterEmployee.ViewModels
+@model SaveEmployeeListDtoRequestDto
+<br />
+<div class="container">
+    <form asp-controller="RegisterEmployee" asp-action="CreateUser" method="post">
+        @if (ViewBag.Message != null)
+        {
+            <div id="successMessage">
+                <div class="alert alert-success">
+                    <h4>نام کاربری و رمز عبور با موفقیت ثبت گردید.</h4>
+                </div>
+                <br />
+            </div>
+        }
+        <div class="card">
+            <div class="card-header bg-info">
+                <h5>مشخصات GSB</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            <label asp-for="usernameHeader"></label>
+                            <input asp-for="usernameHeader" type="text" class="form-control" placeholder="نام کاربری وارد کنید">
+                            <span asp-validation-for="usernameHeader" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            <label asp-for="passwordHeader"></label>
+                            <input asp-for="passwordHeader" type="password" class="form-control" placeholder="رمز عبور">
+                            <span asp-validation-for="passwordHeader" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="card">
+            <div class="card-header bg-info">
+                <h5>سرویس کاربری وزارت بهداشت</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            <label asp-for="usernameBody"></label>
+                            <input asp-for="usernameBody" type="text" class="form-control" placeholder="نام کاربری وارد کنید">
+                            <span asp-validation-for="usernameBody"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            <label asp-for="passwordBody"></label>
+                            <input asp-for="passwordBody" type="password" class="form-control" placeholder="رمز عبور">
+                            <span asp-validation-for="passwordBody"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <button type="submit" class="btn btn-success btn-sm">ذخیره</button>
+    </form>
+</div>
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            setTimeout(function () {
+                $('#successMessage').fadeOut(1500);
+            }, 2000);
+        });
+    </script>
+}

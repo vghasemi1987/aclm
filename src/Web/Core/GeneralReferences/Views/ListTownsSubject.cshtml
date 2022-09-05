@@ -1,0 +1,294 @@
+﻿@using DomainEntities.BroadcastAggregate
+@model IList<ProtectionOffice>
+@{
+	ViewBag.Title = "اضافه کردن موضوع";
+}
+@if (!string.IsNullOrEmpty(ViewBag.Message))
+{
+	<div class="alert alert-primary" role="alert" id="alertMessage">
+		<h2>@ViewBag.Message</h2>
+	</div>
+}
+<div class="container">
+	<div class="card">
+		<div class="card-header bg-warning">
+			<h3>اضافه کردن موضوعات</h3>
+		</div>
+		<div class="card-body">
+			<form asp-controller="GeneralReferences" asp-action="AddTownsSubject" method="post">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="title">عنوان</label>
+								<input type="text" class="form-control" name="title" id="title" />
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="col-md-3">
+							<button type="submit" class="btn btn-success">ذخیره</button>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<br />
+<hr />
+<br />
+<div class="container">
+	<div class="card">
+		<div class="card-header bg-warning">
+			<h3>لیست نمایشی</h3>
+		</div>
+		<div class="card-body">
+			<table id="efaTable" class="table table-bordered table-hover table-striped text-center">
+				<thead>
+					<tr class="bg-success">
+						<th>گروه ها</th>
+						<th style="width:100px;">عملیات</th>
+						<th style="width:150px;"></th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var efa in Model.OrderByDescending(c => c.Id))
+					{
+						<tr>
+							<td>@efa.Title</td>
+							<td>
+								@*فعلا پاک نشود*@
+
+								@*<form asp-controller="GeneralReferences" asp-action="DeleteTowns" onsubmit="return confirm('آیا مطمئن هستید ؟');">
+										<input type="hidden" hidden name="id" value="@efa.Id" />
+										<button type="submit" class="btn btn-danger btn-sm">حدف</button>
+									</form>*@
+
+								<button class="btn btn-info btn-sm addModal" data-toggle="modal" data-target="#generateModalAdd" value="@efa.Id">اضافه کردن اعضاء</button>
+								<input type="hidden" name="name" class="proOfficeMemberValueClass" id="proOfficeMemberValue" value="@efa.Id" hidden />
+
+							</td>
+							<td>
+								<div class="row">
+									<button class="btn btn-sm btn-warning btn-edit" data-toggle="modal" data-target="#generateModalUpdate" value="@efa.Id">ویرایش</button>
+									<form onsubmit="return confirm('آیا مطمئن هستید');" method="post" action="/GeneralReferences/DeleteTownSubject">
+										<input type="hidden" value="@efa.Id" name="id" /><button class="btn btn-danger btn-sm" type="submit">حذف</button>
+									</form>
+								</div>
+
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+</div>
+<!-- The Modal -->
+<div class="modal" id="generateModalAdd" style="font-family:Tahoma !important;">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<!-- Modal Header -->
+			<div class="modal-header">
+				<h4 class="modal-title">اضافه کردن افراد</h4>
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+			<!-- Modal body -->
+			<div class="modal-body">
+				<form action="/GeneralReferences/AddUserSubject" method="post">
+					<div class="form-group">
+						<label for="selectUsers">اضافه کردن کاربر</label>
+						<input type="hidden" name="protectionMemberId" id="protectionMemberId" hidden />
+						<select class="js-example-basic-multiple" name="states" multiple="multiple" style="font-family:Tahoma !important;" id="selectUsers">
+						</select>
+					</div>
+					<button type="submit" class="btn btn-success btn-sm">ذخیره</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- The Modal -->
+<div class="modal" id="generateModalUpdate" style="font-family:Tahoma !important;">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<!-- Modal Header -->
+			<div class="modal-header">
+				<h4 class="modal-title">ویرایش گروه ها</h4>
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+			<!-- Modal body -->
+			<div class="modal-body">
+				<form action="/GeneralReferences/UpdateTownsSubject" method="post">
+					<div class="form-group">
+						<label for="selectUsers">نام گروه</label>
+						<input type="hidden" name="id" id="editId" hidden />
+						<input class="form-control" id="txtUpdate" name="title" />
+					</div>
+					<button type="submit" class="btn btn-success btn-sm">ذخیره</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+@section styles
+{
+	<link href="~/lib/Datatable/dataTables.bootstrap4.min.css" rel="stylesheet" />
+	<link href="~/lib/select2/select2.min.css" rel="stylesheet" />
+	<style>
+		#input_search {
+			direction: ltr !important;
+		}
+
+		.ltr {
+			direction: ltr !important;
+		}
+
+		.verdanaFont {
+			font-family: Verdana !important;
+			font-size: small !important;
+		}
+
+		.dt-buttons > * {
+			font-family: Verdana !important;
+		}
+
+		.dt-buttons {
+			display: flex !important;
+			position: absolute;
+			left: 400px;
+			width: 210px !important;
+			height: 0%;
+		}
+
+			.dt-buttons > * {
+				margin: auto !important;
+				width: 210px !important;
+			}
+
+		table {
+			width: 100% !important;
+		}
+
+		/*.select2-search__field {
+			width: 40.75em !important;
+		}*/
+		.select2-container {
+			width: 470px !important;
+		}
+	</style>
+}
+@section scripts
+{
+	<script src="~/lib/Datatable/jquery-3.5.1.js"></script>
+	<script src="~/lib/Datatable/jquery.dataTables.min.js"></script>
+	<script src="~/lib/Datatable/dataTables.buttons.min.js"></script>
+	<script src="~/lib/datatable/datatables.bootstrap4.min.js"></script>
+	<script src="~/lib/Datatable/jszip.min.js"></script>
+	<script src="~/lib/Datatable/pdfmake.min.js"></script>
+	<script src="~/lib/Datatable/vfs_fonts.js"></script>
+	<script src="~/lib/Datatable/buttons.html5.min.js"></script>
+	<script src="~/lib/Datatable/buttons.print.min.js"></script>
+	<script src="~/lib/select2/select2.min.js"></script>
+	<script>
+
+		$(document).ready(function () {
+
+			addModalClick();
+			hideAlert();
+
+
+			$('.js-example-basic-multiple').select2({
+				theme: "classic",
+				width: 'resolve',
+			});
+
+			const table = $('#efaTable').DataTable({
+				dom: 'Bfrtip',
+				buttons: [
+					'copy', 'csv', 'excel', 'print',
+				]
+			});
+
+			$('.buttons-html5').addClass('btn btn-primary btn-sm');
+			$('.buttons-print').addClass('btn btn-primary btn-sm');
+
+			bindEdit();
+
+		});
+
+		function addModalClick() {
+
+			$('.addModal').click(function () {
+
+
+				let protectionOfficeId = $(this).val();
+
+				bindDataEntry(protectionOfficeId);
+
+				bindDataUsersExists(protectionOfficeId);
+
+			});
+		}
+
+		function bindDataUsers() {
+			$.ajax('/GeneralReferences/UsersInfoSubject').done(function (result) {
+
+				let str = '';
+
+				for (var i = 0; i < result.length; i++) {
+
+					str += `<option value=${result[i].Id}>${result[i].UserName}</option>`;
+
+				}
+
+				$('#selectUsers').html(str);
+
+			});
+		}
+		function bindDataUsersExists(id) {
+			$.ajax(`/GeneralReferences/UsersInfoExistSubject/${id}`).done(function (result) {
+
+				if (result.length == 0) {
+				}
+
+				$('#selectUsers').html('');
+
+
+				let str = '';
+
+				for (var i = 0; i < result.length; i++) {
+
+					str += `<option selected  value=${result[i].ApplicationUser.Id}>${result[i].ApplicationUser.UserName}</option>`;
+
+				}
+
+				$('#selectUsers').html(str);
+
+				bindDataUsers();
+
+			});
+		}
+		function bindDataEntry(officeId) {
+			$('#protectionMemberId').val(officeId);
+		}
+		function hideAlert() {
+			$("#alertMessage").show().delay(3000).fadeOut();
+		}
+		function bindEdit() {
+			$('.btn-edit').click(function () {
+				var id = $(this).val();
+				$.ajax(`/GeneralReferences/EditListTownsSubject?id=${id}`).done(function (result) {
+					$('#txtUpdate').val(result.Title);
+					$('#editId').val(result.Id);
+				});
+
+			});
+		}
+	</script>
+}

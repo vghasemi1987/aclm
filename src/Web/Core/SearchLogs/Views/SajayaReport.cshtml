@@ -1,0 +1,113 @@
+﻿@using Web.Core.SearchLogs
+@model Web.Core.SearchLogs.ViewModels.SearchLogDetailViewModel
+@{
+    ViewBag.Title = "گزارش سجایا";
+}
+
+<div class="m-portlet">
+    <div class="m-portlet__head">
+        <div class="m-portlet__head-caption">
+            <div class="m-portlet__head-title">
+                <h3 class="m-portlet__head-text">
+                    گزارش سجایا
+                </h3>
+            </div>
+        </div>
+    </div>
+    <div class="m-portlet__body">
+        <div class="k-rtl">
+            <div id="report-grid"></div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="k-rtl">
+    <div id="report-grid"></div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function() {
+
+                var serviceDataSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        url: '@Html.Raw(Url.Action("GetSajayaReport", "SearchLogs",Model))',
+                        dataType: "json",
+                        type: 'GET',
+                    },
+                    parameterMap: function(options) {
+                        return `models=${kendo.stringify(options)}`;
+                    }
+                },
+                schema: {
+                    data: "Data",
+                    total: "Total"
+                },
+                error: function(e) {
+                    alert(e.errorThrown);
+                },
+                pageSize: 10,
+                sort: { field: "Id", dir: "desc" },
+                serverPaging: true,
+                serverFiltering: true,
+                serverSorting: true
+            });
+            $("#report-grid").kendoGrid({
+                dataSource: serviceDataSource,
+                autoBind: true,
+                scrollable: true,
+                pageable: {
+                    buttonCount: 5,
+                    refresh: true,
+                    input: true,
+                    pageSizes: [5, 10, 15, 20, 25],
+                    info: true
+                },
+        progress:true,
+                sortable: false,
+                filterable: {
+                    mode: "menu",
+                    messages: {
+                        selectedItemsFormat: "{0} آیتم انتخاب شده",
+                        search: "جستجو",
+                        checkAll: "انتخاب همه",
+                        clear: "لغو",
+                        filter: "اعمال"
+                    }
+                },
+                toolbar: [
+                    {
+                        template:
+                          `<button class="k-button" data-title="جستجو" data-link="@Url.Action(nameof(SearchLogsController.SearchForSajayaReport))"><span class="k-icon k-i-search"></span>جستجو</button>&nbsp;`
+                    },
+
+                ],
+                reorderable: true,
+                columnMenu: true,
+                columns: [
+                    { field: "Id", hidden:true },
+                    { field: "LetterIdentifier", title: "شماره نامه",width:"100px" , media: "(min-width: 450px)" },
+                    { field: "CardNumber", title: "شماره کارت",width:"100px" , media: "(min-width: 450px)" },
+                    { field: "SearchDate", title: "تاریخ جستجو",width:"100px" , media: "(min-width: 450px)" },
+                    { field: "FirstName", title: "نام",width:"120px" , media: "(min-width: 450px)" },
+                    { field: "LastName", title: "نام خانوادگی",width:"120px" , media: "(min-width: 450px)" },
+                    { field: "NationalCode", title: "کد ملی",width:"100px" , media: "(min-width: 450px)" },
+                    { field: "IsSuccess", title: "وضعیت جستجو",width:"100px" , media: "(min-width: 450px)" },
+                    { field: "IsVictim", title: "وضعیت تراکنش",width:"100px" , media: "(min-width: 450px)" },
+                ]
+            });
+            });
+
+    </script>
+
+
+
+    <script id="responsive-column-template" type="text/x-kendo-template">
+        <strong>نام</strong>
+        <p class="col-template-val">#:data.Id#</p>
+    </script>
+}

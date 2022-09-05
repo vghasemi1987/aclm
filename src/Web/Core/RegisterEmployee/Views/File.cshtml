@@ -1,0 +1,49 @@
+﻿@using Web.Core.RegisterEmployee.ViewModels
+@model FileUploadViewModel
+@{
+    ViewData["Title"] = "File";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    h1 {
+        padding: 50px;
+        font-weight: 500;
+    }
+</style>
+<h1>File Upload Example</h1>
+<div class="form-group row">
+    <form asp-controller="RegisterEmployee" asp-action="File" method="post" class="text-left form-validate" enctype="multipart/form-data">
+        <div class="form-group col-sm-12">
+            <div class="file-select-button" id="fileName">Upload Excel File</div>
+            <input asp-for="XlsFile" type="file" id="chooseFile">
+        </div>
+        <br />
+        <br />
+        <br />
+        <div class="form-group col-sm-6">
+            <button type="submit" class="btn btn-primary">Read Excel File</button>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <h1>
+        Display Excel File Records
+    </h1>
+    <table class="table table-active table-bordered" width="100">
+        <thead>
+            <tr>
+                <th>کدملی</th>
+                <th>وضعیت</th>
+            </tr>
+        </thead>
+        <tbody>
+            @*@foreach (var item in Model.Employee.EmployeeList)
+            {
+                <tr>
+                    <td>@item.NationalCode</td>
+                    <td>@item.EmployeeStatus</td>
+                </tr>
+            }*@
+        </tbody>
+    </table>
+</div>

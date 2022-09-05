@@ -1,0 +1,90 @@
+﻿@using Web.Core.InquiryEmployee.ViewModels
+@model ResultDtoPager
+
+<div class="card">
+    <div class="card-header bg-info">
+        <h3>نتایج استعلام</h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <form asp-controller="InquiryEmployee" asp-action="ResponseServicrSearch" method="get">
+                    <div class="input-group mb-3">
+                        <input type="text" name="search" class="form-control" placeholder="جستجوی کد ملی" required>
+                        <div class="input-group-prepend">
+                            <button class="btn btn-outline-success" type="submit">جستجو</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+          
+        </div>
+        @if (Model != null)
+        {
+
+            <br />
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>نسخه سرویس</label>
+                        <input type="text" value="@Model.ResultDto.version" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>وضعیت فراخوانی سرویس</label>
+                        <input type="text" value="@Model.ResultDto.statusCode" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>وضعیت خطا</label>
+                        <input type="text" value="@Model.ResultDto.isError" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>پیام</label>
+                        <input type="text" value="@Model.ResultDto.message" class="form-control" />
+                    </div>
+                </div>
+            </div>
+            <br />
+
+            <table class="table table-bordered table-striped text-center">
+                <thead>
+                    <tr class="bg-success">
+                        <th>نام کاربری سازمان</th>
+                        <th>کد ملی کارمند</th>
+                        <th>تاریخ(میلادی)</th>
+                        <th>تاریخ(شمسی)</th>
+                        <th>وضعیت ناقل</th>
+                        <th>تاریخ اتمام قرنطینه</th>
+                        <th>تاریخ اتمام قرنطینه (شمسی)</th>
+                    </tr>
+                </thead>
+                <tbody style="font-family:Verdana !important; font-size:small !important;">
+                    @foreach (var item in Model.ResultListDto)
+                    {
+                        <tr>
+                            <td>@item.organization</td>
+                            <td>@item.nationalCode</td>
+                            <td>@item.lastStatusCheck</td>
+                            <td>@item.lastStatusCheckFa</td>
+                            <td>@item.isContagious</td>
+                            <td>@item.quarantineEndDate</td>
+                            <td>@item.quarantineEndDateFa</td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+        }
+
+
+        else
+        {
+            <h3>داده ای وجود ندارد</h3>
+        }
+    </div>
+</div>

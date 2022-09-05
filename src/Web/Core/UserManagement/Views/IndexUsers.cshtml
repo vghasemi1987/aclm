@@ -1,0 +1,35 @@
+﻿@using Web.Core.UserManagement.ViewModels
+@model IQueryable<UserDetailViewModel>
+@{
+	ViewBag.Title = "لیست کاربران";
+}
+<table>
+	<thead>
+		<tr>
+			<th>نام</th>
+			<th>نام کاربری</th>
+			<th>سازمان</th>
+			<th>امور شعب</th>
+			<th>محل خدمت</th>
+			<th>تاریخ و زمان ثبت</th>
+			<th>نقش</th>
+			<th>عملیات</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var user in Model)
+		{
+			<tr>
+				<td hidden>@user.Id</td>
+				<td>@user.Name</td>
+				<td>@user.UserName</td>
+				<td>@user.DepartmentName</td>
+				<td>@user.BankBranchName</td>
+				<td>@user.DutyPositionTitle</td>
+				<td>@user.Roles</td>
+				<td>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>

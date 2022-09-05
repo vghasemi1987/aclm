@@ -1,0 +1,207 @@
+﻿@using Web.Core.UserManagement
+@{
+	ViewBag.Title = "لیست کاربران";
+}
+
+<div class="m-portlet">
+	<div class="m-portlet__head">
+		<div class="m-portlet__head-caption">
+			<div class="m-portlet__head-title">
+				<h3 class="m-portlet__head-text">
+					لیست کاربران ثبت شده در سامانه
+				</h3>
+			</div>
+		</div>
+	</div>
+	<div class="m-portlet__body">
+		<div class="k-rtl">
+			<div id="report-grid"></div>
+		</div>
+	</div>
+</div>
+
+@section scripts{
+	<script type="text/javascript">
+        $(document).ready(function () {
+            const dataSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        url: '@Url.Action("GetRecords", "UserManagement")',
+                        dataType: "json",
+                        type: 'GET'
+                    },
+                    parameterMap: function(options) {
+                        return `models=${kendo.stringify(options)}`;
+                    }
+                },
+                schema: {
+                    data: "Data",
+                    total: "Total"
+                },
+                error: function(e) {
+                    alert(e.errorThrown);
+                },
+                pageSize: 10,
+                sort: { field: "Id", dir: "desc" },
+                serverPaging: true,
+                serverFiltering: true,
+                serverSorting: true
+            });
+
+            $("#report-grid").kendoGrid({
+                dataSource: dataSource,
+                autoBind: true,
+                scrollable: false,
+                pageable: {
+                    buttonCount: 5,
+                    refresh: true,
+                    input: true,
+                    pageSizes: [5, 10, 15, 20, 25],
+                    info: true
+                },
+                sortable: true,
+                filterable: {
+                    mode: "menu"
+                },
+                toolbar: [{
+                    template:
+                        '<button class="k-button" data-title="ثبت کاربر جدید" data-link="@Url.Action(nameof(UserManagementController.GetDetail))"><span class="k-icon k-i-add"></span>کاربر جدید</button>'
+                }],
+                reorderable: true,
+                columnMenu: true,
+                columns: [
+                    { field: "Id", hidden:true },
+                    {
+                        template: "<span><img class='img-circle' width='32' height='32' src='/uploads/user-image/#:data.Picture#'/>&nbsp;" +
+                            "#:FirstName + ' ' + LastName#</span>", field: "LastName", title: "نام", width: 150, media: "(min-width: 450px)"
+                    },
+                    { field: "UserName", title: "نام کاربری", media: "(min-width: 450px)", attributes: { class: "text-center" } },
+                    { field: "DepartmentName", title: "سازمان", media: "(min-width: 450px)", attributes: { class: "text-center" } },
+                    { field: "BankBranchName", title: "آمور شعب", media: "(min-width: 450px)", attributes: { class: "text-center" } },
+                    { field: "DutyPositionTitle", title: "محل خدمت", media: "(min-width: 450px)", attributes: { class: "text-center" } },
+                    {
+                        field: "RegDateTime", title: "تاریخ و زمان ثبت", media: "(min-width: 850px)",
+                        template: kendo.template($("#persianRegDateTimeTemplate").html()), editor: addMdDateTimePicker,
+                        filterable: {
+                            ui: function (element) {
+                                var name = $(element[0]).data("bind").replace("[", "").replace("]", "").replace(".", "")
+                                    .replace(" ", "").replace(":", "");
+                                $(element[0])
+                                    .addClass("k-input k-textbox")
+                                    .attr("style", "width:100%")
+                                    .attr("data-mddatetimepicker", "true")
+                                    .attr("data-englishnumber", "true")
+                                    .attr("data-trigger", "click")
+                                    .attr("data-targetselector", "#" + name)
+                                    .attr("data-fromdate", "true")
+                                    .attr("data-enabletimepicker", "false")
+                                    .attr("data-placement", "right")
+                                    .attr("name", name)
+                                    .attr("id", name);
+                                EnableMdDateTimePickers();
+                            }
+                        }
+                    },
+                    { field: "Roles", title: "نقش", media: "(min-width: 450px)" },
+                   @* {
+                        field: "DisabledDate", title: "تاریخ غیرفعالسازی", media: "(min-width: 850px)", attributes:{ class:"text-center" },
+                        template: kendo.template($("#persianDisabledDateTemplate").html()), editor: addMdDateTimePicker,
+                        filterable: {
+                            ui: function (element) {
+                                var name = $(element[0]).data("bind").replace("[", "").replace("]", "").replace(".", "")
+                                    .replace(" ", "").replace(":", "");
+                                $(element[0])
+                                    .addClass("k-input k-textbox")
+                                    .attr("style", "width:100%")
+                                    .attr("data-mddatetimepicker", "true")
+                                    .attr("data-englishnumber", "true")
+                                    .attr("data-trigger", "click")
+                                    .attr("data-targetselector", "#" + name)
+                                    .attr("data-fromdate", "true")
+                                    .attr("data-enabletimepicker", "false")
+                                    .attr("data-placement", "right")
+                                    .attr("name", name)
+                                    .attr("id", name);
+                                EnableMdDateTimePickers();
+                            }
+                        }
+                    },
+                    {
+                        field: "LockoutState", title: "وضعیت قفل", attributes:{ class:"text-center" } ,
+                        template: '<input type="checkbox" #: LockoutState ? "checked=checked" : "" # disabled />'
+                    },*@
+                    {
+                        title: "عملیات",
+                        template:
+                            '<button class="k-button" data-title="ویرایش کاربر #:UserName#" data-link="@Url.Action(nameof(UserManagementController.GetDetail))/#:Id#"><span class="k-icon k-i-edit"></span>ویرایش</button>'+
+                            '<button class="k-button" data-title="تخصیص محدوده دسترسی #:UserName#" data-link="@Url.Action(nameof(UserManagementController.AccessRange))/#:Id#"><span class="k-icon k-i-edit"></span>تخصیص محدوده دسترسی</button>'
+                    },
+                    {
+                        title: "جزئیات",
+                        template: kendo.template($("#responsive-column-template").html()),
+                        media: "(max-width: 450px)"
+                    }
+                ]
+            });
+        });
+
+        function addMdDateTimePicker(container, options) {
+            var fieldValue = options.model[options.field];
+            var persianDate = fieldValue ? moment(fieldValue).format('jYYYY/jMM/jDD') : "";
+
+            var input = $('<div dir="ltr" class="input-group">' +
+                '<div class="input-group-addon" data-name="datepicker1" data-mddatetimepicker="true" data-trigger="click" data-targetselector="#' +
+                options.field +
+                '" data-fromdate="false" data-enabletimepicker="false" data-englishnumber="true" data-placement="left">' +
+                '<span class="glyphicon glyphicon-calendar"></span>' +
+                '</div>' +
+                '<input type="text" value="' +
+                persianDate +
+                '" class="form-control" id="' +
+                options.field +
+                '" placeholder="از تاریخ" data-mddatetimepicker="true" data-trigger="click" data-targetselector="#' +
+                options.field +
+                '" data-englishnumber="true"  data-fromdate="true" data-enabletimepicker="false" data-placement="right" />' +
+                '</div>');
+            input.appendTo(container);
+
+            EnableMdDateTimePickers();
+
+            $('#' + options.field).change(function () {
+                var selectedPersianDate = $(this)[0].value;
+                if (selectedPersianDate) {
+                    var gregorianDate = moment(selectedPersianDate, 'jYYYY/jMM/jDD').format('YYYY-MM-DD');
+                    options.model.set(options.field, gregorianDate);
+                }
+            });
+
+            $('#' + options.field).blur(function () {
+                $('[data-name="datepicker1"]').MdPersianDateTimePicker('hide');
+            });
+            options != undefined
+        }
+	</script>
+	<script id="persianRegDateTimeTemplate" type="text/x-kendo-template">
+		#if( RegDateTime ) {#
+		#:moment(RegDateTime).format('jYYYY/jMM/jDD')#
+		#}#
+	</script>
+	<script id="persianDisabledDateTemplate" type="text/x-kendo-template">
+		#if( DisabledDate ) {#
+		#:moment(DisabledDate).format('jYYYY/jMM/jDD')#
+		#}#
+
+	</script>
+	<script id="responsive-column-template" type="text/x-kendo-template">
+		<strong>نام کاربری</strong>
+		<p class="col-template-val">#:data.UserName#</p>
+		<strong>نام</strong>
+		<p class="col-template-val">#:data.Name#</p>
+		<strong>تاریخ ثبت</strong>
+		<p class="col-template-val">#:moment(data.RegDateTime).format('jYYYY/jMM/jDD')#</p>
+		<strong>تلفن</strong>
+		<p class="col-template-val">#:data.PhoneNumber#</p>
+		<strong>نقش</strong>
+		<p class="col-template-val">#:data.Roles#</p>
+	</script>
+}

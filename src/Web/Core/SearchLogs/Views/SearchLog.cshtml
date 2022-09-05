@@ -1,0 +1,370 @@
+﻿@using Web.Core.SearchLogs
+@model Web.Core.SearchLogs.ViewModels.SearchLogDetailViewModel
+@{
+    ViewBag.Title = "جستجو در تراکنش ها";
+}
+<style>
+    .hide-div {
+        display: none;
+    }
+
+    fieldset {
+        margin: 8px;
+        border: 1px solid silver;
+        padding: 8px;
+        border-radius: 4px;
+    }
+
+    legend {
+        padding-right: 5px;
+        margin: 0;
+        font-size: 12px;
+        width: 90px;
+    }
+
+    .display-none {
+        display: none;
+    }
+
+    input {
+        direction: ltr;
+    }
+
+    .text-left {
+        direction: ltr;
+    }
+    .card-number-width{
+        width:60px !important;
+    }
+</style>
+
+<div class="m-portlet">
+    <div class="m-portlet__body">
+        <div class="k-rtl">
+            <div id="search">
+                <div id="div-letterNo">
+                    <div class="row">
+                        <div class="col-md-4 form-group">
+                            <label asp-for="LetterIdentifier" class="control-label"></label>
+                            <input asp-for="LetterIdentifier" class="form-control" />
+                            <span asp-validation-for="LetterIdentifier" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <br />
+                            <button type="button" id="btnLetterIdentifier" class="btn btn-primary">ادامه</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="div-cardNumber" class="hide-div">
+                    <div class="row">
+                        <div>
+                            <div class="col-md-2  card-number-width">
+                                <label asp-for="CardNumberPart1" class="control-label" ></label>
+                            </div>
+                        </div>
+                        <div class="col-md-2  card-number-width">
+                            <div class="form-group ">
+                                <input asp-for="CardNumberPart1" class="form-control" />
+                                <span asp-validation-for="CardNumberPart1" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2  card-number-width">
+                            <div class="form-group ">
+                                <input asp-for="CardNumberPart2" class="form-control" />
+                                <span asp-validation-for="CardNumberPart2" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2  card-number-width">
+                            <div class="form-group ">
+                                <input asp-for="CardNumberPart3" value="63" class="form-control" />
+                                <span asp-validation-for="CardNumberPart3" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2  card-number-width">
+                            <div class="form-group ">
+                                <input asp-for="CardNumberPart4" value="5894" class="form-control" />
+                                <span asp-validation-for="CardNumberPart4" value="5894" readonly class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <button type="button" id="btnSearch" class="btn btn-primary">جستجو</button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="div-grid" class="hide-div">
+                                <br />
+                                <div id="report-grid">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div id="div-status" class="hide-div">
+
+                                <br />
+                                <fieldset>
+                                    <legend>وضعیت جستجو</legend>
+                                    <input type="radio" name="IsSuccess" id="success" checked />&nbsp;<label>موفقیت آمیز بود</label>
+                                    <br />
+                                    <input type="radio" name="IsSuccess" id="unSuccess" />&nbsp;<label>ناموفق بود(عدم نتیجه)</label>
+                                </fieldset>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div id="div-victim" class="hide-div">
+                                <br />
+                                <fieldset>
+                                    <legend>وضعیت تراکنش</legend>
+                                    <input type="radio" name="IsVictim" id="isVictim" checked />&nbsp;<label>قربانی</label>
+                                    <br />
+                                    <input type="radio" name="IsVictim" id="isAbuse" />&nbsp;<label>سو استفاده کننده</label>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div id="div-personalInfo" class="hide-div">
+                    <br />
+                    <fieldset>
+                        <legend>اطلاعات شخصی</legend>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label asp-for="FirstName" class="control-label"></label>
+                                <input asp-for="FirstName" class="form-control" />
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="LastName" class="control-label"></label>
+                                <input asp-for="LastName" class="form-control" />
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="NationalCode" class="control-label"></label>
+                                <input asp-for="NationalCode" class="form-control" />
+                                <span asp-validation-for="NationalCode" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="FatherName" class="control-label"></label>
+                                <input asp-for="FatherName" class="form-control" />
+                                <span asp-validation-for="FatherName" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-12">
+                                <label asp-for="Address" class="control-label"></label>
+                                <input asp-for="Address" class="form-control" />
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-11"></div>
+                    <div id="div-submit" class="col-md-1 display-none">
+                        <button type="submit" id="btnSubmit" class="btn btn-primary">ادامه</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+    <script>
+    $('#CardNumberPart1').inputmask("9999");
+    $('#CardNumberPart2').inputmask("9999");
+    $('#CardNumberPart3').inputmask("9999");
+    $('#CardNumberPart4').inputmask("9999");
+
+    $('#btnLetterIdentifier').click(function(){
+        debugger;
+        if($('#LetterIdentifier').val() != ""){
+           $('#div-letterNo').hide('slow');
+           $('#div-cardNumber').show('slow');
+        }
+        else{
+            toastr["warning"]("شماره نامه را وارد نمایید!", "هشدار");
+        }
+    });
+    $('#btnContinue').click(function(){
+        if($('#CardNumber').val() != ""){
+           $('#div-cardNumber').hide('slow');
+           $('#victim').show('slow');
+        }
+    });
+    $('#btnSearch').click(function(){
+        $('#div-grid').show('slow');
+        $('#div-status').show('slow');
+        $('#div-submit').show('slow');
+    });
+    $('input[type=radio][name=IsSuccess]').change(function() {
+        if (this.id == 'success') {
+             $('#div-victim').show('slow');
+             $('#div-personalInfo').show('slow');
+             $('#btnSubmit').text('ادامه');
+        }
+        else if (this.id == 'unSuccess') {
+             $('#div-victim').hide('slow');
+             $('#div-personalInfo').hide('slow');
+             $('#btnSubmit').text('ثبت');
+        }
+    });
+
+    $('#btnSubmit').click(function(){
+
+        if($('#btnSubmit').text()=='ادامه'){
+            if($('#div-status').is(':visible')){
+               $('#div-victim').show('slow');
+            }
+            if($('#div-victim').is(':visible')){
+                $('#div-personalInfo').show('slow');
+                $('#btnSubmit').text('ثبت');
+            }
+        }
+        else {
+             submit();
+        }
+    });
+    function submit(){
+
+        if($('#success').is(':checked')){
+            var isSuccess = 1;
+        }
+        else if($('#unSuccess').is(':checked')){
+            isSuccess = 0;
+        }
+
+        if($('#isVictim').is(':checked')){
+            var isVictim = 1;
+        }
+        else if($('#isAbuse').is(':checked')){
+            isVictim = 0;
+        }
+        var checked = [];
+        for(var i in checkedIds){
+            if(checkedIds[i]){
+                checked.push(i);
+            }
+        }
+        $.ajax({
+            url:"/SearchLogs/AddSearchLog",
+            type:"Post",
+            data:{LetterIdentifier:$('#LetterIdentifier').val(),CardNumberPart4:$('#CardNumberPart4').val(),CardNumberPart3:$('#CardNumberPart3').val(),
+                  CardNumberPart2:$('#CardNumberPart2').val(),CardNumberPart1:$('#CardNumberPart1').val(),
+                  FirstName:$('#FirstName').val(),LastName:$('#LastName').val(),NationalCode:$('#NationalCode').val(),
+                  FatherName:$('#FatherName').val(),Address:$('#Address').val(),IsSuccess: isSuccess,IsVictim: isVictim, TransactionDetailIdList: checked},
+            success:function(result){
+                if(result.Success){
+                    window.location.href = 'Success';
+                }
+            }
+        });
+    }
+     var checkedIds = {};
+
+    function selectRow() {
+        var checked = this.checked,
+        row = $(this).closest("tr"),
+        grid = $("#report-grid").data("kendoGrid"),
+        dataItem = grid.dataItem(row);
+
+        checkedIds[dataItem.Id] = checked;
+        if (checked) {
+            row.addClass("k-state-selected");
+            } else {
+            row.removeClass("k-state-selected");
+        }
+    }
+    </script>
+
+    <script type="text/javascript">
+        $("#btnSearch").click(function() {
+
+        var url = '@Url.Action("GetListByCardNumber", "SearchLogs", new { cardNumber = "replace" })';
+        var cardNumber = $('#CardNumberPart4').val()+ $('#CardNumberPart3').val()+ $('#CardNumberPart2').val()+ $('#CardNumberPart1').val();
+
+        url = url.replace("replace", cardNumber);
+
+        var transactionDataSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: url,
+                    dataType: "json",
+                    type: 'GET'
+                },
+                parameterMap: function(options) {
+                    return `models=${kendo.stringify(options)}`;
+                }
+            },
+            schema: {
+                data: "Data",
+                total: "Total"
+            },
+            error: function(e) {
+                alert(e.errorThrown);
+            },
+            pageSize: 5,
+            sort: { field: "Id", dir: "desc" },
+            serverPaging: true,
+            serverFiltering: true,
+            serverSorting: true
+        });
+       var grid = $("#report-grid").kendoGrid({
+            dataSource: transactionDataSource,
+            autoBind: true,
+            scrollable: false,
+            pageable: {
+                buttonCount: 5,
+                refresh: true,
+                input: true,
+                pageSizes: [5, 10, 15, 20, 25],
+                info: true
+            },
+
+            sortable: true,
+            filterable: {
+                mode: "menu",
+                messages: {
+                    selectedItemsFormat: "{0} آیتم انتخاب شده",
+                    search: "جستجو",
+                    checkAll: "انتخاب همه",
+                    clear: "لغو",
+                    filter: "اعمال"
+                }
+            },
+            reorderable: true,
+            columnMenu: true,
+            columns: [
+                { field: "Id", hidden:true },
+                { template: "<input type='checkbox' class='checkbox' />" , width: "35px" },
+                { field: "SourcePan", title: "شماره کارت مبدا", media: "(min-width: 450px)" ,attributes: { class: "text-left" }},
+                { field: "TargetPan", title: "شماره کارت مقصد", media: "(min-width: 450px)" , attributes: { class: "text-left" }},
+                { field: "TransactionDate", title: "تاریخ تراکنش", media: "(min-width: 450px)" , attributes: { class: "text-left" }},
+                { field: "TransactionTime", title: "زمان تراکنش", media: "(min-width: 450px)" , attributes: { class: "text-left" }},
+                { field: "Tel", title: "تلفن", media: "(min-width: 450px)" , attributes: { class: "text-left" }},
+                { field: "Amount", title: "مبلغ", media: "(min-width: 450px)" , attributes: { class: "text-left" }},
+                { field: "IpAddress", title: "آدرسIp", media: "(min-width: 450px)" , attributes: { class: "text-left" }},
+                { field: "UserAgent", title: "UserAgent", media: "(min-width: 450px)" , attributes: { class: "text-left" }},
+                { field: "Status", title: "وضعیت", media: "(min-width: 450px)" , attributes: { class: "text-left" }},
+                { field: "RefNumber", title: "شماره مرجع", media: "(min-width: 450px)" , attributes: { class: "text-left" }},
+            ]
+        }).data("kendoGrid");
+            grid.table.on("click", ".checkbox" , selectRow);
+    });
+    </script>
+}

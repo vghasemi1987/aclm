@@ -1,0 +1,119 @@
+﻿@using Web.Core.Reports
+@model Web.Core.Reports.ViewModels.SearchViewModel
+@{
+    ViewBag.Title = "گزارش بر اساس پارامتر";
+}
+
+<div class="m-portlet">
+    <div class="m-portlet__head">
+        <div class="m-portlet__head-caption">
+            <div class="m-portlet__head-title">
+                <h3 class="m-portlet__head-text">
+                    گزارش بر اساس پارامتر
+                </h3>
+            </div>
+        </div>
+    </div>
+    <div class="m-portlet__body">
+
+        <div class="k-rtl">
+            <div id="report-grid"></div>
+        </div>
+    </div>
+</div>
+
+
+<div class="k-rtl">
+    <div id="report-grid"></div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#li-report, #li-reportByFilter").addClass('active');
+
+           var reportDataSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        url: '@Html.Raw(Url.Action("GetReportByFilter", "Reports",Model))',
+                        dataType: "json",
+                        type: 'GET'
+                    },
+                    parameterMap: function(options) {
+                        return `models=${kendo.stringify(options)}`;
+                    }
+                },
+                schema: {
+                    data: "Data",
+                    total: "Total"
+                },
+                error: function(e) {
+                    alert(e.errorThrown);
+                },
+                pageSize: 10,
+                sort: { field: "Id", dir: "desc" },
+                serverPaging: true,
+                serverFiltering: true,
+                serverSorting: true
+            });
+            $("#report-grid").kendoGrid({
+                dataSource: reportDataSource,
+                autoBind: true,
+                scrollable: true,
+                pageable: {
+                    buttonCount: 5,
+                    refresh: true,
+                    input: true,
+                    pageSizes: [5, 10, 15, 20, 25],
+                    info: true
+                },
+        progress:true,
+                sortable: true,
+                filterable: {
+                    mode: "menu",
+                    messages: {
+                        selectedItemsFormat: "{0} آیتم انتخاب شده",
+                        search: "جستجو",
+                        checkAll: "انتخاب همه",
+                        clear: "لغو",
+                        filter: "اعمال"
+                    }
+                },
+        toolbar: [
+        "excel",
+                    {
+                        template:
+                          `<button class="k-button" data-title="جستجو" data-link="@Url.Action(nameof(ReportsController.Search),Model)"><span class="k-icon k-i-search"></span>جستجو</button>&nbsp;`
+                    },
+        ],
+
+                reorderable: true,
+                columnMenu: true,
+                  excel: {
+                allPages: true
+            },
+                columns: [
+                    { field: "SourceSystemName", title: "سامانه مبدا",width:"120px" , media: "(min-width: 450px)" },
+                    { field: "SourceSystemIp", title: "آدرس سامانه مبدا",width:"120px" , media: "(min-width: 450px)" },
+                    { field: "SystemPort", title: "پورت مبدا",width:"140px" , media: "(min-width: 450px)" },
+                    { field: "DestinationSystemName", title: "سامانه مقصد",width:"120px" , media: "(min-width: 450px)" },
+                    { field: "DestinationSystemIp", title: "آدرس سامانه مقصد",width:"120px" , media: "(min-width: 450px)" },
+                    { field: "DestinationPort", title: "پورت مقصد",width:"140px" , media: "(min-width: 450px)" },
+                    { field: "RequestingUserName", title: "کاربر درخواست دهنده",width:"140px" , media: "(min-width: 450px)" },
+                    { field: "UserDepartment", title: "کاربر تایید کننده",width:"140px" , media: "(min-width: 450px)" },
+                    { field: "RequestDepartment", title: "کاربر درخواست دهنده",width:"140px" , media: "(min-width: 450px)" },
+                    { field: "AccessType", title: "نوع دسترسی",width:"140px" , media: "(min-width: 450px)" },
+
+                ]
+            });
+        });
+
+    </script>
+
+
+
+    <script id="responsive-column-template" type="text/x-kendo-template">
+        <strong>نام</strong>
+        <p class="col-template-val">#:data.Id#</p>
+    </script>
+}

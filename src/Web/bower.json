@@ -1,0 +1,24 @@
+{
+  "name": "asp.net",
+  "private": true,
+  "dependencies": {
+    "jquery": "3.3.1",
+    "jquery-validation": "1.19.0",
+    "jquery-validation-unobtrusive": "v3.2.11",
+    "bootstrap-select": "v1.13.5",
+    "EasyAutocomplete": "v1.3.5",
+    "bootstrap-tagsinput": "0.8.0",
+    "font-awesome": "5.6.3",
+    "jquery.counterup": "jquery-counterup#v2.0.5",
+    "kendo-global": "*",
+    "bootstrap": "v4.2.1"
+  },
+  "resolutions": {
+    "jquery-validation": "1.19.0",
+    "jquery": "3.3.1",
+    "font-awesome": "5.6.3",
+    "jquery-validation-unobtrusive": "v3.2.11",
+    "bootstrap-select": "v1.13.5",
+    "bootstrap": "v4.2.1"
+  }
+}

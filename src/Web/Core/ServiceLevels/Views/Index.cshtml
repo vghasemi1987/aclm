@@ -1,0 +1,104 @@
+﻿@using Web.Core.ServiceLevels
+@{
+    ViewBag.Title = "لیست سطوح حساسیت";
+}
+
+<div class="m-portlet">
+    <div class="m-portlet__head">
+        <div class="m-portlet__head-caption">
+            <div class="m-portlet__head-title">
+                <h3 class="m-portlet__head-text">
+                    لیست سطوح حساسیت در سامانه
+                </h3>
+            </div>
+        </div>
+    </div>
+    <div class="m-portlet__body">
+        <div class="k-rtl">
+            <div id="report-grid"></div>
+        </div>
+    </div>
+</div>
+
+<div class="k-rtl">
+    <div id="report-grid"></div>
+</div>
+
+@section scripts{
+<script type="text/javascript">
+        $(document).ready(function() {
+            var serviceLevelDataSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        url: '@Html.Raw(Url.Action("GetRecords", "ServiceLevels"))',
+                        dataType: "json",
+                        type: 'GET'
+                    },
+                    parameterMap: function(options) {
+                        return `models=${kendo.stringify(options)}`;
+                    }
+                },
+                schema: {
+                    data: "Data",
+                    total: "Total"
+                },
+                error: function(e) {
+                    alert(e.errorThrown);
+                },
+                pageSize: 10,
+                sort: { field: "Id", dir: "desc" },
+                serverPaging: true,
+                serverFiltering: true,
+                serverSorting: true
+            });
+
+         $("#report-grid").kendoGrid({
+                dataSource: serviceLevelDataSource,
+                autoBind: true,
+                scrollable: false,
+                pageable: {
+                    buttonCount: 5,
+                    refresh: true,
+                    input: true,
+                    pageSizes: [5, 10, 15, 20, 25],
+                    info: true
+                },
+
+                sortable: true,
+                filterable: {
+                    mode: "menu",
+                    messages: {
+                        selectedItemsFormat: "{0} آیتم انتخاب شده",
+                        search: "جستجو",
+                        checkAll: "انتخاب همه",
+                        clear: "لغو",
+                        filter: "اعمال"
+                    }
+                },
+                 @*toolbar: [
+                    {
+                        template:
+                          `<button class="k-button" data-title="ثبت سطح حساسیت جدید" data-link="@Url.Action(nameof(ServiceLevelsController.GetDetail))"><span class="k-icon k-i-add"></span>ثبت نوع سرویس جدید</button>&nbsp;`
+                    },
+
+                ],*@
+                reorderable: true,
+                columnMenu: true,
+                columns: [
+                    { template: "<input type='checkbox' class='checkbox' />"  ,  width:"30px"},
+                    { field: "Id", hidden:true },
+                    { field: "Title", title: "عنوان", media: "(min-width: 450px)" },
+                    {
+                        title: "عملیات",
+                        template:
+                            '<button class="k-button k-button-icontext k-grid-edit" data-link="@Url.Action(nameof(ServiceLevelsController.GetDetail))/#:Id#" data-title="ویرایش #:Title#" ><span class="k-icon k-i-edit"></span>ویرایش</button>'
+                    }
+                ]
+            });
+        });
+</script>
+    <script id="responsive-column-template" type="text/x-kendo-template">
+        <strong>عنوان</strong>
+        <p class="col-template-val">#:data.Title#</p>
+    </script>
+}

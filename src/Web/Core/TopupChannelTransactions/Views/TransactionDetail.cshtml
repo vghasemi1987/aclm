@@ -1,0 +1,201 @@
+﻿
+@using Web.Core.TopupChannelTransactions
+@model Web.Core.TopupChannelTransactions.ViewModels.TopupChannelSearchViewModel
+
+@{
+    ViewBag.Title = "گزارش تراکنش ها";
+}
+
+<div class="m-portlet">
+
+    <div class="m-portlet__body">
+
+        <div id="search">
+            <div class="row">
+                <div class="form-group col-md-3">
+                    <label asp-for="OperatorName" class="control-label"></label>
+                    <input asp-for="OperatorName" class="form-control">
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="CustomerAccountNumber" class="control-label"></label>
+                    <input asp-for="CustomerAccountNumber" class="form-control">
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="FollowupCode" class="control-label"></label>
+                    <input asp-for="FollowupCode" class="form-control">
+                </div>
+            </div>
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label asp-for="TransactionStatus" class="control-label"></label>
+                        <input asp-for="TransactionStatus" class="form-control">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label asp-for="TransactionDate" class="control-label"></label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text cursor-pointer" id="btnTransactionDate"><i class="far fa-calendar-alt"></i></span>
+                            </div>
+                            <input asp-for="TransactionDate" class="form-control" style="width:100px" />
+                        </div>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label asp-for="TransactionAmount" class="control-label"></label>
+                        <input asp-for="TransactionAmount" class="form-control" />
+                    </div>
+                    <div class="form-group col-md-1">
+                        <br />
+                        <button class="btn btn-primary" type="submit" id="btnSearch">
+                            جستجو
+                        </button>
+                    </div>
+                </div>
+            </div>
+        <br />
+        <div class="k-rtl">
+            <div id="report-grid"></div>
+        </div>
+    </div>
+</div>
+
+
+<div class="k-rtl">
+    <div id="report-grid"></div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+         $(document).ready(function() {
+             $('#btnSearch').click(function () {
+                var searchParameters = JSON.stringify({
+                     customerAccountNumber: $('#CustomerAccountNumber').val(), operatorName: $('#OperatorName').val(),
+                     transactionStatus: $('#TransactionStatus').val(), followupCode: $('#FollowupCode').val(),
+                     transactionAmount: $('#TransactionAmount').val(), transactionDate: $('#TransactionDate').val()
+                 });
+
+               var reportDataSource = new kendo.data.DataSource({
+                    transport: {
+                        read: {
+                            url: '@Html.Raw(Url.Action("GetTransactionDetail", "TopupChannelTransactions"))?searchParameters='+searchParameters,
+                            dataType: "json",
+                            type: 'GET'
+                        },
+                        parameterMap: function(options) {
+                            return `models=${kendo.stringify(options)}`;
+                        },
+                    },
+                    schema: {
+                        data: "Data",
+                        total: "Total"
+                    },
+                    error: function(e) {
+                        alert(e.errorThrown);
+                    },
+                    pageSize: 10,
+                    sort: { field: "Id", dir: "desc" },
+                    serverPaging: true,
+                    serverFiltering: true,
+                    serverSorting: true
+                });
+                $("#report-grid").kendoGrid({
+                    dataSource: reportDataSource,
+                    autoBind: true,
+                    scrollable: false,
+                    pageable: {
+                        buttonCount: 5,
+                        refresh: true,
+                        input: true,
+                        pageSizes: [5, 10, 15, 20, 25],
+                        info: true
+                    },
+            progress:true,
+                    sortable: true,
+                    filterable: {
+                        mode: "menu",
+                        messages: {
+                            selectedItemsFormat: "{0} آیتم انتخاب شده",
+                            search: "جستجو",
+                            checkAll: "انتخاب همه",
+                            clear: "لغو",
+                            filter: "اعمال"
+                        }
+                    },
+                    toolbar: [
+                        {
+                            template:
+                               '<button onclick="downloadExcel()" class="k-button" "><span class="k-icon k-i-excel"></span>خروجی اکسل</button>'
+                        }
+                    ],
+                    reorderable: true,
+                    columnMenu: true,
+                      excel: {
+                    allPages: true
+                   },
+                    columns: [
+                        { field: "Id", hidden: true },
+                        { field: "TransactionDate", title: "تاریخ تراکنش", media: "(min-width: 450px)" },
+                        { field: "TransactionStatus", title: "وضعیت تراکنش", media: "(min-width: 450px)" },
+                        { field: "TransactionAmount", title: "مبلغ تراکنش", media: "(min-width: 450px)" },
+                        { field: "AmountText", title: "مبلغ حرفی", media: "(min-width: 450px)" },
+                        { field: "ChannelType", title: "نوع کانال", media: "(min-width: 450px)" },
+                        { field: "CustomerAccountNumber", title: "شماره حساب مشتری", media: "(min-width: 450px)" },
+                        { field: "Extra1", title: "Extra1", media: "(min-width: 450px)" },
+                        { field: "Extra2", title: "Extra2", media: "(min-width: 450px)" },
+                        { field: "FollowupCode", title: "کد پیگیری", media: "(min-width: 450px)" },
+                        { field: "FollowupCode2", title: "کد پیگیری 2", media: "(min-width: 450px)" },
+                        { field: "MobileNumber", title: "شماره موبایل", media: "(min-width: 450px)" },
+                        { field: "OperatorName", title: "نام اپراتور", media: "(min-width: 450px)" },
+
+                    ]
+                });
+
+              });
+
+            });
+
+    </script>
+
+
+    <script src="~/lib/jquery.mask/jquery.mask.min.js"></script>
+
+    <script id="responsive-column-template" type="text/x-kendo-template">
+        <strong>نام</strong>
+        <p class="col-template-val">#:data.Id#</p>
+    </script>
+
+    <script>
+        $('#btnTransactionDate').MdPersianDateTimePicker({
+            targetTextSelector: '#TransactionDate',
+            textFormat: 'yyyy/MM/dd',
+            englishNumber: true,
+            enableTimePicker: true
+        });
+
+        $('#SourcePan').mask('ZZZZ-ZZZZ-ZZZZ-ZZZZ', {
+            translation: {
+                'Z': {
+                    pattern: /[0-9]/, optional: true
+                }
+            }
+        });
+
+        $('#TargetPan').mask('ZZZZ-ZZZZ-ZZZZ-ZZZZ', {
+            translation: {
+                'Z': {
+                    pattern: /[0-9]/, optional: true
+                }
+            }
+        });
+
+        function downloadExcel() {
+
+            var searchParameters = JSON.stringify({
+                sourcePan: $('#SourcePan').val(), targetPan: $('#TargetPan').val(),
+                amount: $('#Amount').val(), transactionDate: $('#TransactionDate').val()
+            });
+
+            window.location.href = '@Url.Action("ExportToExcel", "TopupChannelTransactions")?searchParameters=' + searchParameters;
+        }
+    </script>
+
+}

@@ -1,0 +1,292 @@
+﻿@model Web.Core.NetworkDiagram.ViewModels.SearchViewModel
+@{
+	ViewBag.Title = "گراف دسترسی";
+}
+@section styles
+{
+
+}
+<head>
+	<link href="~/css/vis.css" rel="stylesheet" />
+	<link href="~/css/vis-network.min.css" rel="stylesheet" />
+	<script src="~/js/vis.js"></script>
+	<script src="~/js/vis-network.min.js"></script>
+	<script src="~/lib/jquery-mask-plugin/dist/jquery.mask.js"></script>
+	<style type="text/css">
+		#networkdiagram {
+			height: 600px !important;
+			width: 100%;
+			background-color: white !important;
+			overflow: auto;
+		}
+
+		input {
+			font-family: Verdana !important;
+		}
+	</style>
+</head>
+<div class="m-portlet" id="section-to-print">
+	<div class="m-portlet__body">
+		<div class="k-rtl">
+			<div id="search">
+				<div class="row">
+					<div class="form-group col-md-2">
+						<label asp-for="SystemId" class="control-label"></label>
+						<select asp-for="SystemId" asp-items="@Model.SystemList" class="form-control">
+							<option value="">لطفا انتخاب کنید...</option>
+						</select>
+					</div>
+					<div class="form-group col-md-2">
+						<label asp-for="Level" class="control-label"></label>
+						<select asp-for="Level" class="form-control">
+							<option value="1">ِیک</option>
+							<option value="2">دو</option>
+							@*<option value="3">سه</option>*@
+						</select>
+					</div>
+					<div class="form-group col-md-2">
+						<label asp-for="RouterId" class="control-label"></label>
+						<select asp-for="RouterId" asp-items="@Model.RouterList" class="form-control">
+							<option value="">لطفا انتخاب کنید...</option>
+						</select>
+					</div>
+					<div class="form-group col-md-2">
+						<label asp-for="Address" class="control-label"></label>
+						<input asp-for="Address" class="form-control" />
+					</div>
+					<div class="form-group col-md-2">
+						<label asp-for="AccessCount" class="control-label"></label>
+						<input asp-for="AccessCount" class="form-control" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$">
+					</div>
+					<div class="form-group col-md-2">
+						<label asp-for="ImportanceFactor" class="control-label"></label>
+						<input asp-for="ImportanceFactor" class="form-control">
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="form-group col-md-2">
+						<label asp-for="ServiceId" class="control-label"></label>
+						<select asp-for="ServiceId" asp-items="@Model.ServiceList" class="form-control">
+							<option value="">لطفا انتخاب کنید...</option>
+						</select>
+					</div>
+					<div class="form-group col-md-2">
+						<label asp-for="SourceIp" class="control-label"></label>
+						<input asp-for="SourceIp" class="form-control" />
+					</div>
+					<div class="form-group col-md-2">
+						<label asp-for="DestinationIp" class="control-label"></label>
+						<input asp-for="DestinationIp" class="form-control">
+					</div>
+					<div class="form-group col-md-2">
+						<label asp-for="PersonelCode" class="control-label"></label>
+						<input asp-for="PersonelCode" class="form-control">
+					</div>
+
+					<div class="form-group col-md-2">
+						<label asp-for="RecoveryDate" class="control-label"></label>
+						<div class="input-group">
+							<div class="input-group-prepend">
+								<span class="input-group-text cursor-pointer" id="btnRecoveryDate"><i class="far fa-calendar-alt"></i></span>
+							</div>
+							<input asp-for="RecoveryDate" class="form-control" style="width:100px" />
+						</div>
+						<span class="help-block"><span asp-validation-for="RecoveryDate" class="text-danger"></span></span>
+					</div>
+
+					<div class="col-md-1">
+						<br />
+						<button class="btn btn-primary" onclick="DrawDiagram(false)">
+							جستجو
+						</button>
+					</div>
+					<div class="col-md-1">
+						<br />
+						<button class="btn btn-primary" onclick="DrawDiagram(true)">
+							<i class="far fa-paper-plane"></i>
+						</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="fa-rtl" id="requestNotFound" style="display:none ;margin:200px 400px;height:10px; width:250px;">
+				<label class="fa-rtl" style="font-family:Tahoma;color:red">موردی با مشخصات وارد شده یافت نشد.</label>
+			</div>
+
+			<div class="fa-rtl" id="ipNoAccess" style="display:none ;margin:200px 400px;height:10px; width:250px;">
+				<label class="fa-rtl" style="font-family:Tahoma;color:red">به آدرس وارد شده دسترسی ندارید</label>
+			</div>
+
+			<div style="margin-right:50%;margin-top:5%;display:none" id="divWaiting">
+				<i class="fa fa-spin fa-spinner fa-3x"></i><br />
+				<label style="font-family:Tahoma;font-size:12px">در حال بارگذاری ...</label>
+			</div>
+
+			<div id="networkDiagram" style="display:none; height: 400px !important;width: 100%; overflow:auto;">
+			</div>
+		</div>
+	</div>
+
+</div>
+
+
+
+
+<script>
+
+    function DrawDiagram(newPage)
+    {
+
+        $("#divWaiting").show();
+        $("#networkDiagram").hide();
+        var isDrawing = false;
+        if (isDrawing)
+            return;
+        isDrawing = true;
+        var model= {
+            SystemId: $('#SystemId option:selected').val() == '' ? null : $('#SystemId option:selected').val(),
+            ServiceId: $('#ServiceId option:selected').val() == '' ? null : $('#ServiceId option:selected').val(),
+            Address: $('#Address').val(),
+            RouterId: $('#RouterId option:selected').val() == '' ? null : $('#RouterId option:selected').val(),
+            Level:$('#Level').val(),
+            AccessCount:$('#AccessCount').val() ,
+            SourceIp:$('#SourceIp').val() ,
+            DestinationIp:$('#DestinationIp').val(),
+            PersonelCode:$('#PersonelCode').val() ,
+            ImportanceFactor: $('#ImportanceFactor').val() == '' ? null : $('#ImportanceFactor').val(),
+        }
+        let s = JSON.stringify(model);
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("GetNetworkDiagram", "NetworkDiagrams")',
+            data: JSON.stringify(model),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            complete: function (xhr, status) {
+                var data = $.parseJSON(xhr.responseText);
+                isDrawing = false;
+                console.log(data)
+                if (data == null) {
+                    $("#ipNoAccess").css('display', 'inline');
+                    $("#networkDiagram").css('display', 'none');
+                    $("#divWaiting").css('display', 'none');
+                }
+                else {
+                    if (data.nodes.length == 0) {
+                        $("#requestNotFound").css('display', 'inline');
+                        $("#networkDiagram").css('display', 'none');
+                        $("#divWaiting").css('display', 'none');
+                    }
+                    else {
+                        $("#requestNotFound").css('display', 'none');
+                        $("#ipNoAccess").css('display', 'none');
+                        if (newPage) {
+                            var container = document.getElementById('networkDiagramLayout');
+                        }
+                        else {
+                            var container = document.getElementById('networkDiagram');
+                        }
+
+
+                        var options = {
+                            nodes: {
+                                shape: 'dot',
+                                scaling: {
+                                    min: 3,
+                                    max: 10
+                                },
+                                font: {
+                                    size: 12,
+                                    face: 'Tahoma'
+                                }
+                            },
+                            edges: {
+                                color: { inherit: true },
+                                width: 0.15,
+                                smooth: {
+                                    type: 'straightCross'
+                                }
+                            },
+                            interaction: {
+                                hideEdgesOnDrag: true,
+                                tooltipDelay: 200
+                            },
+                            physics: {
+                                barnesHut: {
+                                    gravitationalConstant: -81424,
+                                    centralGravity: 2,
+                                    springLength: 100,
+                                    springConstant: 0.01,
+                                    damping: 1,
+                                    avoidOverlap: 1
+                                },
+                                maxVelocity: 10,
+                                minVelocity: 1,
+                            }
+                        };
+
+                        var network = new vis.Network(container, data, options);
+                        if (newPage) {
+                            //console.log(data.nodes.length)
+                            var len = data.nodes.length;
+                            var h = 1000;//window.innerHeight;
+                            if (len>12) {
+                                h = 2000;
+                            }
+                            else if (len > 6) {
+                                h = 1500;
+                            }
+                            $("#networkDiagram").hide();
+                            $("#networkDiagramLayout").css("height", h)
+                            $("#divWaiting").hide();
+                            $('#dataModalDiagrams').modal('show');
+                        }
+                        else {
+                            $("#networkDiagram").show();
+                            $("#divWaiting").hide();
+                            $('#dataModalDiagrams').modal('hide');
+                        }
+                    }
+                }
+            },
+            error:{
+            }
+    });
+}
+</script>
+
+@section scripts{
+	<script>
+		$.validator.unobtrusive.parse($("form"));
+
+		$('#btnRecoveryDate').MdPersianDateTimePicker({
+			targetTextSelector: '#RecoveryDate',
+			textFormat: 'yyyy/MM/dd',
+			englishNumber: true,
+			enableTimePicker: true
+		});
+		$('#SourceIp').mask('0ZZ.0ZZ.0ZZ.0ZZ', {
+			translation: {
+				'Z': {
+					pattern: /[0-9]/, optional: true
+				}
+			}
+		});
+		$('#DestinationIp').mask('0ZZ.0ZZ.0ZZ.0ZZ', {
+			translation: {
+				'Z': {
+					pattern: /[0-9]/, optional: true
+				}
+			}
+		});
+		$('#Address').mask('0ZZ.0ZZ.0ZZ.0ZZ', {
+			translation: {
+				'Z': {
+					pattern: /[0-9]/, optional: true
+				}
+			}
+		});
+
+	</script>
+}

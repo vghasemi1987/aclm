@@ -1,0 +1,120 @@
+﻿@using Web.Core.Accessibilities
+@{
+    ViewBag.Title = "لیست دسترسی ها";
+}
+
+<div class="m-portlet">
+    <div class="m-portlet__head">
+        <div class="m-portlet__head-caption">
+            <div class="m-portlet__head-title">
+                <h3 class="m-portlet__head-text">
+                    لیست دسترسی های ثبت شده در سامانه
+                </h3>
+            </div>
+        </div>
+    </div>
+    <div class="m-portlet__body">
+        <div class="k-rtl">
+            <div id="report-grid"></div>
+        </div>
+    </div>
+</div>
+
+<div class="k-rtl">
+    <div id="report-grid"></div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var accessTypeDataSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        url: '@Html.Raw(Url.Action("GetRecords", "Accessibilities"))',
+                        dataType: "json",
+                        type: 'GET'
+                    },
+                    parameterMap: function(options) {
+                        return `models=${kendo.stringify(options)}`;
+                    }
+                },
+                schema: {
+                    data: "Data",
+                    total: "Total"
+                },
+                error: function(e) {
+                    alert(e.errorThrown);
+                },
+                pageSize: 10,
+                sort: { field: "Id", dir: "desc" },
+                serverPaging: true,
+                serverFiltering: true,
+                serverSorting: true
+            });
+            $("#report-grid").kendoGrid({
+                dataSource: accessTypeDataSource,
+                autoBind: true,
+                scrollable: false,
+                pageable: {
+                    buttonCount: 5,
+                    refresh: true,
+                    input: true,
+                    pageSizes: [5, 10, 15, 20, 25],
+                    info: true
+                },
+
+                sortable: true,
+                filterable: {
+                    mode: "menu",
+                    messages: {
+                        selectedItemsFormat: "{0} آیتم انتخاب شده",
+                        search: "جستجو",
+                        checkAll: "انتخاب همه",
+                        clear: "لغو",
+                        filter: "اعمال"
+                    }
+                },
+                 toolbar: [
+                    {
+                        template:
+                          `<button class="k-button" data-title="دسترسی جدید" data-link="@Url.Action(nameof(AccessibilitiesController.GetDetail))"><span class="k-icon k-i-add"></span>دسترسی جدید</button>&nbsp;
+                           <button class="k-button" data-title="تایید دسترسی" onclick="confirmRecords()"><span class="k-icon"></span>تایید دسترسی</button>&nbsp;`
+                    },
+
+                ],
+                reorderable: true,
+                columnMenu: true,
+                columns: [
+                    { field: "Id", hidden:true },
+                    { field: "SourceSystemTitle", title: "سیستم مبدا", media: "(min-width: 450px)" },
+                    { field: "DestinationSystemTitle", title: "سیستم مقصد", media: "(min-width: 450px)" },
+                    { field: "SourceIp", title: "آدرس سیستم مبدا", media: "(min-width: 450px)" },
+                    { field: "DestinationIp", title: "آدرس سیستم مقصد", media: "(min-width: 450px)" },
+                    { field: "SourcePort", title: "پورت سیستم مبدا", media: "(min-width: 450px)" },
+                    { field: "DestinationPort", title: "پورت سیستم مقصد", media: "(min-width: 450px)" },
+                    { field: "Protocol", title: "پروتکل", media: "(min-width: 450px)" },
+                    { field: "RouterTitle", title: "روتر", media: "(min-width: 450px)" },
+                    { field: "ActionType", title: "نوع عملیات", media: "(min-width: 450px)" },
+                    @*{
+                        title: "عملیات",
+                        template:
+                            '<button class="k-button k-button-icontext k-grid-edit" data-link="@Url.Action(nameof(AccessibilitiesController.GetDetail))/#:Id#" data-title="ویرایش"><span class="k-icon k-i-edit"></span>ویرایش</button>'
+                    }*@
+                ]
+            });
+        });
+    </script>
+    <script id="responsive-column-template" type="text/x-kendo-template">
+        <strong>نام</strong>
+        <p class="col-template-val">#:data.Title#</p>
+    </script>
+}
+
+
+<script>
+    function confirmRecords(){
+        $.get("/Accessibilities/ConfirmAccessibilities", function(result) {
+            update_list(result);
+        });
+    }
+</script>

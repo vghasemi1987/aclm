@@ -1,0 +1,125 @@
+﻿@using Web.Core.InquiryEmployee.ViewModels
+@model ResultDtoPager
+
+<div class="card">
+    <div class="card-header bg-info">
+        <h3>نتایج استعلام</h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <form asp-controller="InquiryEmployee" asp-action="ResponseServicrSearch" method="get">
+                    <div class="input-group mb-3">
+                        <input type="text" name="search" class="form-control" placeholder="جستجوی کد ملی" required>
+                        <div class="input-group-prepend">
+                            <button class="btn btn-outline-success" type="submit">جستجو</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>نسخه سرویس</label>
+                    <input type="text" value="@Model.ResultDto.version" class="form-control" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>وضعیت فراخوانی سرویس</label>
+                    <input type="text" value="@Model.ResultDto.statusCode" class="form-control" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>وضعیت خطا</label>
+                    <input type="text" value="@Model.ResultDto.isError" class="form-control" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>پیام</label>
+                    <input type="text" value="@Model.ResultDto.message" class="form-control" />
+                </div>
+            </div>
+        </div>
+        <br />
+        @if (Model != null)
+            {
+                int counter = 1;
+<table class="table table-bordered table-striped text-center">
+    <thead>
+        <tr class="bg-success">
+            <th>ردیف</th>
+            <th>نام کاربری سازمان</th>
+            <th>کد ملی کارمند</th>
+            <th>تاریخ(میلادی)</th>
+            <th>تاریخ(شمسی)</th>
+            <th>وضعیت ناقل</th>
+            <th>تاریخ اتمام قرنطینه</th>
+            <th>تاریخ اتمام قرنطینه (شمسی)</th>
+        </tr>
+    </thead>
+    <tbody style="font-family:Verdana !important; font-size:small !important;">
+        @foreach (var item in Model.ResultListDto)
+        {
+<tr>
+    <td>@(((Model.PagingInfo.CurrentPage-1) * 10 ) + counter)</td>
+    <td>@item.organization</td>
+    <td>@item.nationalCode</td>
+    <td>@item.lastStatusCheck</td>
+    <td>@item.lastStatusCheckFa</td>
+    <td>@item.isContagious</td>
+    <td>@item.quarantineEndDate</td>
+    <td>@item.quarantineEndDateFa</td>
+</tr> counter++;
+        }
+    </tbody>
+
+</table> }
+else
+{
+<h3>داده ای وجود ندارد</h3>}
+    </div>
+</div>
+<div class="card-footer">
+    <div class="form-inline">
+        <div class="col-md-12">
+            <div class="col-md-6 pull-right">
+                @{ bool isgon = false;
+                    if (ViewBag.FlagIsContagious != null)
+                    {
+                        isgon = true;
+                    } }
+                <a title="انتها" class="btn btn-primary" href="/inquiryEmployee/ResponseServicr/@isgon/@(Model.PagingInfo.TotalPages)">
+                    <i class="fa fa-arrow-circle-right" aria-hidden="true"></i>
+                </a>
+                <a title="بعدی" class="btn btn-primary" href="/inquiryEmployee/ResponseServicr/@isgon/@(Model.PagingInfo.CurrentPage+1)">
+                    <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                </a>
+                <input class="form-control" type="text" name="name" value="@Model.PagingInfo.CurrentPage" />
+                <a title="قبلی" class="btn btn-primary" href="/inquiryEmployee/ResponseServicr/@isgon/@(Model.PagingInfo.CurrentPage-1)">
+                    <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                </a>
+                <a title="ابتدا" class="btn btn-primary" href="/inquiryEmployee/ResponseServicr/@isgon/1">
+                    <i class="fa fa-arrow-circle-left" aria-hidden="true"></i>
+                </a>
+
+            </div>
+            <div class="col-md-6 pull-left">
+                <form asp-controller="InquiryEmployee" asp-action="ResponseServicr" method="get">
+                    <input class="form-control" name="pageNumber" />
+                    <button type="submit" class="btn btn-success">برو</button>
+                    <button type="button" class="btn btn-warning">
+                        <i class="fa fa-arrow-up" aria-hidden="true"></i>
+                        @Model.PagingInfo.TotalPages
+                    </button>
+                    <button class="btn btn-info" type="button">تعداد کل نتایج : <span style="font-family:Verdana;">@Model.PagingInfo.TotalItems</span></button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<hr />

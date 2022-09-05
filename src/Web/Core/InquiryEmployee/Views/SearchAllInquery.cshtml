@@ -1,0 +1,93 @@
+﻿@section styles
+{
+	<link href="~/lib/Datatable/dataTables.bootstrap4.min.css" rel="stylesheet" />
+	<style>
+		#input_search {
+			direction: ltr !important;
+		}
+
+		.ltr {
+			direction: ltr !important;
+		}
+
+		.verdanaFont {
+			font-family: Verdana !important;
+			font-size: small !important;
+		}
+	</style>
+}
+<div class="card">
+	<div class="card-header bg-success">
+		<h3>گزارشات کلی استعلام کارمندان</h3>
+	</div>
+	<div class="card-body">
+
+		<div class="row">
+			<div class="col-md-4">
+				<div class="input-group mb-3">
+					<input type="text" class="form-control" id="inputSearch" placeholder="لطفا شماره پرسنلی یا کد ملی را وارد نمایید">
+					<div class="input-group-prepend">
+						<button class="btn btn-success" type="button" id="btnSearch">جستجو</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<br />
+		<div class="row">
+			<div class="col-md-12">
+				<table id="example" class="table table-striped table-bordered table-hover text-center" style="width:100%">
+					<thead>
+						<tr class="bg-info">
+							<th>نام</th>
+							<th>نام خانوادگی</th>
+							<th>کد پرسنلی</th>
+							<th>کد ملی کارمند</th>
+							<th>محل خدمت</th>
+							<th>امورشعب</th>
+							<th>شعبه</th>
+							<th>تاریخ استعلام</th>
+							<th>وضعیت ناقل</th>
+							<th>تاریخ اتمام قرنطینه</th>
+						</tr>
+					</thead>
+					<tbody id="innerTable">
+					</tbody>
+				</table>
+			</div>
+
+		</div>
+	</div>
+</div>
+@section scripts
+{
+	<script>
+		$(document).ready(function () {
+			$('#btnSearch').click(function () {
+				$('#innerTable').html('<tr><td colspan="12"><h2>لطفا منتظر بمانید ... </h2></td></tr>');
+				let inputSearch = $('#inputSearch').val();
+				inputSearch = inputSearch.trim();
+
+				if (inputSearch.length > 0) {
+					$.ajax('/InquiryEmployee/SearchAllInquery/?search=' + inputSearch + '')
+						.done(function (result) {
+
+							if (result.length > 0) {
+								$('#innerTable').html('');
+								for (var i = 0; i < result.length; i++) {
+									$('#innerTable').append('<tr><td>' + result[i].FirstName + '</td><td>' + result[i].LastName + '</td><td>' + result[i].Code + '</td><td class="ltr verdanaFont">' + result[i].NationalCode + '</td><td class="ltr verdanaFont">' + result[i].ProvinceName + '</td><td class="ltr verdanaFont">' + result[i].OrganizationName + '</td><td class="ltr verdanaFont">' + result[i].UnitName + '</td><td class="ltr verdanaFont">' + result[i].lastStatusCheckFa + '</td><td class="ltr verdanaFont">' + result[i].isContagious + '</td><td class="ltr verdanaFont">' + result[i].quarantineEndDateFa + '</td></tr>');
+								}
+							}
+							else {
+								$('#innerTable').html('');
+								$('#innerTable').html('<tr><td colspan="12"><h2>موردی یافت نگردید.</h2></td></tr>');
+							}
+						});
+				}
+				else {
+					$('#innerTable').html('');
+					$('#innerTable').html('<tr><td colspan="12"><h2>مقدار ورودی نباید خالی باشد !!!</h2></td></tr>');
+				}
+			});
+		});
+	</script>
+}

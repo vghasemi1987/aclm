@@ -1,0 +1,114 @@
+﻿
+@using Web.Core.TopupAccountTransactions
+@model Web.Core.TopupAccountTransactions.ViewModels.TopupAccountSearchViewModel
+
+@{
+    ViewBag.Title = "جزییات تراکنش";
+}
+
+<div class="m-portlet">
+
+    <div class="m-portlet__body">
+        <div class="k-rtl">
+            <div id="report-grid"></div>
+        </div>
+    </div>
+</div>
+
+
+<div class="k-rtl">
+    <div id="report-grid"></div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+         $(document).ready(function() {
+               var reportDataSource = new kendo.data.DataSource({
+                    transport: {
+                        read: {
+                            url: '@Html.Raw(Url.Action("GetTransactionDetailByHeader", "TopupAccountTransactions", Model))',
+                            dataType: "json",
+                            type: 'GET'
+                        },
+                        parameterMap: function(options) {
+                            return `models=${kendo.stringify(options)}`;
+                        }
+                    },
+                    schema: {
+                        data: "Data",
+                        total: "Total"
+                    },
+                    error: function(e) {
+                        alert(e.errorThrown);
+                    },
+                    pageSize: 10,
+                    sort: { field: "Id", dir: "desc" },
+                    serverPaging: true,
+                    serverFiltering: true,
+                    serverSorting: true
+                });
+                $("#report-grid").kendoGrid({
+                    dataSource: reportDataSource,
+                    autoBind: true,
+                    scrollable: false,
+                    pageable: {
+                        buttonCount: 5,
+                        refresh: true,
+                        input: true,
+                        pageSizes: [5, 10, 15, 20, 25],
+                        info: true
+                    },
+            progress:true,
+                    sortable: true,
+                    filterable: {
+                        mode: "menu",
+                        messages: {
+                            selectedItemsFormat: "{0} آیتم انتخاب شده",
+                            search: "جستجو",
+                            checkAll: "انتخاب همه",
+                            clear: "لغو",
+                            filter: "اعمال"
+                        }
+                    },
+                @*toolbar: [
+                        {
+                            template:
+                              `<button class="k-button" data-title="جستجو" data-link="@Url.Action(nameof(TopupAccountTransactionsController.Search),Model)"><span class="k-icon k-i-search"></span>جستجو</button>&nbsp;`
+                        },
+                    ],*@
+                    reorderable: true,
+                    columnMenu: true,
+                 //     excel: {
+                 //   allPages: true
+                 //  },
+                    columns: [
+                        { field: "Id", hidden: true },
+                        { field: "TransactionDate", title: "تاریخ تراکنش", media: "(min-width: 450px)" },
+                        { field: "TransactionTime", title: "زمان تراکنش", media: "(min-width: 450px)" },
+                        { field: "TransactionStatus", title: "وضعیت تراکنش", media: "(min-width: 450px)" },
+                        { field: "TransactionAmount", title: "مبلغ تراکنش", media: "(min-width: 450px)" },
+                        { field: "TransactionAmountText", title: "مبلغ حرفی", media: "(min-width: 450px)" },
+                        { field: "TransactionType", title: "نوع تراکنش واریز یا برداشت", media: "(min-width: 450px)" },
+                        { field: "AccountNumber", title: "شماره حساب", media: "(min-width: 450px)" },
+                        { field: "BranchCode", title: "کد شعبه", media: "(min-width: 450px)" },
+                        { field: "CustomerAccountNumber", title: "شماره حساب مشتری", media: "(min-width: 450px)" },
+                        { field: "Extra1", title: "Extra1", media: "(min-width: 450px)" },
+                        { field: "Extra2", title: "Extra2", media: "(min-width: 450px)" },
+                        { field: "Extra3", title: "Extra3", media: "(min-width: 450px)" },
+                        { field: "Extra4", title: "Extra4", media: "(min-width: 450px)" },
+                        { field: "FollowupCode", title:  "کد پیگیری کانال", media: "(min-width: 450px)" },
+                        { field: "FollowupCode2", title: "کد پیگیری 2", media: "(min-width: 450px)" },
+                        { field: "RefrenceCode", title: "کد مرجع", media: "(min-width: 450px)" }
+                    ]
+                });
+            });
+
+    </script>
+
+
+
+    <script id="responsive-column-template" type="text/x-kendo-template">
+        <strong>نام</strong>
+        <p class="col-template-val">#:data.Id#</p>
+    </script>
+}

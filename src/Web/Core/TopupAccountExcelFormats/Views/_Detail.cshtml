@@ -1,0 +1,42 @@
+﻿@model Web.Core.TopupAccountExcelFormats.ViewModels.TopupAccountExcelFormatHeaderViewModel
+
+<form asp-controller="TopupAccountExcelFormats" asp-action="AddDetail" id="frmTopupAccountExcelFormatsDetail" method="post" enctype="multipart/form-data">
+    <div class="modal-body">
+        <div class="container">
+            <div class="row">
+                <input asp-for="Id" hidden />
+                <div class="form-group col-md-6">
+                    <label asp-for="Title" class="control-label"></label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="FileKindId" class="control-label"></label>
+                    <select asp-for="FileKindId" class="form-control">
+                        <option value="">لطفا انتخاب کنید...</option>
+                        <option value="0">فایل اکسل</option>
+                        <option value="1">فایل csv</option>
+                        <option value="2">فایل TXT</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-12">
+                    <br />
+                    <label asp-for="PostedFile" class="control-label"></label>
+                    <input asp-for="PostedFile" type="file" />
+                    <span asp-validation-for="PostedFile" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">خروج</button>
+                @{ var url = Url.Action("AddDetail", "TopupAccountExcelFormats");}
+                <button onclick="event.preventDefault();saveAndupdateFile($(this.form), '@url');" type="button" class="btn btn-primary" perform="action">
+                    ذخیره
+                </button>
+            </div>
+        </div>
+    </div>
+</form>

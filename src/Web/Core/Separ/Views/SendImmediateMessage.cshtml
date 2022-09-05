@@ -1,0 +1,109 @@
+﻿@using Web.Core.Separ.ViewModels
+@model BroadCastViewModelGet
+
+@section styles
+{
+	<link href="~/lib/select2/select2.min.css" rel="stylesheet" />
+	<style>
+		.tahoma {
+			font-family: Tahoma !important;
+		}
+	</style>
+}
+@if (ViewBag.Message != null)
+{
+	<div class="alert alert-success">
+		<h4>@Convert.ToString(ViewBag.Message)</h4>
+	</div>
+}
+<div class="card">
+	<div class="card-header">
+		<h3>پیام آنی</h3>
+	</div>
+	<div class="card-body">
+		<form asp-controller="Separ" asp-action="SendImmediateMessage" method="post">
+			<div asp-validation-summary="All" class="text-danger">
+
+			</div>
+			<div class="col-md-12">
+				<div class="row">
+					<div class="col-md-6">
+						<div class="form-group">
+							<label asp-for="Subject"></label><span style="color:red;">*</span>
+							<input class="form-control" asp-for="Subject" />
+							<span asp-validation-for="Subject" class="text-danger"></span>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="form-group">
+							<label asp-for="DateTimeSubject"></label>
+							<input class="form-control" id="dateTimeSubject" asp-for="DateTimeSubject" />
+							@*<span asp-validation-for="Subject" class="text-danger"></span>*@
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label asp-for="ReferralBroadCasts">لیست کاربران</label>
+							<select class="form-control js-example-basic-multiple tahoma" name="SelectedUsers" multiple="multiple">
+								@if (Model.Users != null)
+								{
+									foreach (var user in Model.Users)
+									{
+										string concatName = $"{user.UserName}-{user.FirstName}-{user.LastName}-{user.PersonnelCode}";
+										<option value="@user.Id">@concatName</option>
+									}
+								}
+							</select>
+							<span asp-validation-for="ReferralBroadCasts" class="text-danger"></span>
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div class="form-group">
+							<label>لیست گروه ها</label>
+							<select class="form-control js-example-basic-multiple02 tahoma" name="SelectedGroup" multiple="multiple">
+								@foreach (var group in Model.GroupingOffices)
+								{
+									<option value="@group.Id">@group.Title</option>
+								}
+
+							</select>
+						</div>
+					</div>
+				</div>
+
+
+			</div>
+			<div class="col-md-12">
+				<div class="form-group">
+					<label asp-for="Text"></label><span style="color:red;">*</span>
+					<textarea rows="10" class="form-control" asp-for="Text"></textarea>
+					<span asp-validation-for="Text" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-12">
+				<button class="btn btn-success">ثبت</button>
+			</div>
+		</form>
+	</div>
+</div>
+@section scripts
+{
+
+	<script src="~/lib/select2/select2.min.js"></script>
+	<script>
+		$(document).ready(function () {
+
+			$('.js-example-basic-multiple').select2();
+			$('.js-example-basic-multiple02').select2();
+
+			$('#dateTimeSubject').MdPersianDateTimePicker({
+				targetTextSelector: '#dateTimeSubject',
+				textFormat: 'yyyy/MM/dd HH:mm',
+				englishNumber: true,
+				enableTimePicker: true,
+			});
+		});
+	</script>
+}

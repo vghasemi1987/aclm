@@ -1,0 +1,275 @@
+﻿@model Web.Core.AccessibilityRequests.ViewModels.AccessibilityRequestViewModel
+
+<form asp-controller="AccessibilityRequests" asp-action="AddDetail" id="frmAccessibilityRequestDetail" method="post">
+    <div class="modal-body">
+        <div class="container">
+
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label asp-for="LetterNo" class="control-label"></label>
+                    <input asp-for="LetterNo" class="form-control" />
+                    <span asp-validation-for="LetterNo" class="text-danger"></span>
+
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="LetterDate" class="control-label"></label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text cursor-pointer" id="btnLetterDate"><i class="far fa-calendar-alt"></i></span>
+                        </div>
+                        <input asp-for="LetterDate" class="form-control" style="width:235px"/>
+                    </div>
+                    <span class="help-block"><span asp-validation-for="LetterDate" class="text-danger"></span></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <input asp-for="Id" />
+                <div class="form-group col-md-6">
+                    <label asp-for="SourceSystemId" class="control-label"></label>
+                    <select asp-for="SourceSystemId" asp-items="@Model.SystemList" class="form-control">
+                        <option value="">لطفا انتخاب کنید...</option>
+                    </select>
+                    <span asp-validation-for="SourceSystemId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label asp-for="DestinationSystemId" class="control-label"></label>
+                    <select asp-for="DestinationSystemId" asp-items="@Model.SystemList" class="form-control">
+                        <option value="">لطفا انتخاب کنید...</option>
+                    </select>
+                    <span asp-validation-for="DestinationSystemId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label asp-for="SourceIp" class="control-label"></label>
+                    <input asp-for="SourceIp" class="form-control" />
+                    
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label asp-for="DestinationIp" class="control-label"></label>
+                    <input asp-for="DestinationIp" class="form-control" />              
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label asp-for="ServiceId" class="control-label"></label>
+                    <select asp-for="ServiceId" asp-items="@Model.ServiceList" class="form-control">
+                        <option value="">لطفا انتخاب کنید...</option>
+                    </select>
+                    <span asp-validation-for="ServiceId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label asp-for="DestinationServiceId" class="control-label"></label>
+                    <select asp-for="DestinationServiceId" asp-items="@Model.ServiceList" class="form-control">
+                        <option value="">لطفا انتخاب کنید...</option>
+                    </select>
+                    <span asp-validation-for="DestinationServiceId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label asp-for="SourceProtocolId" class="control-label"></label>
+                    <select asp-for="SourceProtocolId" asp-items="@Model.ProtocolList" class="form-control">
+                        <option value="">لطفا انتخاب کنید...</option>
+                    </select>
+                    <span asp-validation-for="SourceProtocolId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label asp-for="DestinationProtocolId" class="control-label"></label>
+                    <select asp-for="DestinationProtocolId" asp-items="@Model.ProtocolList" class="form-control">
+                        <option value="">لطفا انتخاب کنید...</option>
+                    </select>
+                    <span asp-validation-for="DestinationProtocolId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label asp-for="SourceAccessibilityLevelId" class="control-label"></label>
+                    <select asp-for="SourceAccessibilityLevelId" asp-items="@Model.AccessibilityLeveList" class="form-control">
+                        <option value="">لطفا انتخاب کنید...</option>
+                    </select>
+                    <span asp-validation-for="SourceAccessibilityLevelId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label asp-for="DestAccessibilityLevelId" class="control-label"></label>
+                    <select asp-for="DestAccessibilityLevelId" asp-items="@Model.AccessibilityLeveList" class="form-control">
+                        <option value="">لطفا انتخاب کنید...</option>
+                    </select>
+                    <span asp-validation-for="DestAccessibilityLevelId" class="text-danger"></span>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label asp-for="RequestingUserId" class="control-label"></label>
+                    <select asp-for="RequestingUserId" asp-items="@Model.UserList" class="form-control">
+                        <option value="">لطفا انتخاب کنید...</option>
+                    </select>
+                    <span asp-validation-for="RequestingUserId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label asp-for="ConfirmUserId" class="control-label"></label>
+                    <select asp-for="ConfirmUserId" asp-items="@Model.UserList" class="form-control">
+                        <option value="">لطفا انتخاب کنید...</option>
+                    </select>
+                    <span asp-validation-for="ConfirmUserId" class="text-danger"></span>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label asp-for="UserDepartmentId" class="control-label"></label>
+                    <select asp-for="UserDepartmentId" asp-items="@Model.DepartmentList" class="form-control">
+                        <option value="">لطفا انتخاب کنید...</option>
+                    </select>
+                    <span asp-validation-for="UserDepartmentId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label asp-for="RequestDepartmentId" class="control-label"></label>
+                    <select asp-for="RequestDepartmentId" asp-items="@Model.DepartmentList" class="form-control">
+                        <option value="">لطفا انتخاب کنید...</option>
+                    </select>
+                    <span asp-validation-for="RequestDepartmentId" class="text-danger"></span>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label asp-for="PhoneNumber" class="control-label"></label>
+                    <input asp-for="PhoneNumber" class="form-control" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label asp-for="AccessibilityTypeId" class="control-label"></label>
+                    <select asp-for="AccessibilityTypeId" asp-items="@Model.AccessibilityTypeList" class="form-control">
+                        <option value="">لطفا انتخاب کنید...</option>
+                    </select>
+                    <span asp-validation-for="AccessibilityTypeId" class="text-danger"></span>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    <label asp-for="AccessStartDate" class="control-label"></label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text cursor-pointer" id="btnAccessStartDate"><i class="far fa-calendar-alt"></i></span>
+                        </div>
+                        <input asp-for="AccessStartDate" class="form-control" />
+                    </div>
+                    <span class="help-block"><span asp-validation-for="AccessStartDate" class="text-danger"></span></span>
+                </div>
+                <div class="col-md-6 form-group">
+                    <label asp-for="AccessEndDate" class="control-label"></label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text cursor-pointer" id="btnAccessEndDate"><i class="far fa-calendar-alt"></i></span>
+                        </div>
+                        <input asp-for="AccessEndDate" class="form-control" />
+                    </div>
+                    <span class="help-block"><span asp-validation-for="AccessEndDate" class="text-danger"></span></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label asp-for="ImportanceFactor" class="control-label"></label>
+                    <input asp-for="ImportanceFactor" class="form-control" />
+                    <span asp-validation-for="ImportanceFactor" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Description" class="control-label"></label>
+                    <input asp-for="Description" class="form-control" />
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">خروج</button>
+                @{ var url = Model.Id > 0 ? Url.Action("EditDetail", "AccessibilityRequests") : Url.Action("AddDetail", "AccessibilityRequests");}
+                <button onclick="event.preventDefault();saveAndupdate($(this.form), '@url');" type="button" class="btn btn-primary">ذخیره</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<script type="text/javascript">
+  $.validator.unobtrusive.parse($("form"));
+    $('#btnLetterDate').MdPersianDateTimePicker({
+        targetTextSelector: '#LetterDate',
+        textFormat: 'yyyy/MM/dd HH:mm:ss',
+        englishNumber:true,
+        enableTimePicker:true
+    });
+
+     $('#btnAccessStartDate').MdPersianDateTimePicker({
+        targetTextSelector: '#AccessStartDate',
+        textFormat: 'yyyy/MM/dd HH:mm:ss',
+        englishNumber:true,
+        enableTimePicker:true
+    });
+
+     $('#btnAccessEndDate').MdPersianDateTimePicker({
+        targetTextSelector: '#AccessEndDate',
+        textFormat: 'yyyy/MM/dd HH:mm:ss',
+        englishNumber:true,
+        enableTimePicker:true
+    });
+    $('#SourceIp').mask('0ZZ.0ZZ.0ZZ.0ZZ', {
+        translation: {
+          'Z': {
+            pattern: /[0-9]/, optional: true
+          }
+        }
+    });
+    $('#DestinationIp').mask('0ZZ.0ZZ.0ZZ.0ZZ', {
+        translation: {
+          'Z': {
+            pattern: /[0-9]/, optional: true
+          }
+        }
+    });
+ 
+   var list;
+    $(document).ready(function(){
+        list = JSON.parse('@Html.Raw(Json.Serialize(Model.SystemIpList))');
+        });
+    $('#SourceSystemId').on('change', function (e) {
+        var selectedItem = $('#SourceSystemId :selected').val();
+        $.each(list, function(i, v) {
+        if (v.Id == selectedItem) {
+            $('#SourceIp').val(v.IpAddress);
+            return;
+            }
+        });
+    });
+
+    $('#DestinationSystemId').on('change', function (e) {
+        var selectedItem = $('#DestinationSystemId :selected').val();
+        $.each(list, function(i, v) {
+        if (v.Id == selectedItem) {
+            $('#DestinationIp').val( v.IpAddress);
+            return;
+            }
+        });
+    });
+</script>

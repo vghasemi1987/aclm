@@ -1,0 +1,107 @@
+﻿@using Web.Core.AccessRanges
+@{
+    ViewBag.Title = "لیست محدوده دسترسی";
+}
+
+<div class="m-portlet">
+    <div class="m-portlet__head">
+        <div class="m-portlet__head-caption">
+            <div class="m-portlet__head-title">
+                <h3 class="m-portlet__head-text">
+                    لیست محدوده دسترسی در سامانه
+                </h3>
+            </div>
+        </div>
+    </div>
+    <div class="m-portlet__body">
+        <div class="k-rtl">
+            <div id="report-grid"></div>
+        </div>
+    </div>
+</div>
+
+<div class="k-rtl">
+    <div id="report-grid"></div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var actionTypeDataSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        url: '@Html.Raw(Url.Action("GetRecords", "AccessRanges"))',
+                        dataType: "json",
+                        type: 'GET'
+                    },
+                    parameterMap: function(options) {
+                        return `models=${kendo.stringify(options)}`;
+                    }
+                },
+                schema: {
+                    data: "Data",
+                    total: "Total"
+                },
+                error: function(e) {
+                    alert(e.errorThrown);
+                },
+                pageSize: 10,
+                sort: { field: "Id", dir: "desc" },
+                serverPaging: true,
+                serverFiltering: true,
+                serverSorting: true
+            });
+
+          var grid =  $("#report-grid").kendoGrid({
+                dataSource: actionTypeDataSource,
+                autoBind: true,
+                scrollable: false,
+                pageable: {
+                    buttonCount: 5,
+                    refresh: true,
+                    input: true,
+                    pageSizes: [5, 10, 15, 20, 25],
+                    info: true
+                },
+
+                sortable: true,
+                filterable: {
+                    mode: "menu",
+                    messages: {
+                        selectedItemsFormat: "{0} آیتم انتخاب شده",
+                        search: "جستجو",
+                        checkAll: "انتخاب همه",
+                        clear: "لغو",
+                        filter: "اعمال"
+                    }
+                },
+                 toolbar: [
+                    {
+                        template:
+                          `<button class="k-button" data-title="جدید" data-link="@Url.Action(nameof(AccessRangesController.GetDetail))"><span class="k-icon k-i-add"></span>محدوده دسترسی جدید</button>&nbsp;
+                            <button class="k-button" id="deleteSelection" data-url="@Url.Action(nameof(AccessRangesController.Delete))"><span class="k-icon k-i-delete"></span>حذف انتخاب شده ها</button>`
+                    },
+
+                ],
+                reorderable: true,
+                columnMenu: true,
+                columns: [
+                    { template: "<input type='checkbox' class='checkbox' />"  ,  width:"30px"},
+                    { field: "Id", hidden:true },
+                    { field: "Title", title: "عنوان", media: "(min-width: 450px)" },
+                   
+                    {
+                        title: "عملیات",
+                        template:
+                            '<button class="k-button k-button-icontext k-grid-edit" data-link="@Url.Action(nameof(AccessRangesController.GetDetail))/#:Id#" data-title="جزییات #:Title#" ><span class="k-icon k-i-edit"></span>جزییات</button>'
+                    }
+                ]
+            }).data("kendoGrid");
+            grid.table.on("click", ".checkbox" , selectRow);
+        });
+    </script>
+    <script id="responsive-column-template" type="text/x-kendo-template">
+        <strong>عنوان</strong>
+        <p class="col-template-val">#:data.Title#</p>
+    </script>
+}

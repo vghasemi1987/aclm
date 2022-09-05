@@ -1,0 +1,136 @@
+﻿@model Web.Core.Accessibilities.ViewModels.AccessibilityViewModel
+
+<form asp-controller="Accessibilities" asp-action="AddDetail" id="frmAccessibilityDetail" method="post">
+    <div class="modal-body">
+        <div class="container">
+            <div class="row ">
+                <input asp-for="Id" />
+                <div class="form-group col-md-6">
+                    <label asp-for="SourceSystemId" class="control-label"></label>
+                    <select asp-for="SourceSystemId" asp-items="@Model.SystemList" class="form-control">
+                        <option value="">لطفا انتخاب کنید...</option>
+                    </select>
+                    <span asp-validation-for="SourceSystemId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label asp-for="DestinationSystemId" class="control-label"></label>
+                    <select asp-for="DestinationSystemId" asp-items="@Model.SystemList" class="form-control">
+                        <option value="">لطفا انتخاب کنید...</option>
+                    </select>
+                    <span asp-validation-for="DestinationSystemId" class="text-danger"></span>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label asp-for="SourceIp" class="control-label"></label>
+                    <input asp-for="SourceIp" readonly class="form-control" />
+                    <span asp-validation-for="SourceIp" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label asp-for="DestinationIp" class="control-label"></label>
+                    <input asp-for="DestinationIp" readonly class="form-control" />
+                    <span asp-validation-for="DestinationIp" class="text-danger"></span>
+                </div>
+
+            </div>
+
+            @*<div class="row">
+                    <div class="form-group col-md-6">
+                        <label asp-for="SourcePort" class="control-label"></label>
+                        <input asp-for="SourcePort" class="form-control" />
+                        <span asp-validation-for="SourcePort" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label asp-for="DestinationPort" class="control-label"></label>
+                        <input asp-for="DestinationPort" class="form-control" />
+                        <span asp-validation-for="DestinationPort" class="text-danger"></span>
+                    </div>
+
+                </div>*@
+
+            <div class="row ">
+                <div class="form-group col-md-6">
+                    <label asp-for="ProtocolId" class="control-label"></label>
+                    <select asp-for="ProtocolId" asp-items="@Model.ProtocolList" class="form-control">
+                        <option value="">لطفا انتخاب کنید...</option>
+                    </select>
+                    <span asp-validation-for="ProtocolId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label asp-for="RouterId" class="control-label"></label>
+                    <select asp-for="RouterId" asp-items="@Model.RouterList" class="form-control">
+                        <option value="">لطفا انتخاب کنید...</option>
+                    </select>
+                    <span asp-validation-for="RouterId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label asp-for="ServiceId" class="control-label"></label>
+                    <select asp-for="ServiceId" asp-items="@Model.ServiceList" class="form-control">
+                        <option value="">لطفا انتخاب کنید...</option>
+                    </select>
+                    <span asp-validation-for="ServiceId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label asp-for="DestinationServiceId" class="control-label"></label>
+                    <select asp-for="DestinationServiceId" asp-items="@Model.ServiceList" class="form-control">
+                        <option value="">لطفا انتخاب کنید...</option>
+                    </select>
+                    <span asp-validation-for="DestinationServiceId" class="text-danger"></span>
+                </div>
+
+            </div>
+
+            <div class="row ">
+                <div class="form-group col-md-6">
+                    <label asp-for="ActionTypeId" class="control-label"></label>
+                    <select asp-for="ActionTypeId" asp-items="@Model.ActionTypeList" class="form-control">
+                        <option value="">لطفا انتخاب کنید...</option>
+                    </select>
+                    <span asp-validation-for="ActionTypeId" class="text-danger"></span>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">خروج</button>
+                @{ var url = Model.Id > 0 ? Url.Action("EditDetail", "Accessibilities") : Url.Action("AddDetail", "Accessibilities");}
+                <button onclick="event.preventDefault();saveAndupdate($(this.form), '@url');" type="button" class="btn btn-primary">ذخیره</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+var list;
+$(document).ready(function(){
+    list = JSON.parse('@Html.Raw(Json.Serialize(Model.SystemIpList))');
+    });
+$('#SourceSystemId').on('change', function (e) {
+    var selectedItem = $('#SourceSystemId :selected').val();
+    $.each(list, function(i, v) {
+    if (v.Id == selectedItem) {
+        $('#SourceIp').val(v.IpAddress);
+        return;
+        }
+    });
+});
+
+$('#DestinationSystemId').on('change', function (e) {
+    var selectedItem = $('#DestinationSystemId :selected').val();
+    $.each(list, function(i, v) {
+    if (v.Id == selectedItem) {
+        $('#DestinationIp').val( v.IpAddress);
+        return;
+        }
+    });
+});
+</script>

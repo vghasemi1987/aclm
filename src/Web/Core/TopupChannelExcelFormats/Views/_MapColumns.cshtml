@@ -1,0 +1,148 @@
+﻿@model Web.Core.TopupChannelExcelFormats.ViewModels.TopupChannelExcelFormatViewModel
+
+<form asp-controller="TopupChannelExcelFormatsController" asp-action="AddDetail" id="frmTopupChannelExcelFormatsDetail" method="post">
+    <div class="modal-body">
+        <div class="container">
+            <div class="row">
+                <input hidden asp-for="Id" />
+                <input hidden asp-for="HeaderId" />
+                <div class="form-group col-md-12">
+                    <label asp-for="Title" class="control-label"></label>
+                    <input asp-for="Title" readonly class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label asp-for="TransactionDate" class="control-label"></label>
+                    <select asp-for="TransactionDate" asp-items="@Model.PropList" class="form-control">
+                        <option>لطفا انتخاب کنید...</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="TransactionAmount" class="control-label"></label>
+                    <select asp-for="TransactionAmount" asp-items="@Model.PropList" class="form-control">
+                        <option>لطفا انتخاب کنید...</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label asp-for="TransactionStatus" class="control-label"></label>
+                    <select asp-for="TransactionStatus" asp-items="@Model.PropList" class="form-control">
+                        <option>لطفا انتخاب کنید...</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="AmountText" class="control-label"></label>
+                    <select asp-for="AmountText" asp-items="@Model.PropList" class="form-control">
+                        <option>لطفا انتخاب کنید...</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label asp-for="ChannelType" class="control-label"></label>
+                    <select asp-for="ChannelType" asp-items="@Model.PropList" class="form-control">
+                        <option>لطفا انتخاب کنید...</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="CustomerAccountNumber" class="control-label"></label>
+                    <select asp-for="CustomerAccountNumber" asp-items="@Model.PropList" class="form-control">
+                        <option>لطفا انتخاب کنید...</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label asp-for="MobileNumber" class="control-label"></label>
+                    <select asp-for="MobileNumber" asp-items="@Model.PropList" class="form-control">
+                        <option>لطفا انتخاب کنید...</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="OperatorName" class="control-label"></label>
+                    <select asp-for="OperatorName" asp-items="@Model.PropList" class="form-control">
+                        <option>لطفا انتخاب کنید...</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label asp-for="FollowupCode" class="control-label"></label>
+                    <select asp-for="FollowupCode" asp-items="@Model.PropList" class="form-control">
+                        <option>لطفا انتخاب کنید...</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="FollowupCode2" class="control-label"></label>
+                    <select asp-for="FollowupCode2" asp-items="@Model.PropList" class="form-control">
+                        <option>لطفا انتخاب کنید...</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label asp-for="Extra1" class="control-label"></label>
+                    <select asp-for="Extra1" asp-items="@Model.PropList" class="form-control">
+                        <option>لطفا انتخاب کنید...</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Extra2" class="control-label"></label>
+                    <select asp-for="Extra2" asp-items="@Model.PropList" class="form-control">
+                        <option>لطفا انتخاب کنید...</option>
+                    </select>
+                </div>
+            </div>
+
+            <!--<div class="row">
+        <div class="form-group col-md-6">
+            <label asp-for="Application" class="control-label"></label>
+            <select asp-for="Application" asp-items="@Model.PropList" class="form-control">
+                <option>لطفا انتخاب کنید...</option>
+            </select>
+        </div>
+    </div>-->
+            <div class="modal-footer">
+
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">خروج</button>
+                @{ var url = Model.Id > 0 ? Url.Action("EditDetail", "TopupChannelExcelFormats") : Url.Action("MapColumns", "TopupChannelExcelFormats");}
+                <button onclick="event.preventDefault();saveAndupdate($(this.form), '@url');" type="button" class="btn btn-primary">ذخیره</button>
+
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<script>
+    $(document).ready(function() {
+       $("#files").kendoUpload();
+    });
+    function saveOrUpdate(){
+        var formData = new FormData();
+            formData.append("file", $("#upLoadFile")[0].files[0]);
+            formData.append("Title",$("#Title").val());
+            var _url = '@Url.Action("AddDetail", "TopupChannelExcelFormats")';
+            $.ajax({
+                url: _url,
+                type: 'POST',
+                data: formData,
+                processData: false,  // tell jQuery not to process the data
+                contentType: false,  // tell jQuery not to set contentType
+                success: function (result) {
+                    update_list(result);
+                },
+                error: function (jqXHR) {
+                },
+                complete: function (jqXHR, status) {
+                }
+            });
+        }
+</script>

@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+     <RestoreSources>$(RestoreSources);../Infrastructure/bin/Debug;https://api.nuget.org/v3/index.json</RestoreSources>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Data\Migrations\**" />
+    <EmbeddedResource Remove="Data\Migrations\**" />
+    <None Remove="Data\Migrations\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Migrations\20190612040000_InitialModel03.cs" />
+    <Compile Remove="Migrations\20190612040000_InitialModel03.Designer.cs" />
+    <Compile Remove="Migrations\20190709034330_InitialModel13.cs" />
+    <Compile Remove="Migrations\20190709034330_InitialModel13.Designer.cs" />
+    <Compile Remove="Migrations\20190713120441_InitialModel14.cs" />
+    <Compile Remove="Migrations\20190713120441_InitialModel14.Designer.cs" />
+    <Compile Remove="Migrations\20190724040503_InitialModel21.cs" />
+    <Compile Remove="Migrations\20190724040503_InitialModel21.Designer.cs" />
+    <Compile Remove="Migrations\20190728074039_InitialModel01.cs" />
+    <Compile Remove="Migrations\20190728074039_InitialModel01.Designer.cs" />
+    <Compile Remove="Migrations\20190818073800_InitialModel02.cs" />
+    <Compile Remove="Migrations\20190818073800_InitialModel02.Designer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+ 
+    <PackageReference Include="Dapper" Version="2.0.90" />
+    <PackageReference Include="EFCore.BulkExtensions" Version="2.5.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.3" PrivateAssets="all">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="Z.Dapper.Plus" Version="4.0.12" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ApplicationCommon\ApplicationCommon.csproj" />
+    <ProjectReference Include="..\DomainApplication\DomainApplication.csproj" />
+  </ItemGroup>
+</Project>

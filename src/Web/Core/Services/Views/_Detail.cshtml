@@ -1,0 +1,54 @@
+﻿@model Web.Core.Services.ViewModels.ServiceViewModel
+
+<form asp-controller="Services" asp-action="AddDetail" id="frmServicesDetail" method="post">
+    <div class="modal-body">
+        <div class="container">
+            <div class="row  ">
+                <input asp-for="Id" />
+                <div class="form-group col-md-12">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-12">
+                    <label asp-for="Description" class="control-label"></label>
+                    <input asp-for="Description" class="form-control" />
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row  ">
+                <div class="form-group col-md-12">
+                    <label asp-for="Port" class="control-label"></label>
+                    <input asp-for="Port" class="form-control" />
+                    <span asp-validation-for="Port" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-12">
+                    <label asp-for="ProtocolId" class="control-label"></label>
+                    <select asp-for="ProtocolId" asp-items="@Model.ProtocolSelectList" class="form-control">
+                        <option value="">لطفا انتخاب کنید...</option>
+                    </select>
+                    <span asp-validation-for="ProtocolId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row  ">
+                <div class="form-group col-md-12">
+                    <label asp-for="ServiceLevelId" class="control-label"></label>
+                    <select asp-for="ServiceLevelId" asp-items="@Model.ServiceLevelSelectList" class="form-control">
+                        <option value="">لطفا انتخاب کنید...</option>
+                    </select>
+                    <span asp-validation-for="ServiceLevelId" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">خروج</button>
+            @{ var url = Model.Id > 0 ? Url.Action("EditDetail", "Services") : Url.Action("AddDetail", "Services");}
+            <button onclick="event.preventDefault();saveAndupdate($(this.form), '@url');" type="button" class="btn btn-primary">ذخیره</button>
+        </div>
+    </div>
+    </div>
+</form>

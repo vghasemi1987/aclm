@@ -1,0 +1,64 @@
+﻿@model Web.Core.ToDoTask.ViewModels.FormViewModel
+
+<form asp-controller="ToDoTask" asp-action="AddDetail" enctype="multipart/form-data" id="frmTaskDetail" method="post">
+    <div class="modal-body">
+        <input asp-for="Id" />
+        <div class="form-group">
+            <label asp-for="Title" class="control-label"></label>
+            <input asp-for="Title" class="form-control autocomplete" data-section="3" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Description" class="control-label"></label>
+            <textarea asp-for="Description" class="form-control"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="DueDateTime" class="control-label"></label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text cursor-pointer" id="btnDueDateTime"><i class="far fa-calendar-alt"></i></span>
+                </div>
+                <input asp-for="DueDateTime" class="form-control" />
+            </div>
+            <span class="help-block"><span asp-validation-for="DueDateTime" class="text-danger"></span></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="AssignedToUserId" class="control-label"></label>
+            <select asp-for="AssignedToUserId" asp-items="Model.Users" title="لطفا انتخاب کنید..." data-live-search="true" class="form-control selectpicker show-tick"></select>
+            <span asp-validation-for="AssignedToUserId" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="PostedFile" class="control-label"></label>
+            <input asp-for="PostedFile" type="file" class="form-control" />
+            <span asp-validation-for="PostedFile" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="PriorityId" class="control-label"></label>
+            <select asp-for="PriorityId" asp-items="Model.Priority" class="form-control selectpicker show-tick"></select>
+            <span asp-validation-for="PriorityId" class="text-danger"></span>
+        </div>
+        <div class="form-group" @(Model.Id > 0 ? "" : "hidden")>
+            <label asp-for="StateId" class="control-label"></label>
+            <select asp-for="StateId" asp-items="Model.StateSelectList" class="form-control selectpicker show-tick"></select>
+            <span asp-validation-for="StateId" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" data-dismiss="modal">خروج</button>
+        <button onclick="event.preventDefault();saveAndupdateFile($(this.form), '@Url.Action(Model.Id>0?"EditDetail" : "AddDetail", "ToDoTask")');"
+                perform="action" class="btn btn-primary">
+            ذخیره
+        </button>
+    </div>
+</form>
+
+<script type="text/javascript">
+    $.validator.unobtrusive.parse($("form"));
+    $('#btnDueDateTime').MdPersianDateTimePicker({
+        targetTextSelector: '#DueDateTime',
+        textFormat: 'yyyy/MM/dd HH:mm:ss',
+        englishNumber:true,
+        enableTimePicker:true
+    });
+</script>
