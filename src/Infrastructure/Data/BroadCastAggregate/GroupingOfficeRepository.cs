@@ -39,6 +39,16 @@ namespace Infrastructure.Data.BroadCastAggregate
 			_dbSet = dbContext.Set<GroupingOfficeMember>();
 		}
 
+		public async Task DeleteByGroupingOfficeMemberListAsync(int id)
+		{
+			List<GroupingOfficeMember> result =
+				await (_dbSet.Where(w => w.GroupingOfficeId == id)).ToListAsync();
+			foreach (GroupingOfficeMember item in result)
+			{
+				_dbSet.Remove(_dbSet.Find(item.Id));
+			}
+		}
+
 		public async Task<List<GroupingOfficeMember>> GetById(int? id)
 		{
 			var model = await DbContext.Set<GroupingOfficeMember>().Where(w => w.GroupingOfficeId == id)

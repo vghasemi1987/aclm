@@ -364,3 +364,7 @@ div.k-treeview {
 .m-brand.m-brand--skin-dark .m-brand__tools .m-brand__icon:hover > i {
     color: maroon;
 }
+
+.swal2-popup {
+    width: 1000px !important;
+}

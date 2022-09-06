@@ -21,7 +21,7 @@ namespace Infrastructure.Data.BroadCastAggregate
 				.IsUnicode(true)
 				.IsRequired(true);
 			builder.Property(c => c.Text)
-				.HasMaxLength(500)
+				.HasMaxLength(2000)
 				.IsUnicode(true)
 				.IsRequired(true);
 

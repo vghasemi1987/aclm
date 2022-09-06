@@ -10,5 +10,6 @@ namespace DomainContracts.BroadcastAggregate
 		Task<List<ProtectionOfficeMember>> GetById(int? id);
 		Task<List<ProtectionOfficeMember>> GetByProtectionOfficeId(int? id);
 		Task<List<ProtectionOfficeMember>> GetByProtectionOfficeUserId(List<int> userIdList);
+		Task DeleteByprotectionMemberIdListAsync(int id);
 	}
 }

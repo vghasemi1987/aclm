@@ -21,11 +21,16 @@ namespace Infrastructure.Data.BroadCastAggregate
 			return await DbContext.Set<ProtectionOffice>().Include(c => c.ProtectionOfficeUserRelations).AsNoTracking().SingleOrDefaultAsync(c => c.Id == id);
 		}
 
-		
 
+		/// <summary>
+		/// لسیت موضوعات
+		/// </summary>
+		/// <returns></returns>
 		public async Task<List<ProtectionOffice>> GetProtectionOfficeAll()
 		{
-			return await DbContext.Set<ProtectionOffice>().Include(c => c.ProtectionOfficeMembers).Include(c => c.ProtectionOfficeUserRelations).AsNoTracking().ToListAsync();
+			List<ProtectionOffice> result =
+				await DbContext.Set<ProtectionOffice>().Include(c => c.ProtectionOfficeMembers).Include(c => c.ProtectionOfficeUserRelations).AsNoTracking().ToListAsync();
+			return result;
 		}
 	}
 	public class ProtectionOfficeMemberRepository : EfRepository<ProtectionOfficeMember>, IProtectionOfficeMemberRepository
@@ -35,6 +40,17 @@ namespace Infrastructure.Data.BroadCastAggregate
 		{
 			_dbSet = dbContext.Set<ProtectionOfficeMember>();
 		}
+
+		public async Task DeleteByprotectionMemberIdListAsync(int id)
+		{
+			List<ProtectionOfficeMember> result =
+				await (_dbSet.Where(w => w.ProtectionOfficeId == id)).ToListAsync();
+			foreach (ProtectionOfficeMember item in result)
+			{
+				_dbSet.Remove(_dbSet.Find(item.Id));
+			}
+		}
+
 		public async Task<List<ProtectionOfficeMember>> GetById(int? id)
 		{
 			var model = await DbContext.Set<ProtectionOfficeMember>().Where(w => w.ProtectionOfficeId == id)

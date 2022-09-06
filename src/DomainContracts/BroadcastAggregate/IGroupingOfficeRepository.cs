@@ -14,6 +14,7 @@ namespace DomainContracts.BroadcastAggregate
 	public interface IGroupingOfficeMemberRepository : IRepository<GroupingOfficeMember>, IAsyncRepository<GroupingOfficeMember>
 	{
 		Task<List<GroupingOfficeMember>> GetById(int? id);
+		Task DeleteByGroupingOfficeMemberListAsync(int id);
 	}
 	
 }
