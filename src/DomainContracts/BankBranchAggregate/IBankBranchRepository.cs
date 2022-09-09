@@ -11,5 +11,6 @@ namespace DomainContracts.BankBranchAggregate
 		Task<List<BankBranchDropDownDto>> GetDropDownBankBranchesList();
 		//Task<List<BankBranchDropDownDto>> GetDropDownList();
 		Task<BankBranch> GetBranchByName(string branchName);
+		Task<BankBranch> GetBranchById(int id);
 	}
 }

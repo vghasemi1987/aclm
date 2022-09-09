@@ -53,8 +53,20 @@ namespace Infrastructure.Data.BroadCastAggregate
 		}
 		public async Task<ReferralBroadCast> GetReferralBroadCastFromBroadCast(int id)
 		{
-			var model = _dbSet.Include(c => c.ApplicationUser).Include(c => c.BroadCast);
-			var result = await model.Where(c => c.BroadCastId == id).FirstOrDefaultAsync();
+			var result =
+				await _dbSet.Where(w => w.BroadCastId == id)
+				.Include(c => c.ApplicationUser)
+				.Include(c => c.BroadCast)
+				.FirstOrDefaultAsync();
+
+
+			if (result == null) throw new Exception();
+			//var model =
+			//	_dbSet.Include(c => c.ApplicationUser).Include(c => c.BroadCast);
+
+			//var result =
+			//	await model.Where(c => c.BroadCastId == id).FirstOrDefaultAsync();
+
 			return result;
 		}
 		public async Task<ReferralBroadCast> GetByIdUpdate(int? id)
@@ -69,10 +81,25 @@ namespace Infrastructure.Data.BroadCastAggregate
 		}
 		public async Task<List<ReferralBroadCast>> GetListtByIdDstUser(int? id)
 		{
-			var model = await _dbSet.Where(w => w.DstUserID == id).Include(c => c.ApplicationUser).Include(c => c.BroadCast).AsNoTracking().ToListAsync();
+			List<ReferralBroadCast> model =
+				await _dbSet.Where(w => w.DstUserID == id)
+				.Include(c => c.ApplicationUser).Include(c => c.BroadCast).AsNoTracking().ToListAsync();
 			return model;
 		}
+		public async Task<List<BroadCast>> GetListtByIdDstUserBroadCast(int? id)
+		{
+			List<BroadCast> broadCastsList = new List<BroadCast>();
+			var model =
+				await _dbSet.Where(w => w.DstUserID == id)
+				.Include(c => c.BroadCast)
+				.AsNoTracking().ToListAsync();
 
+			foreach (var bb in model)
+			{
+				broadCastsList.Add(bb.BroadCast);
+			}
+			return broadCastsList;
+		}
 		public async Task<IEnumerable<ReferralBroadCast>> GetListAllAdameMoshahede()
 		{
 			var result = await Task.Run(() =>
@@ -85,20 +112,21 @@ namespace Infrastructure.Data.BroadCastAggregate
 		}
 		public async Task<IEnumerable<ReferralBroadCast>> GetListAllTakhir()
 		{
-			var result = await Task.Run(() =>
+			IQueryable<ReferralBroadCast> result =
+
 			_dbSet.Include(c => c.BroadCast).Where(w =>
 
 			//w.Status == ReferralStatusBroadCastEnum.AdameMoshahede
 
 			(w.ActionDescription == null || w.ActionDescription == "") &&
 			w.BroadCast.CreateDate.Value.AddDays(5) < DateTime.Now
-
 			)
 
 			.Include(c => c.ApplicationUser)
+			.AsNoTracking();
 
-			.AsNoTracking()
-			);
+
+
 			return result;
 		}
 		public async Task<int> CountUnRead5DayLast()

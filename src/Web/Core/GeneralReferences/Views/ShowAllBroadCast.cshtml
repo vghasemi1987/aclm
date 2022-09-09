@@ -5,14 +5,18 @@
 	<div class="alert alert-success waiting hidden">
 		<h3>لطفا منتظر بمانید ... </h3>
 	</div>
-	@if (Convert.ToInt32(ViewBag.CountAdameMoshahede) != null)
+
+	@if (User.IsInRole(role: "admin"))
 	{
-		<div class="row">
-			<div class="col-md-4">
-				<a href="/GeneralReferences/ShowAllUnReadMessage">پیام های مشاهده نشده  <span>@(ViewBag.CountAdameMoshahede)</span></a>
+		if (Convert.ToInt32(ViewBag.CountAdameMoshahede) != null)
+		{
+			<div class="row">
+				<div class="col-md-4">
+					<a class="flashingButton" href="/GeneralReferences/ShowAllUnReadMessage">پیام های مشاهده نشده  <span>@(ViewBag.CountAdameMoshahede)</span></a>
+				</div>
 			</div>
-		</div>
-		<hr />
+			<hr />
+		}
 	}
 
 	<div class="row">
@@ -54,8 +58,8 @@
 				</tr>
 			</thead>
 			<tbody>
-				
-				@if (Model.Count>0 && Model != null)
+
+				@if (Model.Count > 0 && Model != null)
 				{
 					foreach (var item in Model)
 					{
@@ -295,15 +299,15 @@
 
 							textData +=
 								`<tr>
-																						<td> ${result[i].ApplicationUser.FirstName + ' ' + result[i].ApplicationUser.LastName}</td>
-																						<td>${result[i].ApplicationUser.UserName}</td>
-																						<td>${result[i].BroadCast.UserNameSender}</td>
-																						<td>${result[i].StatusString}</td>
-																						<td>${result[i].BroadCast.CreateDatePersian}</td>
-																						<td>${result[i].DeadLinePersian}</td>
-																						<td><button class="btn-ActionText btn-sm btn btn-dark" value="${result[i].BroadCast.Text}">متن پیام</button></td>
-																						<td><button class="btn-ActionDescription btn-sm btn btn-info" value="${result[i].ActionDescription}">مشاهده</button></td>
-																						</tr>`;
+																							<td> ${result[i].ApplicationUser.FirstName + ' ' + result[i].ApplicationUser.LastName}</td>
+																							<td>${result[i].ApplicationUser.UserName}</td>
+																							<td>${result[i].BroadCast.UserNameSender}</td>
+																							<td>${result[i].StatusString}</td>
+																							<td>${result[i].BroadCast.CreateDatePersian}</td>
+																							<td>${result[i].DeadLinePersian}</td>
+																							<td><button class="btn-ActionText btn-sm btn btn-dark" value="${result[i].BroadCast.Text}">متن پیام</button></td>
+																							<td><button class="btn-ActionDescription btn-sm btn btn-info" value="${result[i].ActionDescription}">مشاهده</button></td>
+																							</tr>`;
 						}
 						$('#trDetails').html(textData);
 					} else {

@@ -46,5 +46,12 @@ namespace Infrastructure.Data.DepartmentAggregate
 				})
 				.AsNoTracking().ToListAsync();
 		}
+
+		public async Task<IList<Department>> GetDepartmentByName(string name)
+		{
+			var result =
+				await _dbSet.Where(w => w.Name.Contains(name)).ToListAsync();
+			return result;
+		}
 	}
 }

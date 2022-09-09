@@ -48,7 +48,7 @@ namespace Infrastructure.Data.Commons
 			public ServerAccessibilityMonitorContext CreateDbContext(string[] args)
 			{
 				var builder = new DbContextOptionsBuilder<ServerAccessibilityMonitorContext>();
-				builder.UseSqlServer("Data Source=.;Password=Ss1234!@#$;Initial Catalog=SamNew000331;User ID=sa;Persist Security Info=true;MultipleActiveResultSets=True");
+				builder.UseSqlServer("Data Source=.;Password=Ss1234!@#$;Initial Catalog=SamNew;User ID=sa;Persist Security Info=true;MultipleActiveResultSets=True");
 				return new ServerAccessibilityMonitorContext(builder.Options);
 			}
 		}

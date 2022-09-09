@@ -1,6 +1,10 @@
 ﻿@using Web.Core.Separ.ViewModels
 @using DomainEntities.BroadcastAggregate
-@{ Layout = null;}
+
+@{
+	Layout = null;
+}
+
 @model BroadCastViewModelGeneral
 
 <!DOCTYPE html>
@@ -23,19 +27,28 @@
 		.select2 {
 			font-family: Verdana !important;
 		}
+
+		body {
+			background-image: url(/images/ui-theme/BGSimple.jpg);
+			background-repeat: no-repeat;
+			background-position: right top;
+		}
 	</style>
 </head>
-<body style="background-image: url(/images/ui-theme/login-bg.jpg);">
-	<div class="container" style="display:flex;height:100%;">
+<body>
+	<div class="container">
 		<br />
 
 		@if (ViewBag.Message != null)
 		{
-			<h4><input type="hidden" id="messageText" value="@(Convert.ToString(ViewBag.Message))" /></h4>
+			<div class="alert alert-info">
+				<h4><input type="hidden" id="messageText" value="@(Convert.ToString(ViewBag.Message))" /></h4>
+				<h3>@(ViewBag.Message)</h3>
+			</div>
 		}
-		<div class="card" style="margin:auto;">
-			<div class="card-header bg-primary">
-				<h3>پیام عمومی</h3>
+		<div class="card" style="margin-top:10%;">
+			<div class="card-header bg-warning">
+				<h3>اطلاع رسانی</h3>
 			</div>
 			<div class="card-body">
 				<form asp-controller="GeneralReferences" asp-action="SendMessage" method="post">
@@ -43,35 +56,35 @@
 					</div>
 					<div class="col-md-12">
 						<div class="row">
-							<div class="col-md-3">
+							<div class="col-md-2">
 								<div class="form-group">
 									<label asp-for="FirstName"></label>
 									<input class="form-control" asp-for="FirstName" placeholder="اختیاری" />
 									<span asp-validation-for="FirstName" class="text-danger"></span>
 								</div>
 							</div>
-							<div class="col-md-3">
+							<div class="col-md-2">
 								<div class="form-group">
 									<label asp-for="LastName"></label>
 									<input class="form-control" asp-for="LastName" placeholder="اختیاری" />
 									<span asp-validation-for="LastName" class="text-danger"></span>
 								</div>
 							</div>
-							<div class="col-md-3">
+							<div class="col-md-2">
 								<div class="form-group">
 									<label asp-for="PersonnelCode"></label>
 									<input class="form-control" asp-for="PersonnelCode" placeholder="اختیاری" />
 									<span asp-validation-for="PersonnelCode" class="text-danger"></span>
 								</div>
 							</div>
-							<div class="col-md-3">
+							<div class="col-md-6">
 								<div class="form-group">
 									<label asp-for="Subject"></label>
 									<select asp-for="Subject" class="form-control">
 										<option>[انتخاب کنید]</option>
 										@foreach (var subject in ViewBag.Subjects as List<ProtectionOffice>)
 										{
-											<option value="@(subject.Id)">@(subject.Title)</option>
+											<option value="@(subject.Title)">@(subject.Title)</option>
 										}
 									</select>
 									<span asp-validation-for="Subject" class="text-danger"></span>

@@ -23,5 +23,6 @@ namespace DomainContracts.BroadcastAggregate
 		Task<ReferralBroadCast> GetReferralBroadCastFromBroadCast(int id);
 		Task<IEnumerable<ReferralBroadCast>> GetListAllTakhir();
 		Task<int> CountUnRead5DayLast();
+		Task<List<BroadCast>> GetListtByIdDstUserBroadCast(int? id);
 	}
 }

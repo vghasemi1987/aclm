@@ -19,10 +19,30 @@ namespace Portal.Infrastructure.Data.BankBranchAggregate
 			_dbSet = dbContext.Set<BankBranch>();
 		}
 
+		public async Task<BankBranch> GetBranchById(int id)
+		{
+			var result =
+				await _dbSet.FindAsync(id);
+			return result;
+		}
+
 		public async Task<BankBranch> GetBranchByName(string branchName)
 		{
+
 			var result = await _dbSet.Where(w => w.Title.Contains(branchName)).FirstOrDefaultAsync();
+
+			if (result == null)
+			{
+				var bankBranch = new BankBranch
+				{
+					Id = 0,
+					Title = ""
+				};
+				return bankBranch;
+			}
 			return result;
+
+
 		}
 
 		public Task<List<BankBranchDropDownDto>> GetDropDownBankBranchesList()
@@ -53,5 +73,6 @@ namespace Portal.Infrastructure.Data.BankBranchAggregate
 				.AsNoTracking()
 				.ToListAsync();
 		}
+
 	}
 }

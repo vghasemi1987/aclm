@@ -4,6 +4,7 @@ using Infrastructure.Data.Commons;
 using KendoHelper;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Data.ApplicationUserAggregate
@@ -48,5 +49,7 @@ namespace Infrastructure.Data.ApplicationUserAggregate
 				.ToListAsync();
 
 		}
+
+		
 	}
 }

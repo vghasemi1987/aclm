@@ -4,7 +4,7 @@
 		  <RestoreSources>$(RestoreSources);../Web/bin/Debug/net6.0;https://api.nuget.org/v3/index.json</RestoreSources>
 		<AssemblyName>ServerAccessibilityMonitor</AssemblyName>
 		<AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
-
+		<GenerateRuntimeConfigDevFile>true</GenerateRuntimeConfigDevFile>
 		<UserSecretsId>000b0026-f905-413a-b09a-e6d1f59c59df</UserSecretsId>
 
 		<PlatformTarget>AnyCPU</PlatformTarget>

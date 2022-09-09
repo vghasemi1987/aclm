@@ -12,5 +12,7 @@ namespace DomainContracts.DepartmentAggregate
 		DataSourceResult GetList(DataSourceRequest request);
 		Task<Department> FindByIdAsync(int id);
 		Task<List<DropDownDto>> GetDropDownList();
+
+		Task<IList<Department>> GetDepartmentByName(string name);
 	}
 }

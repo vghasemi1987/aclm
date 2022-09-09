@@ -3,8 +3,10 @@ using AutoMapper;
 using DomainContracts.BankBranchAggregate;
 using DomainContracts.BroadcastAggregate;
 using DomainContracts.Commons;
+using DomainContracts.DepartmentAggregate;
 using DomainEntities.ApplicationUserAggregate;
 using DomainEntities.BroadcastAggregate;
+using DomainEntities.DepartmentAggregate;
 using KendoHelper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -17,6 +19,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Web.ActionFilters;
+using Web.Core.InquiryEmployee.ViewModels;
 using Web.Core.Separ.ViewModels;
 using Web.Extensions;
 using Web.Extensions.Attributes;
@@ -32,7 +35,10 @@ namespace Web.Core.GeneralReferences
 		private readonly IReferralBroadCastRepository _referralBroadCastRepository;
 		private readonly IUnitOfWork _unitOfWork;
 
+		private readonly IDepartmentRepository _departmentRepository;
 		private readonly IBankBranchRepository _bankBranchRepository;
+
+
 		//لیست گروه ها
 		private readonly IGroupingOfficeRepository _groupingOfficeRepository;
 		private readonly IGroupingOfficeMemberRepository _groupingOfficeMemberRepository;
@@ -50,6 +56,7 @@ namespace Web.Core.GeneralReferences
 			IReferralBroadCastRepository referralBroadCastRepository,
 			IGroupingOfficeRepository groupingOfficeRepository,
 			IGroupingOfficeMemberRepository groupingOfficeMemberRepository,
+			IDepartmentRepository departmentRepository,
 			IMapper mapper,
 			IUserLogMessageRepository userLogMessageRepository,
 			IConfiguration configuration,
@@ -61,7 +68,7 @@ namespace Web.Core.GeneralReferences
 			_userManager = userManager;
 			_broadCastRepository = broadCastRepository;
 			_unitOfWork = unitOfWork;
-
+			_departmentRepository = departmentRepository;
 			_referralBroadCastRepository = referralBroadCastRepository;
 
 			_groupingOfficeRepository = groupingOfficeRepository;
@@ -75,6 +82,7 @@ namespace Web.Core.GeneralReferences
 			_bankBranchRepository = bankBranchRepository;
 
 		}
+
 		[Permission]
 		[DisplayName(displayName: "خبر عمومی")]
 		[ServiceFilter(typeof(UserLogMessageAttribute))]
@@ -92,6 +100,7 @@ namespace Web.Core.GeneralReferences
 			//لیست مضوعات
 			//تعیین موضوع توسط کاربر شعبه
 			//
+
 			List<ProtectionOffice> subjects =
 				await _protectionOfficeRepositorySubject.GetProtectionOfficeAll();
 
@@ -120,36 +129,91 @@ namespace Web.Core.GeneralReferences
 		[ServiceFilter(typeof(UserLogMessageAttribute))]
 		public async Task<IActionResult> SendMessage(BroadCastViewModelGeneral inputModel)
 		{
-
-			//Towns --> مقصد استان 
-			string town = inputModel.Town;
-
-			//یافتن کاربر مقصد به وسیله استان
-			//512 --> سیستان و بلوچستان
-			DomainEntities.BankBranchAggregate.BankBranch branches =
-				await _bankBranchRepository.GetBranchByName(town);
-
-			//BranchId in UserTable
-			int bankBranchId = branches.Id;
-
-			//بهتره روی id  شرط گذاشت
-			if (branches == null)
-			{
-				BroadCastViewModelGeneral model04 =
+			BroadCastViewModelGeneral model =
 				await FillSendMessageData();
+
+			//(1) - Department
+
+			//  Id	RecordStatus	Name
+			//  5	0	اداره حفاظت فناوری اطلاعات و اسناد
+
+			IList<Department> departmentList =
+				await _departmentRepository.GetDepartmentByName(inputModel.Subject);
+
+			if (departmentList.Count <= 0)
+			{
 				ViewBag.Message = "حوزه انتخابی فاقد اعتبار می باشد";
-				return View(model04);
+				return View(model);
 			}
 
-			//یافتن کاربر مورد نظر
-			ApplicationUser userDestinition =
-				_userManager.Users.Where(w => w.BankBranchId == bankBranchId).FirstOrDefault();
+			int departmentInt = departmentList.First().Id;
 
-			ReferralBroadCast referralBroadCast = new ReferralBroadCast
+			//(2) - BranchBank
+
+			//  Id RecordStatus    BranchHeadId Title
+			//  522 0   NULL اداره امور شعب همدان
+			//  751	0	NULL	داخلی
+			//-->
+			string branchBankName = inputModel.Town;
+			DomainEntities.BankBranchAggregate.BankBranch bankBranch =
+				await _bankBranchRepository.GetBranchByName(branchBankName);
+			if (bankBranch.Id == 0)
 			{
-				DstUserID = bankBranchId,
+				ViewBag.Message = "!!! حوزه انتخابی فاقد اعتبار می باشد";
+				return View(model);
+			}
+			int bankBranchId = bankBranch.Id;
 
-			};
+			//کلک رشتی
+
+			bankBranchId = 512;
+
+			//(3)
+			//Result User (Destination)
+			//کاربری که اجازه دارد پیام های مربوط به خود را مشاهده کند
+			//UserName BankBranchId    DepartmentId FirstName   LastName
+			//8611    520 5   عادل کلهر
+			//Towns --> مقصد استان 
+
+			List<ApplicationUser> destinationUser =
+				_userManager.Users
+				.Where(w => w.BankBranchId == bankBranchId && w.DepartmentId == departmentInt).ToList();
+
+			//(4) Find Role Separ
+			string roleSeparName =
+				_configuration.GetSection(key: "Separ").GetSection(key: "Role").Value;
+
+			//IList<ApplicationUser> separRoleUsers =
+			//	await _userManager.GetUsersInRoleAsync(roleName: roleSeparName);
+
+			List<ApplicationUser> userFinalSender = new List<ApplicationUser>();
+			foreach (ApplicationUser userCheck in destinationUser)
+			{
+				bool isUserInRole =
+				await _userManager.IsInRoleAsync(user: userCheck, role: roleSeparName);
+
+				if (isUserInRole)
+				{
+					userFinalSender.Add(item: userCheck);
+				}
+			}
+
+
+			if (userFinalSender.Count == 0)
+			{
+				ViewBag.Message = "!!! کاربری برای این حوزه مشخص نگردیده است";
+				return View(model);
+			}
+
+
+			string usernameSender = string.Empty;
+			if (!string.IsNullOrWhiteSpace(inputModel.PersonnelCode))
+			{
+				ApplicationUser result =
+					_userManager.Users?.Where(w => w.PersonnelCode == inputModel.PersonnelCode)?.FirstOrDefault();
+				if (result != null) usernameSender = result.UserName;
+			}
+
 			BroadCast broadCast02 = new BroadCast
 			{
 				FirstName = inputModel.FirstName,
@@ -158,119 +222,139 @@ namespace Web.Core.GeneralReferences
 				Subject = inputModel.Subject,
 				Text = inputModel.Text,
 				BroadCastType = DomainEntities.BroadcastAggregate.BroadCastTypeEnum.General,
-				ReferralBroadCasts = new List<ReferralBroadCast>
-				{
-					new ReferralBroadCast
-					{
-						// DstUserID = item.ApplicationUserId
-						DstUserID = bankBranchId,
-					}
-				},
+
 				CreateDate = DateTime.Now,
-				UserNameSender = "",
+				UserNameSender = usernameSender,
 
 			};
 
-			_broadCastRepository.Add(broadCast02);
+			BroadCast broadCast = _broadCastRepository.Add(broadCast02);
 			await _unitOfWork.SaveAsync();
-			ViewBag.Message = "اطلاعات مشتری با موفقیت ثبت گردید";
-			BroadCastViewModelGeneral model =
-				await FillSendMessageData();
+
+			int broadCastIdAdd = broadCast.Id;
+
+
+			//(2)
+
+			foreach (ApplicationUser userDest in userFinalSender)
+			{
+				ReferralBroadCast referralBroadCast = new ReferralBroadCast
+				{
+					DstUserID = userDest.Id,
+					//BroadCast = broadCast,
+					DeadLine = DateTime.Now.AddDays(value: 5),
+					BroadCastId = broadCastIdAdd,
+					IsImmediate = false,
+					Status = ReferralStatusBroadCastEnum.AdameMoshahede,
+
+				};
+				_referralBroadCastRepository.Add(referralBroadCast);
+				await _unitOfWork.SaveAsync();
+			}
+
+			ViewBag.Message = ".پیام شما با موفقیت ثبت گردید";
+
 			return View(model);
+			//(Comment01)
+			//BroadCastViewModelGeneral model =
+			//	await FillSendMessageData();
+			//return View(model);
+
+
 			//IQueryable<ApplicationUser> userDestinition =
 			//	_userManager.Users.Where(w => w.BankBranchId == branches.Id);
 
 
 			//فعلا پاک می کنیم
 			//000
-			List<ProtectionOfficeMember> userProtectionDestination =
-				await _protectionOfficeMemberRepositorySubject.
-				GetByProtectionOfficeUserId(new List<int>());
+			//List<ProtectionOfficeMember> userProtectionDestination =
+			//	await _protectionOfficeMemberRepositorySubject.
+			//	GetByProtectionOfficeUserId(new List<int>());
 
 
 
-			if (userProtectionDestination.Count == 0)
-			{
-				ViewBag.Message = "حوزه انتخابی فاقد نفرات می باشد";
-				var model03 =
-				await FillSendMessageData();
+			//if (userProtectionDestination.Count == 0)
+			//{
+			//	ViewBag.Message = "حوزه انتخابی فاقد نفرات می باشد";
+			//	var model03 =
+			//	await FillSendMessageData();
 
-				return View(model03);
-			}
-
-
-			try
-			{
-				if (!ModelState.IsValid)
-				{
-					BroadCastViewModelGeneral modelF =
-				await FillSendMessageData();
-					return View(modelF);
-				}
-
-				// استان انتخاب شده است یا خیر؟
-				// اگر استان انتخاب شد >>>> مسئول حفاظت ان استان (از جدول ریلیشن)
-				// اگر استان انتخاب نشده بود >>>> مسئولین 4 بخش
-
-				List<ReferralBroadCast> listRefBroadCast = new List<ReferralBroadCast>();
-
-				ReferralBroadCast addRefferal = new ReferralBroadCast();
-
-				var usernameSender = string.Empty;
-				if (!string.IsNullOrWhiteSpace(inputModel.PersonnelCode))
-				{
-					ApplicationUser result =
-						_userManager.Users?.Where(w => w.PersonnelCode == inputModel.PersonnelCode)?.FirstOrDefault();
-					if (result != null) usernameSender = result.UserName;
-				}
+			//	return View(model03);
+			//}
 
 
+			//try
+			//{
+			//	if (!ModelState.IsValid)
+			//	{
+			//		BroadCastViewModelGeneral modelF =
+			//	await FillSendMessageData();
+			//		return View(modelF);
+			//	}
 
-				//اگر مقصد انتخاب شده بود
+			// استان انتخاب شده است یا خیر؟
+			// اگر استان انتخاب شد >>>> مسئول حفاظت ان استان (از جدول ریلیشن)
+			// اگر استان انتخاب نشده بود >>>> مسئولین 4 بخش
 
-				if (userProtectionDestination.Count != 0)
-				{
-					foreach (var item in userProtectionDestination)
-					{
-						listRefBroadCast.Add(new ReferralBroadCast { DstUserID = item.ApplicationUserId });
-					}
-				}
+			//List<ReferralBroadCast> listRefBroadCast = new List<ReferralBroadCast>();
 
+			//ReferralBroadCast addRefferal = new ReferralBroadCast();
 
-				//if (addRefferal != null)
-				//	listRefBroadCast.Add(addRefferal);
-
-
-				var broadCast = new BroadCast
-				{
-					FirstName = inputModel.FirstName,
-					LastName = inputModel.LastName,
-					PersonnelCode = inputModel.PersonnelCode,
-					Subject = inputModel.Subject,
-					Text = inputModel.Text,
-					BroadCastType = DomainEntities.BroadcastAggregate.BroadCastTypeEnum.General,
-					ReferralBroadCasts = listRefBroadCast,
-					CreateDate = DateTime.Now,
-					UserNameSender = "",
-
-				};
-
-				_broadCastRepository.Add(broadCast);
-				await _unitOfWork.SaveAsync();
-				ViewBag.Message = "اطلاعات مشتری با موفقیت ثبت گردید";
+			//var usernameSender = string.Empty;
+			//if (!string.IsNullOrWhiteSpace(inputModel.PersonnelCode))
+			//{
+			//	ApplicationUser result =
+			//		_userManager.Users?.Where(w => w.PersonnelCode == inputModel.PersonnelCode)?.FirstOrDefault();
+			//	if (result != null) usernameSender = result.UserName;
+			//}
 
 
-				BroadCastViewModelGeneral model05 =
-				await FillSendMessageData();
-				return View(model05);
-			}
-			catch (Exception ex)
-			{
-				ViewBag.Message = "اطلاعات مشتری با موفقیت ثبت نگردید" + "\n" + ex.Message;
-				BroadCastViewModelGeneral model06 =
-				await FillSendMessageData();
-				return View(model06);
-			}
+
+			//اگر مقصد انتخاب شده بود
+
+			//	if (userProtectionDestination.Count != 0)
+			//	{
+			//		foreach (var item in userProtectionDestination)
+			//		{
+			//			listRefBroadCast.Add(new ReferralBroadCast { DstUserID = item.ApplicationUserId });
+			//		}
+			//	}
+
+
+			//	//if (addRefferal != null)
+			//	//	listRefBroadCast.Add(addRefferal);
+
+
+			//	var broadCast00 = new BroadCast
+			//	{
+			//		FirstName = inputModel.FirstName,
+			//		LastName = inputModel.LastName,
+			//		PersonnelCode = inputModel.PersonnelCode,
+			//		Subject = inputModel.Subject,
+			//		Text = inputModel.Text,
+			//		BroadCastType = DomainEntities.BroadcastAggregate.BroadCastTypeEnum.General,
+			//		ReferralBroadCasts = listRefBroadCast,
+			//		CreateDate = DateTime.Now,
+			//		UserNameSender = "",
+
+			//	};
+
+			//	_broadCastRepository.Add(broadCast);
+			//	await _unitOfWork.SaveAsync();
+			//	ViewBag.Message = "اطلاعات مشتری با موفقیت ثبت گردید";
+
+
+			//	BroadCastViewModelGeneral model05 =
+			//	await FillSendMessageData();
+			//	return View(model05);
+			//}
+			//catch (Exception ex)
+			//{
+			//	ViewBag.Message = "اطلاعات مشتری با موفقیت ثبت نگردید" + "\n" + ex.Message;
+			//	BroadCastViewModelGeneral model06 =
+			//	await FillSendMessageData();
+			//	return View(model06);
+			//}
 		}
 		//777
 		[Authorize]
@@ -341,35 +425,78 @@ namespace Web.Core.GeneralReferences
 		//[UserLogMessageAttribute]
 		public async Task<IActionResult> ShowAllBroadCast()
 		{
-			try
+			//System.Net.IPAddress clientIp = HttpContext.Connection.RemoteIpAddress;
+
+			//string ipTown = ApplicationCommon.TownIP.ValidateIPv4(clientIp.ToString());
+			if (User.IsInRole(role: "admin"))
 			{
-				//Admin
-				if (User.IsInRole(role: "admin"))
-				{
-					int countUnRead = await _referralBroadCastRepository.CountUnRead5DayLast();
-					ViewBag.CountAdameMoshahede = countUnRead;
+				int countUnRead = await _referralBroadCastRepository.CountUnRead5DayLast();
+				ViewBag.CountAdameMoshahede = countUnRead;
 
-					IList<BroadCast> model = await _broadCastRepository.ListAllBroadCast();
+				IList<BroadCast> model = await _broadCastRepository.ListAllBroadCast();
 
-					return View(model);
-				}
-				// !Admin
-				else
-				{
-					List<BroadCast> listBroadCast = new List<BroadCast>();
-					List<BroadCast> model = (await _broadCastRepository.ListAllBroadCast()).Where(w => w.UserNameSender == User.Identity.Name).ToList();
-					listBroadCast.AddRange(model);
-					IEnumerable<BroadCast> userList = (await _referralBroadCastRepository.GetListtByIdDstUser(User.GetUserId())).Select(s => s.BroadCast);
-					listBroadCast.AddRange(userList);
-
-					return View(listBroadCast);
-				}
+				return View(model);
 			}
-			catch (Exception ex)
-			{
+			//(1)
+			//	SELECT * FROM dbo.ApplicationUserItems
+			//	WHERE id = 111
 
-				return View(model: new List<BroadCast>());
-			}
+			int idUserInLogin = User.GetUserId();
+			//var broadCastInformationShow =
+			//	await _referralBroadCastRepository.GetListtByIdDstUser(idUserInLogin);
+
+			List<BroadCast> daBroad =
+				await _referralBroadCastRepository.GetListtByIdDstUserBroadCast(idUserInLogin);
+
+
+			return View(daBroad);
+			//-----------------------------------------------
+
+
+			//DomainEntities.BankBranchAggregate.BankBranch branches =
+			//   await _bankBranchRepository.GetBranchByName(ipTown);
+
+
+
+			//BranchId in UserTable
+			//int bankBranchId = branches.Id;
+
+			//try
+			//{
+			//Admin
+			//if (User.IsInRole(role: "admin"))
+			//{
+			//	int countUnRead = await _referralBroadCastRepository.CountUnRead5DayLast();
+			//	ViewBag.CountAdameMoshahede = countUnRead;
+
+			//	IList<BroadCast> model = await _broadCastRepository.ListAllBroadCast();
+
+			//	return View(model);
+			//}
+			// !Admin
+			//else
+			//{
+			//	List<BroadCast> listBroadCast = new List<BroadCast>();
+			//	IList<BroadCast> model =
+			//		await _broadCastRepository.ListAllBroadCast()
+			//		//.
+			//		/*Where(w => w.UserNameSender == User.Identity.Name).ToList()*/;
+			//	listBroadCast.AddRange(model);
+
+			//	IEnumerable<BroadCast> userList =
+			//		(await _referralBroadCastRepository.GetListtByIdDstUser(User.GetUserId()))
+			//		.Select(s => s.BroadCast);
+			//	listBroadCast.AddRange(userList);
+
+			//	var result = listBroadCast.Where(w => w.Subject == bankBranchId.ToString()).ToList();
+			//	return View(result);
+			//}
+			//}
+			//catch (Exception ex)
+			//{
+
+			//	return View(model: new List<BroadCast>());
+			//}
 		}
 		[Authorize]
 		[Permission]
@@ -388,13 +515,23 @@ namespace Web.Core.GeneralReferences
 		[ServiceFilter(typeof(UserLogMessageAttribute))]
 		public async Task<IActionResult> GetDataReferralBroadCasts(int id)
 		{
-			List<ReferralBroadCast> model = await _referralBroadCastRepository.GetListtById(id);
-			List<ReferralBroadCastViewModel> broadCastViewModel = new List<ReferralBroadCastViewModel>();
+			List<ReferralBroadCast> model =
+				await _referralBroadCastRepository.GetListtById(id);
+
+			List<ReferralBroadCastViewModel> broadCastViewModel =
+				new List<ReferralBroadCastViewModel>();
+
 			foreach (ReferralBroadCast pc in model)
 			{
-				broadCastViewModel.Add(new ReferralBroadCastViewModel
+				broadCastViewModel.Add(item: new ReferralBroadCastViewModel
 				{
-					BroadCast = new BroadCastViewModel { UserNameSender = pc.BroadCast.UserNameSender, CreateDate = pc.BroadCast.CreateDate.Value, Text = pc.BroadCast.Text },
+					BroadCast = new BroadCastViewModel
+					{
+						UserNameSender = pc.BroadCast.UserNameSender,
+						CreateDate = pc.BroadCast.CreateDate.Value,
+						Text = pc.BroadCast.Text
+					},
+
 					ApplicationUser = pc.ApplicationUser,
 					Status = (ReferralStatusBroadCastEnumViewModel)pc.Status,
 					DstUserID = (int)pc.DstUserID,
@@ -404,6 +541,7 @@ namespace Web.Core.GeneralReferences
 					ActionDescription = pc.ActionDescription,
 				});
 			}
+
 			return Json(broadCastViewModel.OrderByDescending(c => c.StatusString));
 		}
 		[HttpGet]
@@ -411,9 +549,10 @@ namespace Web.Core.GeneralReferences
 		public async Task<IActionResult> UsersInfo()
 		{
 
-			string roleName = _configuration.GetSection("Separ").GetSection("Role").Value;
+			string roleName = _configuration.GetSection(key: "Separ").GetSection("Role").Value;
 			//لیست کاربرانی که رول آنها سپر باشد
-			var separ = await _userManager.GetUsersInRoleAsync(roleName);
+			IList<ApplicationUser> separ =
+				await _userManager.GetUsersInRoleAsync(roleName);
 
 
 			//var result = _userManager.Users.ToList();
@@ -685,11 +824,14 @@ namespace Web.Core.GeneralReferences
 		{
 			var result = await _referralBroadCastRepository.GetReferralBroadCastFromBroadCast(id);
 			// Update Status
+
+			//اما دارد !!!
 			result.Status = ReferralStatusBroadCastEnum.MoshahedeShode;
+
 			_referralBroadCastRepository.Update(result);
 			await _unitOfWork.SaveAsync();
 
-			var model = new ReferralBroadCastViewModel();
+			ReferralBroadCastViewModel model = new ReferralBroadCastViewModel();
 
 			//bind Model
 			model.BroadCastId = result.Id;
@@ -699,7 +841,7 @@ namespace Web.Core.GeneralReferences
 			model.ActionDescription = result.ActionDescription;
 			model.DeadLine = result.DeadLine;
 
-			return PartialView("_Details", model);
+			return PartialView(viewName: "_Details", model);
 		}
 		//ActionEghdam
 		[HttpPost]

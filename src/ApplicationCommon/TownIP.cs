@@ -83,7 +83,7 @@ namespace ApplicationCommon
 				case "::1":
 					return "داخلی";
 				default:
-					return "پیش فرض";
+					return "داخلی";
 			}
 		}
 		public static string ValidateIPv4(string ipString)
