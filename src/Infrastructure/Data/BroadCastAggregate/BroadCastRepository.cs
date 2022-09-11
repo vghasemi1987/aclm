@@ -18,12 +18,16 @@ namespace Infrastructure.Data.BroadCastAggregate
 
 		public async Task<BroadCast> GetById(int? id)
 		{
-			return await DbContext.Set<BroadCast>().Include(c => c.ReferralBroadCasts).Where(w => w.Id == id).FirstOrDefaultAsync();
+			var result =
+				await DbContext.Set<BroadCast>()
+				.FindAsync(id);
+			return result;
 		}
 		async Task<IList<BroadCast>> IBroadCastRepository.ListAllBroadCast()
 		{
 			var result = await _dbSet.Include(c => c.ReferralBroadCasts)
 				.AsNoTracking().ToListAsync();
+
 			return result;
 		}
 	}

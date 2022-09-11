@@ -382,6 +382,7 @@ namespace Web.Core.UserManagement
 
 			foreach (var item in model.SelectedRoles.Where(q => q.Checked == true))
 			{
+
 				await _userManager.AddToRoleAsync(user, item.Text);
 			}
 			return Json(new
@@ -1035,8 +1036,8 @@ namespace Web.Core.UserManagement
 			graphics.DrawString(code, new Font(fonts[numFont], 50, styleFont[numFontStyle])
 				, Brushes.Gray,
 				new PointF(x, y));
-			
-			
+
+
 
 			MemoryStream stream = new MemoryStream();
 			graphics.Save();

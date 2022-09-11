@@ -379,7 +379,7 @@ div.k-treeview {
     color: #FFFFFF;
     cursor: pointer;
     display: inline-block;
-    /*font-size: 20px;*/
+    font-size: 13px;
     padding: 5px 10px;
     text-align: center;
     text-decoration: none;

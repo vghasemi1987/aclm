@@ -6,11 +6,12 @@
 		<thead>
 			<tr class="bg-danger">
 				<th>نام خانوادگی گیرنده</th>
-				<th>نام کاربری گیرنده</th>
-				<th>فرستنده</th>
-				<th>تاریخ ایجاد</th>
-				<th>ضرب الاجل</th>
-				<th>متن پیام</th>
+				<th style="width:75px;">نام کاربری گیرنده</th>
+				<th style="width:75px;">فرستنده</th>
+				<th style="width:100px;">تاریخ ایجاد</th>
+				<th style="width:75px;">ضرب الاجل</th>
+				<th style="width:50px;">متن پیام</th>
+				<th style="width:50px;">ارجاع</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -19,16 +20,21 @@
 				foreach (var item in Model)
 				{
 					<tr>
-						<td> @(item?.ApplicationUser?.FirstName + ' ' + item?.ApplicationUser?.LastName)</td>
+						<td>@(item?.ApplicationUser?.FirstName + ' ' + item?.ApplicationUser?.LastName)</td>
 						<td>@(item?.ApplicationUser?.UserName)</td>
 						<td>@(item?.BroadCast?.UserNameSender)</td>
 						<td>@(item?.BroadCast?.CreateDatePersian)</td>
 						<td>@(item?.DeadLinePersian)</td>
 						<td><button class="btn-ActionText btn-sm btn btn-dark" value="@item?.BroadCast?.Text)">متن پیام</button></td>
+						<td>
+							<form asp-controller="GeneralReferences" asp-action="ReplyMessage" onsubmit="return confirm('آیا مطمئن هستید؟')">
+								<input type="hidden" hidden name="userId" value="@(item.DstUserID)" />
+								<button class="btn btn-warning btn-sm" name="broadCastId" value="@(item.BroadCastId)">ارجاع</button>
+							</form>
+						</td>
 					</tr>
 				}
 			}
-
 		</tbody>
 	</table>
 </div>
@@ -86,9 +92,6 @@
 		.tahoma {
 			font-family: Tahoma !important;
 		}
-
-	
-		
 	</style>
 }
 @section scripts
@@ -106,13 +109,14 @@
 	<script src="~/lib/sweetalert2/sweetalert2.js"></script>
 	<script>
 		$(document).ready(function () {
-			
+
 			btnTextShow();
 			btn_ActionText();
 			btn_ActionDescription();
 			bindEghdamHtml();
 			closeModal();
 			registerEghdam();
+
 
 
 			const table = $('#listBoardCastAll').DataTable({
@@ -134,6 +138,8 @@
 					'copy', 'csv', 'excel', 'print',
 				]
 			});
+			$('.buttons-html5').addClass('btn btn-info btn-sm');
+			$('.buttons-print').addClass('btn btn-info btn-sm');
 
 		});
 		function btnTextShow() {

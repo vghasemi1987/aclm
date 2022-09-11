@@ -36,7 +36,7 @@ namespace Web
 			});
 
 			//services.AddScoped<IUserLogMessageRepository, UserLogMessageRepository>();
-			services.AddScoped<UserLogMessageAttribute>();
+			services.AddTransient<UserLogMessageAttribute>();
 
 			//services.AddDbContext<ServerAccessibilityMonitorContext>(options => options.UseSqlServer(_configuration.GetConnectionString("DatabaseConnection")));
 			services.AddCustomizedDataStore(_configuration);

@@ -120,7 +120,7 @@ namespace Web.Extensions
 				c.UseSqlServer(configuration.GetConnectionString("DatabaseConnection"),
 									 sqlServerOptionsAction: sqlOptions =>
 									 {
-										 sqlOptions.CommandTimeout(1000);
+										 sqlOptions.CommandTimeout(commandTimeout: 1000);
 										 sqlOptions.MigrationsAssembly(typeof(ServerAccessibilityMonitorContext).GetTypeInfo().Assembly.GetName().Name);
 										 sqlOptions.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
 									 });

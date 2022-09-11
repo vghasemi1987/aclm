@@ -19,7 +19,7 @@ namespace Web.Core.SearchLogs
 
 		public async Task<IActionResult> GetByLetterIdentifier(string letterNo)
 		{
-			var result = await Task.Run(() => _searchLogDetail.GetByLetterIdentifier(letterNo));
+			var result =  _searchLogDetail.GetByLetterIdentifier(letterNo);
 			return new JsonResult(result);
 		}
 	}

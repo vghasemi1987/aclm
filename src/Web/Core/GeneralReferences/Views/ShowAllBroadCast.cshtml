@@ -6,19 +6,6 @@
 		<h3>لطفا منتظر بمانید ... </h3>
 	</div>
 
-	@if (User.IsInRole(role: "admin"))
-	{
-		if (Convert.ToInt32(ViewBag.CountAdameMoshahede) != null)
-		{
-			<div class="row">
-				<div class="col-md-4">
-					<a class="flashingButton" href="/GeneralReferences/ShowAllUnReadMessage">پیام های مشاهده نشده  <span>@(ViewBag.CountAdameMoshahede)</span></a>
-				</div>
-			</div>
-			<hr />
-		}
-	}
-
 	<div class="row">
 		<div class="col-md-4">
 			<div class="input-group input-group-sm mb-3">
@@ -39,6 +26,30 @@
 				</select>
 			</div>
 		</div>
+
+		<div class="col-md-4">
+			<div class="input-group input-group-sm mb-3">
+				@if (User.IsInRole(role: "admin"))
+				{
+					if (Convert.ToInt32(ViewBag.CountAdameMoshahede) != null)
+					{
+						<div class="row">
+							<div class="col-md-12">
+								@{
+									string messageBtn = $" اقدام نشده های منقضی  :  {ViewBag.CountAdameMoshahede}";
+								}
+								<a class="flashingButton" href="/GeneralReferences/ShowAllUnReadMessage"
+								   data-toggle="tooltip" data-placement="@(messageBtn)">
+									@(messageBtn)
+								</a>
+							</div>
+						</div>
+						<hr />
+					}
+				}
+			</div>
+		</div>
+
 	</div>
 	<hr />
 	<br />
@@ -239,9 +250,6 @@
 
 				"deferRender": true,
 
-
-
-
 				dom: 'Bfrtip',
 				buttons: [
 					'copy', 'csv', 'excel', 'print',
@@ -252,8 +260,6 @@
 
 			$('.buttons-html5').addClass('btn btn-info btn-sm');
 			$('.buttons-print').addClass('btn btn-info btn-sm');
-
-
 
 			$('#codeRahgiri').on('keyup', function () {
 				table
@@ -299,15 +305,15 @@
 
 							textData +=
 								`<tr>
-																							<td> ${result[i].ApplicationUser.FirstName + ' ' + result[i].ApplicationUser.LastName}</td>
-																							<td>${result[i].ApplicationUser.UserName}</td>
-																							<td>${result[i].BroadCast.UserNameSender}</td>
-																							<td>${result[i].StatusString}</td>
-																							<td>${result[i].BroadCast.CreateDatePersian}</td>
-																							<td>${result[i].DeadLinePersian}</td>
-																							<td><button class="btn-ActionText btn-sm btn btn-dark" value="${result[i].BroadCast.Text}">متن پیام</button></td>
-																							<td><button class="btn-ActionDescription btn-sm btn btn-info" value="${result[i].ActionDescription}">مشاهده</button></td>
-																							</tr>`;
+																													<td> ${result[i].ApplicationUser.FirstName + ' ' + result[i].ApplicationUser.LastName}</td>
+																													<td>${result[i].ApplicationUser.UserName}</td>
+																													<td>${result[i].BroadCast.UserNameSender}</td>
+																													<td>${result[i].StatusString}</td>
+																													<td>${result[i].BroadCast.CreateDatePersian}</td>
+																													<td>${result[i].DeadLinePersian}</td>
+																													<td><button class="btn-ActionText btn-sm btn btn-dark" value="${result[i].BroadCast.Text}">متن پیام</button></td>
+																													<td><button class="btn-ActionDescription btn-sm btn btn-info" value="${result[i].ActionDescription}">مشاهده</button></td>
+																													</tr>`;
 						}
 						$('#trDetails').html(textData);
 					} else {

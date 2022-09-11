@@ -162,11 +162,12 @@ namespace Web.Core.GeneralReferences
 				ViewBag.Message = "!!! حوزه انتخابی فاقد اعتبار می باشد";
 				return View(model);
 			}
+
 			int bankBranchId = bankBranch.Id;
 
 			//کلک رشتی
 
-			bankBranchId = 512;
+			//bankBranchId = 512;
 
 			//(3)
 			//Result User (Destination)
@@ -506,7 +507,10 @@ namespace Web.Core.GeneralReferences
 		{
 			if (User.IsInRole(role: "admin"))
 			{
-				IEnumerable<ReferralBroadCast> model = await _referralBroadCastRepository.GetListAllTakhir();
+
+				IEnumerable<ReferralBroadCast> model =
+					await _referralBroadCastRepository.GetListAllTakhir();
+
 				return View(model);
 			}
 			return View(viewName: null);
@@ -856,6 +860,71 @@ namespace Web.Core.GeneralReferences
 			await _unitOfWork.SaveAsync();
 			//return RedirectToAction("ShowAllBroadCast");
 			return "اقدام مورد نظر با موفقیت ثبت گردید";
+		}
+		[HttpPost]
+		[ServiceFilter(typeof(UserLogMessageAttribute))]
+		public async Task<IActionResult> ReplyMessage(int broadCastId, int userId)
+		{
+			try
+			{
+				BroadCast broadCast =
+				await _broadCastRepository.GetById(broadCastId);
+
+				var userDestination =
+					await _userManager.FindByIdAsync(userId.ToString());
+				var newBroaCast =
+					new BroadCast
+					{
+						BroadCastType = broadCast.BroadCastType,
+						CreateDate = broadCast.CreateDate,
+						FirstName = broadCast.FirstName,
+						LastName = broadCast.LastName,
+						PersonnelCode = broadCast.PersonnelCode,
+						Subject = broadCast.Subject,
+						Text = broadCast.Text,
+						UserNameSender = broadCast.UserNameSender,
+						RecordStatus = broadCast.RecordStatus,
+						//ReferralBroadCasts = broadCast.ReferralBroadCasts,
+
+					};
+
+
+				BroadCast broadCastAdd = _broadCastRepository.Add(newBroaCast);
+				//Error
+				await _unitOfWork.SaveAsync();
+
+				int broadCastIdAdd = broadCastAdd.Id;
+
+
+				//(2)
+				var refferalAdd =
+					await _referralBroadCastRepository.GetById(broadCastId);
+
+				ReferralBroadCast referralBroadCast = new ReferralBroadCast
+				{
+					DstUserID = userDestination.Id,
+					//BroadCast = broadCast,
+					DeadLine = DateTime.Now.AddDays(value: 5),
+					BroadCastId = broadCastIdAdd,
+					IsImmediate = false,
+					Status = ReferralStatusBroadCastEnum.AdameMoshahede,
+
+				};
+				_referralBroadCastRepository.Add(referralBroadCast);
+				await _unitOfWork.SaveAsync();
+
+				return RedirectToAction(actionName: "ShowAllUnReadMessage");
+			}
+			catch (Exception ex)
+			{
+				string message = ex.Message;
+				string inerMessage = ex.InnerException?.Message;
+				throw;
+			}
+
+
+
+			return View();
 		}
 	}
 }
