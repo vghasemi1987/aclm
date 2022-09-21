@@ -18,6 +18,7 @@ namespace Web.Core.UserManagement.ViewModels
 
 		public string ReturnUrl { get; set; }
 		[Display(Name = "عبارت امنیتی", Prompt = "عبارت امنیتی")]
+		[Required]
 		public string Captcha { get; set; }
 	}
 }

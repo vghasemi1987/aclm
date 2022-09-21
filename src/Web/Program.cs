@@ -28,6 +28,8 @@ namespace Web
 			.UseIISIntegration()
 			.Build();
 	}
+
+	#region[Comment]
 	//public class Program
 	//{
 	//    public static void Main(string[] args)
@@ -80,4 +82,5 @@ namespace Web
 
 	//        ;
 	//}
+	#endregion/[Comment]
 }

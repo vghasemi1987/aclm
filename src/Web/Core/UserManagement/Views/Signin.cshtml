@@ -58,7 +58,7 @@
 		</h1>
 	</div>
 	<form asp-controller="UserManagement" asp-action="Signin" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="m-login__form m-form">
-		
+
 		<div class="form-group m-form__group">
 			<input asp-for="UserName" class="form-control m-input verdana" autocomplete="off" />
 		</div>
@@ -67,7 +67,12 @@
 		</div>
 		<br />
 		<div class="form-group m-form__group text-center">
-			<img style="width:150px; height:100px;" src="/UserManagement/Captcha" />
+			@*<img style="width:150px; height:100px;" src="/UserManagement/Captcha" />*@
+			<img style="width:300px; height:100px;" src="/UserManagement/GetCaptchaImage" />
+		</div>
+		<br />
+		<div class="text-center">
+			<a href="/usermanagement/signin" class="btn btn-sm btn-danger">بازنشانی</a>
 		</div>
 		<br />
 		<div class="form-group m-form__group">

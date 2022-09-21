@@ -1,8 +1,6 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using DomainContracts.BroadcastAggregate;
 using DomainEntities;
-using Infrastructure.Data.BroadCastAggregate;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Features;
@@ -32,7 +30,8 @@ namespace Web
 
 			services.AddSingleton(c =>
 			{
-				return new ConfigurationDto(_configuration.GetConnectionString("DatabaseConnection"));
+				ConfigurationDto result = new ConfigurationDto(_configuration.GetConnectionString("DatabaseConnection"));
+				return result;
 			});
 
 			//services.AddScoped<IUserLogMessageRepository, UserLogMessageRepository>();

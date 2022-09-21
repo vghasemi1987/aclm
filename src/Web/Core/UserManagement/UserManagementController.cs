@@ -30,15 +30,12 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Web.Core.AccessRanges.ViewModels;
 using Web.Core.UserManagement.ViewModels;
 using Web.Extensions;
 using Web.Extensions.Attributes;
 using Tools = ApplicationCommon.Tools;
-using System.Windows;
-using System.Reflection;
 
 namespace Web.Core.UserManagement
 {
@@ -487,7 +484,7 @@ namespace Web.Core.UserManagement
 
 		[HttpPost]
 		[Permission]
-		[DisplayName("حذف")]
+		[DisplayName(displayName: "حذف")]
 		public async Task<IActionResult> DeleteRows(List<int> ids)
 		{
 			if (!ids.Any()) return Json(false);
@@ -499,7 +496,7 @@ namespace Web.Core.UserManagement
 				//await _userManager.SetLockoutEnabledAsync(user, true);
 				await _userManager.SetLockoutEndDateAsync(user, DateTime.MaxValue);
 				//pictureList.Add(user.Picture);
-				await _userManager.SetLockoutEnabledAsync(user, true);
+				await _userManager.SetLockoutEnabledAsync(user, enabled: true);
 			}
 
 			//if (pictureList.Any())
@@ -524,7 +521,8 @@ namespace Web.Core.UserManagement
 		[DisplayName("ورود")]
 		public async Task<IActionResult> Signin(SigninViewModel model)
 		{
-			if (HttpContext.Session.GetString(key: "Code").ToLower() == model.Captcha?.ToLower())
+			string sessionGetString = HttpContext.Session.GetString(key: "Code")?.ToLower();
+			if (sessionGetString == model.Captcha?.ToLower())
 			{
 				var user = _userManager.Users
 				.Include(o => o.ApplicationUserRoles)
@@ -1011,9 +1009,9 @@ namespace Web.Core.UserManagement
 			int x = new Random().Next(20, 40);
 			int y = new Random().Next(20, 40);
 
-			graphics.FillRectangle
-				(new HatchBrush(HatchStyle.DarkDownwardDiagonal, Color.Gray)
-				, new Rectangle(0, 0, 700, 450));
+			//graphics.FillRectangle
+			//	(new HatchBrush(HatchStyle.DarkDownwardDiagonal, Color.Gray)
+			//	, new Rectangle(0, 0, 700, 450));
 
 			Dictionary<int, string> fonts = new Dictionary<int, string>();
 			fonts.Add(3, "Arial");
@@ -1060,6 +1058,17 @@ namespace Web.Core.UserManagement
 
 			}
 			return result.ToString();
+		}
+		[HttpGet, AllowAnonymous]
+		public IActionResult GetCaptchaImage()
+		{
+			int width = 100;
+			int height = 36;
+			var captchaCode = Web.Commons.Captcha.GenerateCaptchaCode();
+			var result = Web.Commons.Captcha.GenerateCaptchaImage(width, height, captchaCode);
+			HttpContext.Session.SetString(key: "Code", result.CaptchaCode);
+			Stream s = new MemoryStream(result.CaptchaByteData);
+			return new FileStreamResult(s, contentType: "image/png");
 		}
 	}
 }

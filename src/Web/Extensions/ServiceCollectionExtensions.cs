@@ -84,6 +84,9 @@ namespace Web.Extensions
 
 			services.AddSession(options =>
 			{
+				options.IdleTimeout = TimeSpan.FromMinutes(value: 20);
+				options.Cookie.HttpOnly = true;
+				//
 				options.Cookie.IsEssential = true;
 				//options.Cookie.Expiration = TimeSpan.FromMinutes(1);
 				options.IdleTimeout = TimeSpan.FromMinutes(1);

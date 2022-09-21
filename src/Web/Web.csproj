@@ -1,7 +1,7 @@
-﻿	<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
-		  <RestoreSources>$(RestoreSources);../Web/bin/Debug/net6.0;https://api.nuget.org/v3/index.json</RestoreSources>
+		<RestoreSources>$(RestoreSources);../Web/bin/Debug/net6.0;https://api.nuget.org/v3/index.json</RestoreSources>
 		<AssemblyName>ServerAccessibilityMonitor</AssemblyName>
 		<AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
 		<GenerateRuntimeConfigDevFile>true</GenerateRuntimeConfigDevFile>
@@ -10,6 +10,8 @@
 		<PlatformTarget>AnyCPU</PlatformTarget>
 
 		<Platforms>AnyCPU;x64</Platforms>
+
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 	</PropertyGroup>
 	<ItemGroup>
 		<Compile Remove="wwwroot\uploads\user-excel\csv-file\**" />
@@ -24,8 +26,8 @@
 		</None>
 	</ItemGroup>
 	<ItemGroup>
-	
-      
+
+
 		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.4.0" />
 		<PackageReference Include="AutoMapper" Version="11.0.1" />
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
@@ -45,6 +47,7 @@
 		<PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
 		<PackageReference Include="Serilog.Settings.Configuration" Version="3.3.0" />
 		<PackageReference Include="Serilog.Sinks.RollingFile" Version="3.3.0" />
+		<PackageReference Include="System.Drawing.Common" Version="6.0.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\ApplicationCommon\ApplicationCommon.csproj" />
@@ -64,7 +67,7 @@
 		<GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-	  <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+		<GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
 	</PropertyGroup>
 	<!--<Target Name="PrecompileScript" BeforeTargets="BeforeBuild">
     <Exec Command="dotnet bundle" />
