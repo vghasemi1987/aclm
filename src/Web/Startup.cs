@@ -76,7 +76,7 @@ namespace Web
 
 			services.Configure<RazorViewEngineOptions>(options =>
 			{
-				options.ViewLocationExpanders.Insert(0, new AppViewLocationExpander());
+				options.ViewLocationExpanders.Insert(0 , new AppViewLocationExpander());
 			});
 
 			var builder = new ContainerBuilder();
@@ -95,9 +95,9 @@ namespace Web
 
 		}
 
-		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IWebHostEnvironment webHostEnvironment)
+		public void Configure(IApplicationBuilder app , IWebHostEnvironment env , IWebHostEnvironment webHostEnvironment)
 		{
-			if (env.IsDevelopment())
+			if ( env.IsDevelopment() )
 			{
 				app.UseDeveloperExceptionPage();
 				// app.UseDatabaseErrorPage();
@@ -109,10 +109,10 @@ namespace Web
 				app.UseStatusCodePagesWithRedirects("~/error/code/{0}");
 				app.UseHsts();
 			}
-			app.Use(async (context, next) =>
+			app.Use(async (context , next) =>
 			{
-				context.Response.Headers.Add("X-Frame-Options", "DENY"); // This
-																		 //context.Response.Headers.Add("X-Frame-Options", "SAMEORIGIN"); // Or this
+				context.Response.Headers.Add("X-Frame-Options" , "DENY"); // This
+																		  //context.Response.Headers.Add("X-Frame-Options", "SAMEORIGIN"); // Or this
 				await next();
 			});
 			app.UseSession();

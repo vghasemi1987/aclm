@@ -16,8 +16,8 @@ namespace DomainApplication.Services.ToDoTaskAggregate
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly INotificationService _notificationService;
 
-		public ToDoTaskService(IToDoTaskRepository taskRepository,
-			IUnitOfWork unitOfWork,
+		public ToDoTaskService(IToDoTaskRepository taskRepository ,
+			IUnitOfWork unitOfWork ,
 			INotificationService notificationService)
 		{
 			_taskRepository = taskRepository;
@@ -25,19 +25,19 @@ namespace DomainApplication.Services.ToDoTaskAggregate
 			_notificationService = notificationService;
 		}
 
-		public async Task DeleteAsync(int itemId, string fileLocation)
+		public async Task DeleteAsync(int itemId , string fileLocation)
 		{
 			var items = new List<int> { itemId };
-			if (items.Any())
+			if ( items.Any() )
 			{
 				await _taskRepository.Delete(items);
 				await _unitOfWork.SaveAsync();
 			}
 		}
 
-		public async Task DeleteAsync(IEnumerable<int> itemId, string fileLocation)
+		public async Task DeleteAsync(IEnumerable<int> itemId , string fileLocation)
 		{
-			if (itemId.Any())
+			if ( itemId.Any() )
 			{
 				await _taskRepository.Delete(itemId);
 				await _unitOfWork.SaveAsync();
@@ -72,18 +72,22 @@ namespace DomainApplication.Services.ToDoTaskAggregate
 					Message = "وظیفه ای با عنوان @@@ در 24 ساعت آینده باید انجام شود."
 				}
 			};
-			foreach (var obj in dateList)
+			foreach ( var obj in dateList )
 			{
-				var taskList = await _taskRepository.GetByCriteria(o =>
+
+				List<DomainEntities.ToDoTaskAggregate.ToDoTask> taskList =
+
+					await _taskRepository
+					.GetByCriteria(o =>
 					o.DueDateTime.Value.ToString(dateFormat) == obj.GetObjectValue<string>("Date") &&
 					o.StateId != 3 && o.StateId != 4);
 
-				if (!taskList.Any()) continue;
-				foreach (var task in taskList)
+				if ( !taskList.Any() ) continue;
+				foreach ( var task in taskList )
 				{
-					_notificationService.AddNotification(task.CreatorUserId,
-						obj.GetObjectValue<string>("Message").Replace("@@@", task.Title), task.AssignedToUserId.GetValueOrDefault(),
-						NotificationType.ToDoTask, task.Id, CategoryEnum.DateOfDuty, true);
+					_notificationService.AddNotification(task.CreatorUserId ,
+						obj.GetObjectValue<string>("Message").Replace("@@@" , task.Title) , task.AssignedToUserId.GetValueOrDefault() ,
+						NotificationType.ToDoTask , task.Id , CategoryEnum.DateOfDuty , true);
 				}
 				await _unitOfWork.SaveAsync();
 			}

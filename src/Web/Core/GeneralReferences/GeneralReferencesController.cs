@@ -1,5 +1,4 @@
-﻿using ApplicationCommon;
-using AutoMapper;
+﻿using AutoMapper;
 using DomainContracts.BankBranchAggregate;
 using DomainContracts.BroadcastAggregate;
 using DomainContracts.Commons;
@@ -19,7 +18,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Web.ActionFilters;
-using Web.Core.InquiryEmployee.ViewModels;
 using Web.Core.Separ.ViewModels;
 using Web.Extensions;
 using Web.Extensions.Attributes;
@@ -50,18 +48,18 @@ namespace Web.Core.GeneralReferences
 		private readonly IProtectionOfficeMemberRepository _protectionOfficeMemberRepositorySubject;
 		//private readonly IProtectionOfficeUserRelationRepository _protectionOfficeUserRelationRepository;
 
-		public GeneralReferencesController(UserManager<ApplicationUser> userManager,
-			IBroadCastRepository broadCastRepository,
-			IUnitOfWork unitOfWork,
-			IReferralBroadCastRepository referralBroadCastRepository,
-			IGroupingOfficeRepository groupingOfficeRepository,
-			IGroupingOfficeMemberRepository groupingOfficeMemberRepository,
-			IDepartmentRepository departmentRepository,
-			IMapper mapper,
-			IUserLogMessageRepository userLogMessageRepository,
-			IConfiguration configuration,
-			IProtectionOfficeRepository protectionOfficeRepository,
-			IProtectionOfficeMemberRepository protectionOfficeMemberRepository,
+		public GeneralReferencesController(UserManager<ApplicationUser> userManager ,
+			IBroadCastRepository broadCastRepository ,
+			IUnitOfWork unitOfWork ,
+			IReferralBroadCastRepository referralBroadCastRepository ,
+			IGroupingOfficeRepository groupingOfficeRepository ,
+			IGroupingOfficeMemberRepository groupingOfficeMemberRepository ,
+			IDepartmentRepository departmentRepository ,
+			IMapper mapper ,
+			IUserLogMessageRepository userLogMessageRepository ,
+			IConfiguration configuration ,
+			IProtectionOfficeRepository protectionOfficeRepository ,
+			IProtectionOfficeMemberRepository protectionOfficeMemberRepository ,
 			IBankBranchRepository bankBranchRepository
 			)
 		{
@@ -118,9 +116,9 @@ namespace Web.Core.GeneralReferences
 			ViewBag.Town = ipTown;
 
 
-			foreach (GroupingOffice pro in _groupingOfficeRepository.ListAll())
+			foreach ( GroupingOffice pro in _groupingOfficeRepository.ListAll() )
 			{
-				model.ProtectionOfficeViewModels.Add(item: new ViewModels.ProtectionOfficeViewModel { Id = pro.Id, Title = pro.Title });
+				model.ProtectionOfficeViewModels.Add(item: new ViewModels.ProtectionOfficeViewModel { Id = pro.Id , Title = pro.Title });
 			}
 			return model;
 		}
@@ -140,7 +138,7 @@ namespace Web.Core.GeneralReferences
 			IList<Department> departmentList =
 				await _departmentRepository.GetDepartmentByName(inputModel.Subject);
 
-			if (departmentList.Count <= 0)
+			if ( departmentList.Count <= 0 )
 			{
 				ViewBag.Message = "حوزه انتخابی فاقد اعتبار می باشد";
 				return View(model);
@@ -157,7 +155,7 @@ namespace Web.Core.GeneralReferences
 			string branchBankName = inputModel.Town;
 			DomainEntities.BankBranchAggregate.BankBranch bankBranch =
 				await _bankBranchRepository.GetBranchByName(branchBankName);
-			if (bankBranch.Id == 0)
+			if ( bankBranch.Id == 0 )
 			{
 				ViewBag.Message = "!!! حوزه انتخابی فاقد اعتبار می باشد";
 				return View(model);
@@ -188,19 +186,19 @@ namespace Web.Core.GeneralReferences
 			//	await _userManager.GetUsersInRoleAsync(roleName: roleSeparName);
 
 			List<ApplicationUser> userFinalSender = new List<ApplicationUser>();
-			foreach (ApplicationUser userCheck in destinationUser)
+			foreach ( ApplicationUser userCheck in destinationUser )
 			{
 				bool isUserInRole =
-				await _userManager.IsInRoleAsync(user: userCheck, role: roleSeparName);
+				await _userManager.IsInRoleAsync(user: userCheck , role: roleSeparName);
 
-				if (isUserInRole)
+				if ( isUserInRole )
 				{
 					userFinalSender.Add(item: userCheck);
 				}
 			}
 
 
-			if (userFinalSender.Count == 0)
+			if ( userFinalSender.Count == 0 )
 			{
 				ViewBag.Message = "!!! کاربری برای این حوزه مشخص نگردیده است";
 				return View(model);
@@ -208,24 +206,24 @@ namespace Web.Core.GeneralReferences
 
 
 			string usernameSender = string.Empty;
-			if (!string.IsNullOrWhiteSpace(inputModel.PersonnelCode))
+			if ( !string.IsNullOrWhiteSpace(inputModel.PersonnelCode) )
 			{
 				ApplicationUser result =
 					_userManager.Users?.Where(w => w.PersonnelCode == inputModel.PersonnelCode)?.FirstOrDefault();
-				if (result != null) usernameSender = result.UserName;
+				if ( result != null ) usernameSender = result.UserName;
 			}
 
 			BroadCast broadCast02 = new BroadCast
 			{
-				FirstName = inputModel.FirstName,
-				LastName = inputModel.LastName,
-				PersonnelCode = inputModel.PersonnelCode,
-				Subject = inputModel.Subject,
-				Text = inputModel.Text,
-				BroadCastType = DomainEntities.BroadcastAggregate.BroadCastTypeEnum.General,
+				FirstName = inputModel.FirstName ,
+				LastName = inputModel.LastName ,
+				PersonnelCode = inputModel.PersonnelCode ,
+				Subject = inputModel.Subject ,
+				Text = inputModel.Text ,
+				BroadCastType = DomainEntities.BroadcastAggregate.BroadCastTypeEnum.General ,
 
-				CreateDate = DateTime.Now,
-				UserNameSender = usernameSender,
+				CreateDate = DateTime.Now ,
+				UserNameSender = usernameSender ,
 
 			};
 
@@ -237,16 +235,16 @@ namespace Web.Core.GeneralReferences
 
 			//(2)
 
-			foreach (ApplicationUser userDest in userFinalSender)
+			foreach ( ApplicationUser userDest in userFinalSender )
 			{
 				ReferralBroadCast referralBroadCast = new ReferralBroadCast
 				{
-					DstUserID = userDest.Id,
+					DstUserID = userDest.Id ,
 					//BroadCast = broadCast,
-					DeadLine = DateTime.Now.AddDays(value: 5),
-					BroadCastId = broadCastIdAdd,
-					IsImmediate = false,
-					Status = ReferralStatusBroadCastEnum.AdameMoshahede,
+					DeadLine = DateTime.Now.AddDays(value: 5) ,
+					BroadCastId = broadCastIdAdd ,
+					IsImmediate = false ,
+					Status = ReferralStatusBroadCastEnum.AdameMoshahede ,
 
 				};
 				_referralBroadCastRepository.Add(referralBroadCast);
@@ -382,7 +380,7 @@ namespace Web.Core.GeneralReferences
 		[ServiceFilter(typeof(UserLogMessageAttribute))]
 		public async Task<IActionResult> DeleteTowns(int? id)
 		{
-			if (id.GetValueOrDefault(0) == 0)
+			if ( id.GetValueOrDefault(0) == 0 )
 				return RedirectToAction("ListTowns");
 			var model = await _groupingOfficeRepository.GetById(id);
 			_groupingOfficeRepository.Delete(model);
@@ -392,7 +390,7 @@ namespace Web.Core.GeneralReferences
 		[ServiceFilter(typeof(UserLogMessageAttribute))]
 		public async Task<IActionResult> EditListTowns(int? id)
 		{
-			if (id == null)
+			if ( id == null )
 				return RedirectToAction("ListTowns");
 			var townGroup = await _groupingOfficeRepository.GetById(id);
 			return Json(townGroup);
@@ -400,9 +398,9 @@ namespace Web.Core.GeneralReferences
 		//Update
 		[HttpPost]
 		[ServiceFilter(typeof(UserLogMessageAttribute))]
-		public async Task<IActionResult> UpdateTowns(int? id, string title)
+		public async Task<IActionResult> UpdateTowns(int? id , string title)
 		{
-			if (id == null)
+			if ( id == null )
 				return RedirectToAction("ListTowns");
 			var townGroup = await _groupingOfficeRepository.GetById(id);
 			townGroup.Title = title;
@@ -413,7 +411,7 @@ namespace Web.Core.GeneralReferences
 		[ServiceFilter(typeof(UserLogMessageAttribute))]
 		public async Task<IActionResult> DeleteTown(int? id)
 		{
-			if (id == null)
+			if ( id == null )
 				return RedirectToAction("ListTowns");
 			_groupingOfficeRepository.Delete(await _groupingOfficeRepository.GetById(id));
 			await _unitOfWork.SaveAsync();
@@ -429,12 +427,12 @@ namespace Web.Core.GeneralReferences
 			//System.Net.IPAddress clientIp = HttpContext.Connection.RemoteIpAddress;
 
 			//string ipTown = ApplicationCommon.TownIP.ValidateIPv4(clientIp.ToString());
-			if (User.IsInRole(role: "admin"))
+			if ( User.IsInRole(role: "admin") )
 			{
 				int countUnRead = await _referralBroadCastRepository.CountUnRead5DayLast();
 				ViewBag.CountAdameMoshahede = countUnRead;
 
-				IList<BroadCast> model = await _broadCastRepository.ListAllBroadCast();
+				IList<BroadCast> model = ( await _broadCastRepository.ListAllBroadCast() );
 
 				return View(model);
 			}
@@ -505,11 +503,11 @@ namespace Web.Core.GeneralReferences
 		[DisplayName(displayName: "نمایش پیام های خوانده نشده")]
 		public async Task<IActionResult> ShowAllUnReadMessage()
 		{
-			if (User.IsInRole(role: "admin"))
+			if ( User.IsInRole(role: "admin") )
 			{
 
 				IEnumerable<ReferralBroadCast> model =
-					await _referralBroadCastRepository.GetListAllTakhir();
+					( await _referralBroadCastRepository.GetListAllTakhir() );
 
 				return View(model);
 			}
@@ -525,24 +523,24 @@ namespace Web.Core.GeneralReferences
 			List<ReferralBroadCastViewModel> broadCastViewModel =
 				new List<ReferralBroadCastViewModel>();
 
-			foreach (ReferralBroadCast pc in model)
+			foreach ( ReferralBroadCast pc in model )
 			{
 				broadCastViewModel.Add(item: new ReferralBroadCastViewModel
 				{
 					BroadCast = new BroadCastViewModel
 					{
-						UserNameSender = pc.BroadCast.UserNameSender,
-						CreateDate = pc.BroadCast.CreateDate.Value,
+						UserNameSender = pc.BroadCast.UserNameSender ,
+						CreateDate = pc.BroadCast.CreateDate.Value ,
 						Text = pc.BroadCast.Text
-					},
+					} ,
 
-					ApplicationUser = pc.ApplicationUser,
-					Status = (ReferralStatusBroadCastEnumViewModel)pc.Status,
-					DstUserID = (int)pc.DstUserID,
-					DeadLine = pc.DeadLine,
+					ApplicationUser = pc.ApplicationUser ,
+					Status = ( ReferralStatusBroadCastEnumViewModel ) pc.Status ,
+					DstUserID = ( int ) pc.DstUserID ,
+					DeadLine = pc.DeadLine ,
 					//SrcUser= (int)pc.SrcUser,
-					IsImmediate = pc.IsImmediate,
-					ActionDescription = pc.ActionDescription,
+					IsImmediate = pc.IsImmediate ,
+					ActionDescription = pc.ActionDescription ,
 				});
 			}
 
@@ -571,28 +569,28 @@ namespace Web.Core.GeneralReferences
 		}
 		[HttpPost]
 		[ServiceFilter(typeof(UserLogMessageAttribute))]
-		public async Task<IActionResult> AddUser(int protectionMemberId, int[] states)
+		public async Task<IActionResult> AddUser(int protectionMemberId , int [] states)
 		{
 			try
 			{
 				GroupingOfficeMember protectionOfficeMember = new();
 				protectionOfficeMember.GroupingOfficeId = protectionMemberId;
 
-				foreach (var item in states)
+				foreach ( var item in states )
 				{
 					var add = new GroupingOfficeMember()
 					{
-						GroupingOfficeId = protectionMemberId,
-						ApplicationUserId = item,
+						GroupingOfficeId = protectionMemberId ,
+						ApplicationUserId = item ,
 					};
 					_groupingOfficeMemberRepository.Add(add);
 					await _unitOfWork.SaveAsync();
 				}
 				return RedirectToAction("ListTowns");
 			}
-			catch (System.Exception)
+			catch ( System.Exception )
 			{
-				return RedirectToAction("ListTowns", new { message = "این کاربر قبلاً به اداره دیگری اضافه گردیده است" });
+				return RedirectToAction("ListTowns" , new { message = "این کاربر قبلاً به اداره دیگری اضافه گردیده است" });
 			}
 
 		}
@@ -619,7 +617,7 @@ namespace Web.Core.GeneralReferences
 		[ServiceFilter(typeof(UserLogMessageAttribute))]
 		public async Task<IActionResult> EditListTownsGroup(int? id)
 		{
-			if (id == null)
+			if ( id == null )
 				return RedirectToAction("ListTownsGroup");
 			var townGroup = await _groupingOfficeRepository.GetById(id);
 			return Json(townGroup);
@@ -627,9 +625,9 @@ namespace Web.Core.GeneralReferences
 		[ServiceFilter(typeof(UserLogMessageAttribute))]
 		//Update
 		[HttpPost]
-		public async Task<IActionResult> UpdateTownsGroup(int? id, string title)
+		public async Task<IActionResult> UpdateTownsGroup(int? id , string title)
 		{
-			if (id == null)
+			if ( id == null )
 				return RedirectToAction("ListTownsGroup");
 			var townGroup = await _groupingOfficeRepository.GetById(id);
 			townGroup.Title = title;
@@ -640,14 +638,14 @@ namespace Web.Core.GeneralReferences
 		[ServiceFilter(typeof(UserLogMessageAttribute))]
 		public async Task<IActionResult> DeleteTownGroup(int? id)
 		{
-			if (id == null)
+			if ( id == null )
 				return RedirectToAction("ListTownsGroup");
 			_groupingOfficeRepository.Delete(await _groupingOfficeRepository.GetById(id));
 			await _unitOfWork.SaveAsync();
 			return RedirectToAction("ListTownsGroup");
 		}
 		[ServiceFilter(typeof(UserLogMessageAttribute))]
-		public async Task<IActionResult> AddUserGroup(int protectionMemberId, int[] states)
+		public async Task<IActionResult> AddUserGroup(int protectionMemberId , int [] states)
 		{
 			try
 			{
@@ -660,22 +658,23 @@ namespace Web.Core.GeneralReferences
 
 				groupingOfficeMember.GroupingOfficeId = protectionMemberId;
 
-				foreach (int item in states)
+				foreach ( int item in states )
 				{
 					GroupingOfficeMember add = new GroupingOfficeMember
 					{
-						GroupingOfficeId = protectionMemberId,
-						ApplicationUserId = item,
+						GroupingOfficeId = protectionMemberId ,
+						ApplicationUserId = item ,
 					};
 
-					_groupingOfficeMemberRepository.Add(add);
+					GroupingOfficeMember groupingOfficeMemberInfo = _groupingOfficeMemberRepository.Add(add);
+
 					await _unitOfWork.SaveAsync();
 				}
 				return RedirectToAction(actionName: "ListTownsGroup");
 			}
-			catch (System.Exception)
+			catch ( System.Exception )
 			{
-				return RedirectToAction(actionName: "ListTownsGroup", new { message = "این کاربر قبلاً به اداره دیگری اضافه گردیده است" });
+				return RedirectToAction(actionName: "ListTownsGroup" , new { message = "این کاربر قبلاً به اداره دیگری اضافه گردیده است" });
 			}
 
 		}
@@ -725,7 +724,7 @@ namespace Web.Core.GeneralReferences
 		[ServiceFilter(typeof(UserLogMessageAttribute))]
 		public async Task<IActionResult> EditListTownsSubject(int? id)
 		{
-			if (id == null)
+			if ( id == null )
 				return RedirectToAction("ListTownsSubject");
 			var townGroup = await _protectionOfficeRepositorySubject.GetById(id);
 			return Json(townGroup);
@@ -733,9 +732,9 @@ namespace Web.Core.GeneralReferences
 		[ServiceFilter(typeof(UserLogMessageAttribute))]
 		//Update
 		[HttpPost]
-		public async Task<IActionResult> UpdateTownsSubject(int? id, string title)
+		public async Task<IActionResult> UpdateTownsSubject(int? id , string title)
 		{
-			if (id == null)
+			if ( id == null )
 				return RedirectToAction("ListTownsSubject");
 			var townGroup = await _protectionOfficeRepositorySubject.GetById(id);
 			townGroup.Title = title;
@@ -746,14 +745,14 @@ namespace Web.Core.GeneralReferences
 		[ServiceFilter(typeof(UserLogMessageAttribute))]
 		public async Task<IActionResult> DeleteTownSubject(int? id)
 		{
-			if (id == null)
+			if ( id == null )
 				return RedirectToAction("ListTownsSubject");
 			_protectionOfficeRepositorySubject.Delete(await _protectionOfficeRepositorySubject.GetById(id));
 			await _unitOfWork.SaveAsync();
 			return RedirectToAction("ListTownsSubject");
 		}
 		[ServiceFilter(typeof(UserLogMessageAttribute))]
-		public async Task<IActionResult> AddUserSubject(int protectionMemberId, int[] states)
+		public async Task<IActionResult> AddUserSubject(int protectionMemberId , int [] states)
 		{
 			try
 			{
@@ -763,13 +762,13 @@ namespace Web.Core.GeneralReferences
 				ProtectionOfficeMember protectionOfficeMember = new();
 				protectionOfficeMember.ProtectionOfficeId = protectionMemberId;
 
-				foreach (var item in states)
+				foreach ( var item in states )
 				{
 					var add = new ProtectionOfficeMember()//GroupingOfficeMember()
 					{
 						//GroupingOfficeId = protectionMemberId,
-						ProtectionOfficeId = protectionMemberId,
-						ApplicationUserId = item,
+						ProtectionOfficeId = protectionMemberId ,
+						ApplicationUserId = item ,
 					};
 					//_protectionOfficeMemberRepository.Add(add);
 					_protectionOfficeMemberRepositorySubject.Add(add);
@@ -777,9 +776,9 @@ namespace Web.Core.GeneralReferences
 				}
 				return RedirectToAction("ListTownsSubject");
 			}
-			catch (System.Exception)
+			catch ( System.Exception )
 			{
-				return RedirectToAction("ListTownsSubject", new { message = "این کاربر قبلاً به اداره دیگری اضافه گردیده است" });
+				return RedirectToAction("ListTownsSubject" , new { message = "این کاربر قبلاً به اداره دیگری اضافه گردیده است" });
 			}
 
 		}
@@ -817,7 +816,7 @@ namespace Web.Core.GeneralReferences
 		public IActionResult GetUserLogMessageData(string models)
 		{
 			var request = JsonConvert.DeserializeObject<DataSourceRequest>(models);
-			var model = (_userLogMessageRepository.GetList(request));
+			var model = ( _userLogMessageRepository.GetList(request) );
 			return Json(model);
 		}
 		//[HttpGet]
@@ -845,13 +844,13 @@ namespace Web.Core.GeneralReferences
 			model.ActionDescription = result.ActionDescription;
 			model.DeadLine = result.DeadLine;
 
-			return PartialView(viewName: "_Details", model);
+			return PartialView(viewName: "_Details" , model);
 		}
 		//ActionEghdam
 		[HttpPost]
 		[Permission]
 		[ServiceFilter(typeof(UserLogMessageAttribute))]
-		public async Task<string> ActionEghdam(int broadCastId, string actionDescription)
+		public async Task<string> ActionEghdam(int broadCastId , string actionDescription)
 		{
 			var result = await _referralBroadCastRepository.GetByIdUpdate(broadCastId);
 			result.ActionDescription = actionDescription;
@@ -863,27 +862,31 @@ namespace Web.Core.GeneralReferences
 		}
 		[HttpPost]
 		[ServiceFilter(typeof(UserLogMessageAttribute))]
-		public async Task<IActionResult> ReplyMessage(int broadCastId, int userId)
+		public async Task<IActionResult> ReplyMessage(int broadCastId , int userId)
 		{
 			try
 			{
 				BroadCast broadCast =
 				await _broadCastRepository.GetById(broadCastId);
 
+
+
 				var userDestination =
 					await _userManager.FindByIdAsync(userId.ToString());
+
+
 				var newBroaCast =
 					new BroadCast
 					{
-						BroadCastType = broadCast.BroadCastType,
-						CreateDate = broadCast.CreateDate,
-						FirstName = broadCast.FirstName,
-						LastName = broadCast.LastName,
-						PersonnelCode = broadCast.PersonnelCode,
-						Subject = broadCast.Subject,
-						Text = broadCast.Text,
-						UserNameSender = broadCast.UserNameSender,
-						RecordStatus = broadCast.RecordStatus,
+						BroadCastType = broadCast.BroadCastType ,
+						CreateDate = DateTime.Now ,
+						FirstName = userDestination.FirstName ,//broadCast.FirstName ,
+						LastName = userDestination.LastName ,//broadCast.LastName ,
+						PersonnelCode = broadCast.PersonnelCode ,
+						Subject = broadCast.Subject ,
+						Text = broadCast.Text ,
+						UserNameSender = broadCast.UserNameSender ,
+						RecordStatus = broadCast.RecordStatus ,
 						//ReferralBroadCasts = broadCast.ReferralBroadCasts,
 
 					};
@@ -902,12 +905,12 @@ namespace Web.Core.GeneralReferences
 
 				ReferralBroadCast referralBroadCast = new ReferralBroadCast
 				{
-					DstUserID = userDestination.Id,
+					DstUserID = userDestination.Id ,
 					//BroadCast = broadCast,
-					DeadLine = DateTime.Now.AddDays(value: 5),
-					BroadCastId = broadCastIdAdd,
-					IsImmediate = false,
-					Status = ReferralStatusBroadCastEnum.AdameMoshahede,
+					DeadLine = DateTime.Now.AddDays(value: 5) ,
+					BroadCastId = broadCastIdAdd ,
+					IsImmediate = false ,
+					Status = ReferralStatusBroadCastEnum.AdameMoshahede ,
 
 				};
 				_referralBroadCastRepository.Add(referralBroadCast);
@@ -915,7 +918,7 @@ namespace Web.Core.GeneralReferences
 
 				return RedirectToAction(actionName: "ShowAllUnReadMessage");
 			}
-			catch (Exception ex)
+			catch ( Exception ex )
 			{
 				string message = ex.Message;
 				string inerMessage = ex.InnerException?.Message;

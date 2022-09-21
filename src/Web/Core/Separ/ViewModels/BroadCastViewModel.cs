@@ -75,6 +75,7 @@ namespace Web.Core.Separ.ViewModels
 		[Display(Name = "کدپرسنلی")]
 		public string PersonnelCode { get; set; }
 		[Display(Name = "موضوع")]
+		[Required(ErrorMessage = "{0} اجباری می باشد")]
 		public string Subject { get; set; }
 		[Required(ErrorMessage = "{0} اجباری می باشد")]
 		[Display(Name = "متن")]

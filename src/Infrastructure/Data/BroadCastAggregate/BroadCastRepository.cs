@@ -26,6 +26,7 @@ namespace Infrastructure.Data.BroadCastAggregate
 		async Task<IList<BroadCast>> IBroadCastRepository.ListAllBroadCast()
 		{
 			var result = await _dbSet.Include(c => c.ReferralBroadCasts)
+				.OrderByDescending(c => c.CreateDate)
 				.AsNoTracking().ToListAsync();
 
 			return result;

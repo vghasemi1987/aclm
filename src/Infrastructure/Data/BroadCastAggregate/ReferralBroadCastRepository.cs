@@ -18,7 +18,7 @@ namespace Infrastructure.Data.BroadCastAggregate
 	{
 		private readonly DbSet<ReferralBroadCast> _dbSet;
 		private readonly UserManager<ApplicationUser> _userManager;
-		public ReferralBroadCastRepository(ServerAccessibilityMonitorContext dbContext, UserManager<ApplicationUser> userManager) : base(dbContext)
+		public ReferralBroadCastRepository(ServerAccessibilityMonitorContext dbContext , UserManager<ApplicationUser> userManager) : base(dbContext)
 		{
 			_dbSet = dbContext.Set<ReferralBroadCast>();
 			_userManager = userManager;
@@ -28,22 +28,22 @@ namespace Infrastructure.Data.BroadCastAggregate
 		{
 			return await DbContext.Set<ReferralBroadCast>().Include(c => c.BroadCast).ToListAsync();
 		}
-		public async Task<DataSourceResult> GetList(DataSourceRequest request, int dstUserID)
+		public async Task<DataSourceResult> GetList(DataSourceRequest request , int dstUserID)
 		{
 			var result =
 				_dbSet.Where(q => q.RecordStatus == Convert.ToBoolean(RecordStatus.NotDeleted) && q.DstUserID == dstUserID)
 				.Select(o => new
 				{
-					Id = o.Id,
-					DeadLine = o.DeadLine.ToPersianDateTime("yyyy/MM/dd - HH:mm"),
-					SrcUser = _userManager.Users.Where(s => s.Id == o.SrcUser).FirstOrDefault().Name,
-					BroadCastId = o.BroadCastId,
-					Description = o.Description,
-					Status = o.Status.DescriptionAttr(),
-					IsImmediateText = o.IsImmediate == true ? "فوری" : "عادی",
+					Id = o.Id ,
+					DeadLine = o.DeadLine.ToPersianDateTime("yyyy/MM/dd - HH:mm") ,
+					SrcUser = _userManager.Users.Where(s => s.Id == o.SrcUser).FirstOrDefault().Name ,
+					BroadCastId = o.BroadCastId ,
+					Description = o.Description ,
+					Status = o.Status.DescriptionAttr() ,
+					IsImmediateText = o.IsImmediate == true ? "فوری" : "عادی" ,
 				})
 				.AsNoTracking()
-			.ToDataSourceResult(request.Take, request.Skip, request.Sort, request.Filter);
+			.ToDataSourceResult(request.Take , request.Skip , request.Sort , request.Filter);
 
 			return result;
 		}
@@ -62,7 +62,7 @@ namespace Infrastructure.Data.BroadCastAggregate
 				.FirstOrDefaultAsync();
 
 
-			if (result == null) throw new Exception();
+			if ( result == null ) throw new Exception();
 			//var model =
 			//	_dbSet.Include(c => c.ApplicationUser).Include(c => c.BroadCast);
 
@@ -96,7 +96,7 @@ namespace Infrastructure.Data.BroadCastAggregate
 				.Include(c => c.BroadCast)
 				.AsNoTracking().ToListAsync();
 
-			foreach (var bb in model)
+			foreach ( var bb in model )
 			{
 				broadCastsList.Add(bb.BroadCast);
 			}
@@ -106,6 +106,7 @@ namespace Infrastructure.Data.BroadCastAggregate
 		{
 			var result =
 			_dbSet.Where(w => w.Status == ReferralStatusBroadCastEnum.AdameMoshahede)
+
 			.Include(c => c.ApplicationUser)
 			.Include(c => c.BroadCast)
 			.AsNoTracking();
@@ -117,10 +118,12 @@ namespace Infrastructure.Data.BroadCastAggregate
 			var result =
 				await
 			_dbSet.Where(w =>
-			(w.ActionDescription == null || w.ActionDescription == "")
+			( w.ActionDescription == null || w.ActionDescription == "" )
 			&&
 			w.BroadCast.CreateDate.Value.AddDays(5) < DateTime.Now
-			).AsNoTracking()
+			)
+			.OrderByDescending(c => c.Id)
+			.AsNoTracking()
 			.Include(c => c.BroadCast)
 			.Include(c => c.ApplicationUser)
 			.ToListAsync();
@@ -133,7 +136,7 @@ namespace Infrastructure.Data.BroadCastAggregate
 
 			//w.Status == ReferralStatusBroadCastEnum.AdameMoshahede
 
-			(w.ActionDescription == null || w.ActionDescription == "") &&
+			( w.ActionDescription == null || w.ActionDescription == "" ) &&
 			w.BroadCast.CreateDate.Value.AddDays(5) < DateTime.Now
 
 			)

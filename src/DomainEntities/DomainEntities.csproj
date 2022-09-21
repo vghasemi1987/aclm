@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup Label="Globals">
+		
 		<SccProjectName>SAK</SccProjectName>
 		<SccProvider>SAK</SccProvider>
 		<SccAuxPath>SAK</SccAuxPath>
@@ -8,6 +9,8 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
+		<!--<ImplicitUsings>disable</ImplicitUsings>-->
+		<!--<Nullable>enable</Nullable>-->
 		<!--<TargetFramework>netstandard2.1</TargetFramework>-->
 		<TargetFramework>net6.0</TargetFramework>
 		  <RestoreSources>$(RestoreSources);../DomainEntities/bin/Debug;https://api.nuget.org/v3/index.json</RestoreSources>
