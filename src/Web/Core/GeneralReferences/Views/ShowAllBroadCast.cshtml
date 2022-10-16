@@ -29,24 +29,26 @@
 
 		<div class="col-md-4">
 			<div class="input-group input-group-sm mb-3">
-				@if (User.IsInRole(role: "admin"))
+				@if (Convert.ToInt32(ViewBag.CountAdameMoshahede) != null)
 				{
-					if (Convert.ToInt32(ViewBag.CountAdameMoshahede) != null)
-					{
-						<div class="row">
-							<div class="col-md-12">
-								@{
-									string messageBtn = $" اقدام نشده های منقضی  :  {ViewBag.CountAdameMoshahede}";
-								}
-								<a class="flashingButton" href="/GeneralReferences/ShowAllUnReadMessage"
-								   data-toggle="tooltip" data-placement="@(messageBtn)">
-									@(messageBtn)
-								</a>
-							</div>
-						</div>
-						<hr />
-					}
+				<div class="row">
+					<div class="col-md-12">
+						@{
+							string messageBtn = $" اقدام نشده های منقضی  :  {ViewBag.CountAdameMoshahede}";
+						}
+						<a class="flashingButton" href="/GeneralReferences/ShowAllUnReadMessage"
+						   data-toggle="tooltip" data-placement="@(messageBtn)">
+							@(messageBtn)
+						</a>
+					</div>
+				</div>
+				<hr />
 				}
+				@*@if ( User.IsInRole( role: "admin" ) )
+				{
+
+
+				}*@
 			</div>
 		</div>
 

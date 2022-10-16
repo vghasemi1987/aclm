@@ -1,0 +1,134 @@
+﻿@model List<DomainEntities.BroadcastAggregate.GroupingOfficeMember>
+@{
+	ViewBag.Title = "اضافه کردن گروه";
+}
+@section styles
+{
+	<link href="~/lib/Datatable/jquery-ui.min.css" rel="stylesheet" />
+}
+@if ( !string.IsNullOrEmpty( ViewBag.Message ) )
+{
+	<div class="alert alert-primary" role="alert" id="alertMessage">
+		<h2>@ViewBag.Message</h2>
+	</div>
+}
+<div class="container">
+	<div class="card">
+		<div class="card-header">
+			<div class="card-header bg-warning">
+				<h3>اضافه کردن اعضاء حوزه ها</h3>
+			</div>
+		</div>
+		<div class="card-body">
+			<form action="/GeneralReferences/ListTownsGroupAddMember" method="post">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label for="selectUsers">نام گروه</label>
+							<input type="hidden" name="id" value="@(ViewData ["TownsGroupId"])" hidden />
+							<input class="form-control" id="txtUpdate" name="title" />
+						</div>
+					</div>
+				</div>
+				<br />
+				<div class="row">
+					<div class="col-md-12">
+						<div class="col-md-3">
+							<button type="submit" class="btn btn-success">ذخیره</button>
+							<a href="/GeneralReferences/ListTownsGroup" class="btn btn-primary">بازگشت</a>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="card-footer">
+			<br />
+			<div class="table-responsive">
+				<table id="efaTable" class="table table-hover table-striped table-bordered text-center">
+					<thead>
+						<tr class="bg-info">
+							<th>
+								نام و نام خوادگی
+							</th>
+							<th style="width:75px;">فعالیت</th>
+						</tr>
+					</thead>
+					<tbody>
+						@if ( Model.Count > 0 )
+						{
+							foreach ( var item in Model )
+							{
+								<tr>
+									<td>@(item.ApplicationUser.Name)</td>
+									<td>
+										<form onsubmit="return confirm('آیا مطمئن هستید');" method="post" action="/GeneralReferences/DeleteGroupingOfficeMember">
+											<input type="hidden" hidden name="id" value="@(item.Id)" />
+											<button class="btn btn-danger btn-sm">حذف</button>
+										</form>
+									</td>
+								</tr>
+							}
+						}
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<hr />
+	</div>
+</div>
+@section scripts
+{
+	<script src="~/lib/Datatable/jquery-3.5.1.js"></script>
+	<script src="~/lib/Datatable/jquery-ui.js"></script>
+	<script src="~/lib/Datatable/jquery.dataTables.min.js"></script>
+	<script src="~/lib/Datatable/dataTables.buttons.min.js"></script>
+	<script src="~/lib/datatable/datatables.bootstrap4.min.js"></script>
+	<script src="~/lib/Datatable/jszip.min.js"></script>
+	<script src="~/lib/Datatable/pdfmake.min.js"></script>
+	<script src="~/lib/Datatable/vfs_fonts.js"></script>
+	<script src="~/lib/Datatable/buttons.html5.min.js"></script>
+	<script src="~/lib/Datatable/buttons.print.min.js"></script>
+	<script src="~/lib/select2/select2.min.js"></script>
+
+	<script>
+		$(document).ready(function () {
+
+			bindUserAutoComplete();
+
+			$('.js-example-basic-multiple').select2({
+				theme: "classic",
+				width: 'resolve',
+			});
+
+			const table = $('#efaTable').DataTable({
+				dom: 'Bfrtip',
+				buttons: [
+					'copy', 'csv', 'excel', 'print',
+				]
+			});
+
+			$('.buttons-html5').addClass('btn btn-primary btn-sm');
+			$('.buttons-print').addClass('btn btn-primary btn-sm');
+
+
+
+		});
+
+		function bindUserAutoComplete() {
+			$(function () {
+				let ss = [];
+				$.ajax('/GeneralReferences/UsersInfoGroup').done(function (result) {
+
+					for (var i = 0; i < result.length; i++) {
+						ss.push(result[i].UserName + " - " + result[i].Name);
+					}
+
+					$("#txtUpdate").autocomplete({
+						source: ss
+					});
+
+				});
+			});
+		}
+	</script>
+}

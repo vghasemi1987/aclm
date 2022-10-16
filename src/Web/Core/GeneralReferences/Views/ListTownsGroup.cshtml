@@ -3,7 +3,7 @@
 @{
 	ViewBag.Title = "اضافه کردن گروه";
 }
-@if (!string.IsNullOrEmpty(ViewBag.Message))
+@if ( !string.IsNullOrEmpty( ViewBag.Message ) )
 {
 	<div class="alert alert-primary" role="alert" id="alertMessage">
 		<h2>@ViewBag.Message</h2>
@@ -56,7 +56,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					@foreach (var efa in Model.OrderByDescending(c => c.Id))
+					@foreach ( var efa in Model.OrderByDescending( c => c.Id ) )
 					{
 						<tr>
 							<td>@efa.Title</td>
@@ -67,8 +67,7 @@
 										<input type="hidden" hidden name="id" value="@efa.Id" />
 										<button type="submit" class="btn btn-danger btn-sm">حدف</button>
 									</form>*@
-
-								<button class="btn btn-info btn-sm addModal" data-toggle="modal" data-target="#generateModalAdd" value="@efa.Id">اضافه کردن اعضاء</button>
+								<a class="btn btn-primary btn-sm" asp-controller="GeneralReferences" asp-action="ListTownsGroupAddMember" asp-route-id="@(efa.Id)">اضافه کردن اعضاء</a>
 								<input type="hidden" name="name" class="proOfficeMemberValueClass" id="proOfficeMemberValue" value="@efa.Id" hidden />
 
 							</td>
@@ -79,7 +78,7 @@
 										<input type="hidden" value="@efa.Id" name="id" /><button class="btn btn-danger btn-sm" type="submit">حذف</button>
 									</form>
 								</div>
-								
+
 							</td>
 						</tr>
 					}
@@ -196,7 +195,6 @@
 	<script src="~/lib/Datatable/buttons.print.min.js"></script>
 	<script src="~/lib/select2/select2.min.js"></script>
 	<script>
-
 		$(document).ready(function () {
 
 			addModalClick();
@@ -264,7 +262,7 @@
 
 				for (var i = 0; i < result.length; i++) {
 
-					str += `<option selected  value=${result[i].ApplicationUser.Id}>${result[i].ApplicationUser.UserName}</option>`;
+					str += `<option selected  value=${result[i].ApplicationUser.Id}>${result[i].ApplicationUser.UserName}   ${result[i].ApplicationUser.Name}</option>`;
 
 				}
 
