@@ -512,7 +512,7 @@ namespace Web.Core.GeneralReferences
 		}
 		[HttpPost]
 		[ServiceFilter( typeof( UserLogMessageAttribute ) )]
-		public async Task<IActionResult> AddUser( int protectionMemberId , int [] states )
+		public async Task<IActionResult> AddUser( int protectionMemberId , int[] states )
 		{
 			try
 			{
@@ -558,7 +558,7 @@ namespace Web.Core.GeneralReferences
 			if ( id == null )
 				return RedirectToAction( actionName: "ListTownsGroup" );
 
-			ViewData [ index: "TownsGroupId" ] = id;
+			ViewData[ index: "TownsGroupId" ] = id;
 
 			List<GroupingOfficeMember> groupOfficeMember =
 				await _groupingOfficeMemberRepository.GetByGroupingOfficeId( id );
@@ -570,7 +570,7 @@ namespace Web.Core.GeneralReferences
 
 		public async Task<IActionResult> ListTownsGroupAddMember( int id , string title )
 		{
-			ViewData [ index: "TownsGroupId" ] = id;
+			ViewData[ index: "TownsGroupId" ] = id;
 			List<GroupingOfficeMember> groupOfficeMember =
 			await _groupingOfficeMemberRepository.GetByGroupingOfficeId( id );
 
@@ -578,15 +578,15 @@ namespace Web.Core.GeneralReferences
 			string userName = string.Empty;
 			if ( string.IsNullOrWhiteSpace( title ) )
 			{
-				ViewData [ index: "Message" ] = "نام کاربری خالی می باشد";
+				ViewData[ index: "Message" ] = "نام کاربری خالی می باشد";
 				return View( groupOfficeMember );
 			}
 
-			userName = title.Split( separator: '-' ) [ 0 ];
+			userName = title.Split( separator: '-' )[ 0 ];
 
 			if ( string.IsNullOrWhiteSpace( userName.Trim() ) )
 			{
-				ViewData [ index: "Message" ] = "نام کاربری خالی می باشد";
+				ViewData[ index: "Message" ] = "نام کاربری خالی می باشد";
 				return View( groupOfficeMember );
 			}
 
@@ -598,7 +598,7 @@ namespace Web.Core.GeneralReferences
 
 			if ( foundedInGroupingByUser != null )
 			{
-				ViewData [ index: "Message" ] = "کاربر انتخابی به این گروه قبلا اضافه گردیده است ";
+				ViewData[ index: "Message" ] = "کاربر انتخابی به این گروه قبلا اضافه گردیده است ";
 				return View( groupOfficeMember );
 			}
 
@@ -614,7 +614,7 @@ namespace Web.Core.GeneralReferences
 
 			groupOfficeMember =
 		   await _groupingOfficeMemberRepository.GetByGroupingOfficeId( id );
-			ViewData [ index: "Message" ] = "کاربر با موفقیت اضافه گردید";
+			ViewData[ index: "Message" ] = "کاربر با موفقیت اضافه گردید";
 
 			return View( groupOfficeMember );
 		}
@@ -652,7 +652,7 @@ namespace Web.Core.GeneralReferences
 			if ( id == null )
 				return RedirectToAction( "ListTownsSubject" );
 
-			ViewData [ index: "TownsGroupId" ] = id;
+			ViewData[ index: "TownsGroupId" ] = id;
 
 			List<ProtectionOfficeMember> protectionOfficeMember =
 				//await _groupingOfficeMemberRepository.GetByGroupingOfficeId( id );
@@ -664,7 +664,7 @@ namespace Web.Core.GeneralReferences
 		[ServiceFilter( typeof( UserLogMessageAttribute ) )]
 		public async Task<IActionResult> ListProtectionAddMember( int id , string title )
 		{
-			ViewData [ index: "TownsGroupId" ] = id;
+			ViewData[ index: "TownsGroupId" ] = id;
 			var protectionOfficeMember =
 			await _protectionOfficeMemberRepositorySubject.GetByProtectionOfficeId( id );
 
@@ -672,15 +672,15 @@ namespace Web.Core.GeneralReferences
 			string userName = string.Empty;
 			if ( string.IsNullOrWhiteSpace( title ) )
 			{
-				ViewData [ index: "Message" ] = "نام کاربری خالی می باشد";
+				ViewData[ index: "Message" ] = "نام کاربری خالی می باشد";
 				return View( protectionOfficeMember );
 			}
 
-			userName = title.Split( separator: '-' ) [ 0 ];
+			userName = title.Split( separator: '-' )[ 0 ];
 
 			if ( string.IsNullOrWhiteSpace( userName.Trim() ) )
 			{
-				ViewData [ index: "Message" ] = "نام کاربری خالی می باشد";
+				ViewData[ index: "Message" ] = "نام کاربری خالی می باشد";
 				return View( protectionOfficeMember );
 			}
 
@@ -694,7 +694,7 @@ namespace Web.Core.GeneralReferences
 
 			if ( foundedInProtectionByUser != null )
 			{
-				ViewData [ index: "Message" ] = "کاربر انتخابی به این گروه قبلا اضافه گردیده است ";
+				ViewData[ index: "Message" ] = "کاربر انتخابی به این گروه قبلا اضافه گردیده است ";
 				return View( protectionOfficeMember );
 			}
 
@@ -710,7 +710,7 @@ namespace Web.Core.GeneralReferences
 
 			protectionOfficeMember =
 		   await _protectionOfficeMemberRepositorySubject.GetByProtectionOfficeId( id );
-			ViewData [ index: "Message" ] = "کاربر با موفقیت اضافه گردید";
+			ViewData[ index: "Message" ] = "کاربر با موفقیت اضافه گردید";
 
 			return View( protectionOfficeMember );
 		}
@@ -750,7 +750,7 @@ namespace Web.Core.GeneralReferences
 			return RedirectToAction( "ListTownsGroup" );
 		}
 		[ServiceFilter( typeof( UserLogMessageAttribute ) )]
-		public async Task<IActionResult> AddUserGroup( int protectionMemberId , int [] states )
+		public async Task<IActionResult> AddUserGroup( int protectionMemberId , int[] states )
 		{
 			try
 			{
@@ -855,7 +855,7 @@ namespace Web.Core.GeneralReferences
 			return RedirectToAction( "ListTownsSubject" );
 		}
 		[ServiceFilter( typeof( UserLogMessageAttribute ) )]
-		public async Task<IActionResult> AddUserSubject( int protectionMemberId , int [] states )
+		public async Task<IActionResult> AddUserSubject( int protectionMemberId , int[] states )
 		{
 			try
 			{

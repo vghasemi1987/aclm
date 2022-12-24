@@ -3,7 +3,9 @@
 		<!--<ImplicitUsings>disable</ImplicitUsings>-->
 		<TargetFramework>net6.0</TargetFramework>
 		<!--<Nullable>enable</Nullable>-->
-		<RestoreSources>$(RestoreSources);../Web/bin/Debug/net6.0;https://api.nuget.org/v3/index.json</RestoreSources>
+		<RestoreSources>
+			$(RestoreSources);../Web/bin/Debug/net6.0;https://api.nuget.org/v3/index.json
+		</RestoreSources>
 		<AssemblyName>ServerAccessibilityMonitor</AssemblyName>
 		<AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
 		<GenerateRuntimeConfigDevFile>true</GenerateRuntimeConfigDevFile>
@@ -71,6 +73,11 @@
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
 		<GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
 	</PropertyGroup>
+	<ProjectExtensions>
+		<VisualStudio>
+			<UserProperties properties_4launchsettings_1json__JsonSchema="https://json.schemastore.org/lerna.json" />
+		</VisualStudio>
+	</ProjectExtensions>
 	<!--<Target Name="PrecompileScript" BeforeTargets="BeforeBuild">
     <Exec Command="dotnet bundle" />
   </Target>-->
